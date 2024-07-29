@@ -37,53 +37,32 @@ const About: React.FC<AboutProps> = (props) => {
                 <h3>About Me</h3>
                 <br />
                 <p>
-                    From a young age, I have had a curiosity about how things
-                    worked. This naturally led me to become absolutely obsessed
-                    with Lego and I fell in love with building things. In
-                    elementary school, I joined the Lego Robotics team at my
-                    local middle school, which was my first real exposure to
-                    programming. In 2008, my family and I moved across the
-                    country from California to New York, where I attended middle
-                    school, high school, and college.
+                    I've always been super curious about how the world around me works.
+                    As a freshman in college, this led me to pursue some super cool research
+                    opportunities in physics. As I got more exposure and broadened my horizons,
+                    I eventually realized that what I was really interested in were questions
+                    about how people worked. This interest led me to study economics and psych
+                    as an undergrad at UW-Madison. I saw them both as cool ways to study and 
+                    model the behavior of the people around me. When graduating, I decided
+                    to continue down the psych route and started working in my current lab. 
                 </p>
                 <br />
                 <div className="captioned-image">
                     <img src={me} style={styles.image} alt="" />
                     <p>
                         <sub>
-                            <b>Figure 1:</b> A real photo of me developing this
-                            website :)
+                            <b>Figure 1:</b> me as a youngin' :)
                         </sub>
                     </p>
                 </div>
-
-                <p>
-                    I started programming more seriously in high school,
-                    initially learning how to scrape and interact with websites.
-                    I went on to do a ton of passion projects, many of them with
-                    one of my closest friends,{' '}
-                    <a
-                        rel="noreferrer"
-                        target="_blank"
-                        href="https://www.linkedin.com/in/scott-bass-189a7919b/"
-                    >
-                        Scott Bass
-                    </a>
-                    . We worked on many projects together, including chat bots,
-                    multiple game projects, apps, and more. One of these
-                    projects is viewable on my{' '}
-                    <Link to="/projects/software">Software Projects</Link> page.
-                </p>
                 <br />
                 <p>
-                    In 2017, I got accepted into Rennselear Polytechnic
-                    Institute to study Computer Science. It was my first choice
-                    and I was absolutely ecstatic to be going to such a great
-                    university. At the end of my sophomore year, I got an
-                    internship working for the startup Hover, primarily focusing
-                    on frontend work. I continued to work at Hover on and off
-                    for about a year and a half, until the start of my senior
-                    year when I decided to focus on other opportunities.
+                    I'm really curious about how we learn about and from one another, and how
+                    we start doing so as children. So much of this process happens during 
+                    social interactions, even those that we aren't directly a part of. How do 
+                    we learn so much in such a short span of time? I'm also tangentially
+                    interested in how we can build models that effectively capture this 
+                    process. 
                 </p>
                 <br />
                 <br />
@@ -99,7 +78,7 @@ const About: React.FC<AboutProps> = (props) => {
                         <h3>My Hobbies</h3>
                         <br />
                         <p>
-                            Beyond software, I have a lot of hobbies that I
+                            Beyond cognitive science, I have a lot of hobbies that I
                             enjoy doing in my free time. The more tangible
                             hobbies I have are{' '}
                             <Link to="/projects/music">Music Production</Link>{' '}
@@ -107,15 +86,12 @@ const About: React.FC<AboutProps> = (props) => {
                             <Link to="/projects/art">Digital Art</Link>. You can
                             read more about each of these on their respective
                             pages under my projects tab. Some other hobbies I
-                            enjoy are working out, cooking, and (unsurprisingly)
-                            playing video games.
+                            enjoy are thrifting, cooking, and going on various
+                            adventures.
                         </p>
                         <br />
                         <p>
-                            In college, I was an active member in the fraternity
-                            Sigma Alpha Epsilon and held multiple positions in
-                            the chapter. I met a lot of amazing people through
-                            my fraternity and thoroughly enjoyed the community.
+                            In college, I was also an ra in the dorms. 
                         </p>
                     </div>
                     <div style={styles.verticalImage}>
@@ -130,18 +106,8 @@ const About: React.FC<AboutProps> = (props) => {
                 <br />
                 <br />
                 <p>
-                    Thanks for reading about me! I hope that you enjoy exploring
-                    the rest of my portfolio website and everything it has to
-                    offer. If you find the easter egg make sure to let me know
-                    on twitter{' '}
-                    <a
-                        rel="noreferrer"
-                        target="_blank"
-                        href="https://twitter.com/henryheffernan"
-                    >
-                        @henryheffernan
-                    </a>{' '}
-                    Good luck and have fun!
+                    Thanks for reading about me! I really hope that you enjoy
+                    exploring the rest of my website
                 </p>
                 <br />
                 <p>
@@ -149,8 +115,8 @@ const About: React.FC<AboutProps> = (props) => {
                     them. You can reach me through the{' '}
                     <Link to="/contact">contact page</Link> or shoot me an email
                     at{' '}
-                    <a href="mailto:henryheffernan@gmail.com">
-                        henryheffernan@gmail.com
+                    <a href="mailto:mokeeffe@stanford.edu">
+                        mokeeffe@stanford.edu
                     </a>
                 </p>
             </div>
