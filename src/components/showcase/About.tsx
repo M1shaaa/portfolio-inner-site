@@ -12,23 +12,23 @@ const About: React.FC<AboutProps> = (props) => {
         <div className="site-page-content">
             {/* <img src={me} style={styles.topImage} alt="" /> */}
             <h1 style={{ marginLeft: -16 }}>Welcome</h1>
-            <h3>I'm Henry Heffernan</h3>
+            <h3>I'm misha okeeffe</h3>
             <br />
             <div className="text-block">
                 <p>
-                    I'm a software engineer currently working at Vercel! In May
-                    of 2022 I graduated from Rensselaer Polytechnic Institute
-                    with my BS in Computer Science.
+                    I'm currently a predoctoral fellow working in Dr. Gweon's Social
+                    Learning Lab at Stanford University. Before working here, I worked
+                    in Dr. Hawkin's Social Interaction Lab, Dr. Dunham's Social 
+                    Cognitive Development Lab, and Dr. Bonawitz Computational 
+                    Cognitive Development Lab.
                 </p>
                 <br />
                 <p>
-                    Thank you for taking the time to check out my portfolio. I
-                    really hope you enjoy exploring it as much as I enjoyed
-                    building it. If you have any questions or comments, feel
-                    free to contact me using{' '}
-                    <Link to="/contact">this form</Link> or shoot me an email at{' '}
-                    <a href="mailto:henryheffernan@gmail.com">
-                        henryheffernan@gmail.com
+                    Thanks for checking out my portfolio! I really hope you enjoy 
+                    exploring it as much as I enjoyed building it. If you have any
+                    questions or comments, feel free to shoot me an email at{' '}
+                    <a href="mailto:mokeeffe@stanford.edu">
+                        mokeeffe@stanford.edu
                     </a>
                 </p>
             </div>
