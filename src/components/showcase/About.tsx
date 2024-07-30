@@ -11,17 +11,17 @@ const About: React.FC<AboutProps> = (props) => {
         // add on resize listener
         <div className="site-page-content">
             {/* <img src={me} style={styles.topImage} alt="" /> */}
-            <h1 style={{ marginLeft: -16 }}>welcome weary internet traveler !</h1>
-            <h3>I'm misha okeeffe</h3>
+            <h1 style={{ marginLeft: -16 }}>welcome!</h1>
+            <h3>my name is misha okeeffe</h3>
             <br />
             <div className="text-block">
                 <p>
                 I'm currently a predoctoral fellow working in <a href="https://sll.stanford.edu/">Dr. Gweon's Social
                 Learning Lab</a> at Stanford University. Before working here, I worked with 
-                <a href="https://clairebergey.net/">Claire Bergey</a> in <a href="https://rdhawkins.com/">Dr. Hawkins'
+                <a href="https://clairebergey.net/"> Claire Bergey</a> in <a href="https://rdhawkins.com/">Dr. Hawkins'
                 Social Interaction Lab</a>, <a href="https://www.aajbaker.com/">Aaron Baker</a> in 
-                <a href="https://www.socialcogdev.com/">Dr. Dunham's Social Cognitive Development Lab</a>, and 
-                <a href="https://raboody.github.io/website/">Rosie Aboody</a> and <a href="https://jchu10.github.io/">Junyi
+                <a href="https://www.socialcogdev.com/"> Dr. Dunham's Social Cognitive Development Lab</a>, and 
+                <a href="https://raboody.github.io/website/"> Rosie Aboody</a> and <a href="https://jchu10.github.io/">Junyi
                 Chu</a> in <a href="https://projects.iq.harvard.edu/ccdlab/home">Dr. Bonawitz's Computational 
                 Cognitive Development Lab</a>.
                 </p>
