@@ -1,31 +1,22 @@
 import React from 'react';
 // @ts-ignore
-import saga from '../../../assets/pictures/projects/software/saga.mp4';
-// @ts-ignore
-import computer from '../../../assets/pictures/projects/software/computer.mp4';
-// @ts-ignore
 import scroll from '../../../assets/pictures/projects/software/scroll.mp4';
 import ResumeDownload from '../ResumeDownload';
 import VideoAsset from '../../general/VideoAsset';
 
 export interface SoftwareProjectsProps {}
 
-const SoftwareProjects: React.FC<SoftwareProjectsProps> = (props) => {
+const SoftwareProjects: React.FC<SoftwareProjectsProps> = () => {
     return (
         <div className="site-page-content">
-            <h1>my adventures</h1>
-            <h3>and endeavors</h3>
-            <br />
+            <h1>my various adventures</h1>
             <p>
                 Below are some of my favorite things I've had the opportunity to do 
                 over the past couple years. 
             </p>
-            <br />
             <ResumeDownload />
-            <br />
             <div className="text-block">
                 <h2>the ironman</h2>
-                <br />
                 <p>
                     In August 2022, probably two weeks into moving to Madison, I had my very first shift
                     at the restaurant I was going to be working at. It also happened to be the same day
@@ -43,9 +34,9 @@ const SoftwareProjects: React.FC<SoftwareProjectsProps> = (props) => {
                     of, I was barely able to make each cutoff time and finished in about 14 or 15 hours. This was probably 
                     the hardest thing I have ever done--would not recommend lol. 
                 </p>
+            </div>
             <div className="text-block">
-                <h2>the ultra</h2>
-                <br />
+                <h2>running</h2>
                 <p>
                     Going into my final year at Madison, I knew I wanted to do something to celebrate graduating. Ideally, I 
                     wanted find something to do with my dad, who had also gone to Madison. We decided to run an Ultramarathon 
@@ -57,91 +48,25 @@ const SoftwareProjects: React.FC<SoftwareProjectsProps> = (props) => {
                     running. It was definitely hard and I walked for much of it, but it was so much more enjoyable than road marathons I had 
                     done before. 
                 </p>
-                <br />
-                <div className="captioned-image">
-                    <VideoAsset src={saga} />
-                    <div style={styles.caption}>
-                        <p>
-                            <sub>
-                                <b>Figure 2: hoodoos along the course--so pretty!</b> 
-                            </sub>
-                        </p>
-                    </div>
-                </div>
+            </div>
             <div className="text-block">
                 <h2>mountaineering</h2>
-                <br />
                 <p>
                     I also really enjoy climbing - or rather trying to climb - various mountains, often 
-                    with my friends. With one of my good friends in particular, Aaron, I've 
+                    with my friends. With one of my good friends in particular, Aaron, I've
+                    {/* Complete this sentence */}
                 </p>
-                <br />
                 <div className="captioned-image">
                     <VideoAsset src={scroll} />
-                    <p style={styles.caption}>
+                    <p className="caption">
                         <sub>
-                            <b>Figure 3:</b> Skip the Scroll in action, finding
-                            the highest rated comments and scrolling right to
-                            them
+                            <b>Figure 3:</b>
                         </sub>
                     </p>
                 </div>
-                <p>
-                    The extension is open source and currently released on the
-                    Chrome web store. Skip the Scroll is obviously not a project
-                    with massive scope, but was fun to make and dive into the
-                    world of browser extensions. I wanted to showcase since it's
-                    a developer tool and I wanna give it some visibility for
-                    those who might find it useful.
-                </p>
-                <br />
-                <h3>Links:</h3>
-                <ul>
-                    <li>
-                        <a
-                            rel="noreferrer"
-                            target="_blank"
-                            href="https://github.com/henryjeff/skip-the-scroll"
-                        >
-                            <p>
-                                <b>[GitHub]</b> - Skip the Scroll Repository
-                            </p>
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            rel="noreferrer"
-                            target="_blank"
-                            href="https://chrome.google.com/webstore/detail/skip-the-scroll/mfehannpjmgfagldoilpngeoecdfgmnd"
-                        >
-                            <p>
-                                <b>[Chrome Web Store]</b> - Skip the Scroll
-                            </p>
-                        </a>
-                    </li>
-                </ul>
-                <p>
-                    If you are a developer and have also found yourself
-                    scrolling through github comment after github comment saying
-                    "i also have this problem...", then I highly recommend you
-                    check out Skip the Scroll to save you some of your precious
-                    time. If you like it, feel free to star it on GitHub and
-                    rate it on the Chrome web store.
-                </p>
             </div>
-            <ResumeDownload />
         </div>
     );
-};
-
-const styles: StyleSheetCSS = {
-    video: {
-        width: '100%',
-        padding: 12,
-    },
-    caption: {
-        width: '80%',
-    },
 };
 
 export default SoftwareProjects;
