@@ -273,8 +273,8 @@ const Wordle: React.FC<WordleProps> = () => {
     return (
         <div style={styles.container}>
             <div style={styles.header}>
-                <h2>Henordle</h2>
-                <p>Wordle but with a HENRY based twist.</p>
+                <h2>mishdle</h2>
+                <p>Wordle but with a misha based twist.</p>
             </div>
             <motion.div
                 variants={gameOverAnimations}
@@ -287,7 +287,7 @@ const Wordle: React.FC<WordleProps> = () => {
                 )}
             >
                 <h2>{won ? 'You win!' : 'Game Over'}</h2>
-                <p>Thanks for playing! Remember: the word is always "HENRY"!</p>
+                <p>Thanks for playing! Remember: the word is always "misha"!</p>
                 <br />
                 <GuessWord
                     key={'winning-guess'}
