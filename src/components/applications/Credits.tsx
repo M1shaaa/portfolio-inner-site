@@ -26,21 +26,6 @@ const CREDITS = [
             ['Windows 95 Startup Sound', 'Microsoft'],
         ],
     },
-    {
-        title: 'Special Thanks',
-        rows: [
-            ['Bruno Simon', 'SimonDev'],
-            ['Lorelei Kravinsky', 'Scott Bass'],
-            ['Trey Briccetti', 'Mom, Dad & Angela'],
-        ],
-    },
-    {
-        title: 'Inspiration',
-        rows: [
-            ['Bruno Simon', 'Jesse Zhou'],
-            ['Pink Yellow', 'Vivek Patel'],
-        ],
-    },
 ];
 
 const Credits: React.FC<CreditsProps> = (props) => {
@@ -78,7 +63,6 @@ const Credits: React.FC<CreditsProps> = (props) => {
             closeWindow={props.onClose}
             onInteract={props.onInteract}
             minimizeWindow={props.onMinimize}
-            bottomLeftText={'© Copyright 2022 Henry Heffernan'}
         >
             <div
                 onMouseDown={nextSlide}
@@ -86,7 +70,6 @@ const Credits: React.FC<CreditsProps> = (props) => {
                 style={styles.credits}
             >
                 <h2>Credits</h2>
-                <p>henryheffernan.com, 2022</p>
                 <br />
                 <br />
                 <br />
