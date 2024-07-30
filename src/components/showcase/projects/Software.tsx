@@ -57,7 +57,7 @@ const SoftwareProjects: React.FC<SoftwareProjectsProps> = (props) => {
                     <a
                         rel="noreferrer"
                         target="_blank"
-                        href="https://henryheffernan.vercel.app/"
+                        href="https://portfolio-inner-site-p1x70rxj5-mishas-projects-6c28eea0.vercel.app"
                     >
                         here
                     </a>{' '}
@@ -84,10 +84,10 @@ const SoftwareProjects: React.FC<SoftwareProjectsProps> = (props) => {
                         <a
                             rel="noreferrer"
                             target="_blank"
-                            href="https://henryheffernan.vercel.app/"
+                            href="https://portfolio-inner-site-p1x70rxj5-mishas-projects-6c28eea0.vercel.app"
                         >
                             <p>
-                                <b>[OS Site]</b> - henryheffernan.vercel.app
+                                <b>[OS Site]</b> - https://portfolio-inner-site-p1x70rxj5-mishas-projects-6c28eea0.vercel.app
                             </p>
                         </a>
                     </li>
@@ -95,7 +95,7 @@ const SoftwareProjects: React.FC<SoftwareProjectsProps> = (props) => {
                         <a
                             rel="noreferrer"
                             target="_blank"
-                            href="https://github.com/henryjeff/portfolio-website"
+                            href="https://github.com/M1shaaa/M1shaaa.github.io/tree/master"
                         >
                             <p>
                                 <b>[GitHub]</b> - 3D Site Repository
@@ -106,7 +106,7 @@ const SoftwareProjects: React.FC<SoftwareProjectsProps> = (props) => {
                         <a
                             rel="noreferrer"
                             target="_blank"
-                            href="https://github.com/henryjeff/portfolio-inner-site"
+                            href="https://github.com/M1shaaa/portfolio-inner-site"
                         >
                             <p>
                                 <b>[GitHub]</b> - OS Site Repository

@@ -17,19 +17,19 @@ const Home: React.FC<HomeProps> = (props) => {
         <div style={styles.page}>
             <div style={styles.header}>
                 <h1 style={styles.name}>misha okeeffe</h1>
-                <h2>Software Engineer</h2>
+                <h2>personal website</h2>
             </div>
             <div style={styles.buttons}>
                 <Link containerStyle={styles.link} to="about" text="ABOUT" />
                 <Link
                     containerStyle={styles.link}
                     to="experience"
-                    text="EXPERIENCE"
+                    text="RESEARCH"
                 />
                 <Link
                     containerStyle={styles.link}
                     to="projects"
-                    text="PROJECTS"
+                    text="OPEN SCIENCE"
                 />
                 <Link
                     containerStyle={styles.link}
