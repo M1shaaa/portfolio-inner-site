@@ -40,7 +40,12 @@ const About: React.FC<AboutProps> = (props) => {
                 <h3>a little bit about me</h3>
                 <br />
                 <p>
-                    I've always been super curious about how the world around me works.
+                    I've always been super curious about how the world works. When I was a kid, I used to
+                    always run off and my parents would find me in some pretty weird spots (on top of a car, 
+                    on top of a trellise, inside a lazy susan, and much more). Besides learning about the things around me, 
+                    I also learned a lot from the <em>people</em> around me. And, although I'm still interested in 
+                    exploring ideas and testing hypotheses about the world and people around me, I now try to explore
+                    this interest in a way that won't worry my parents so much. 
                     
                 </p>
                 <br />
@@ -48,18 +53,16 @@ const About: React.FC<AboutProps> = (props) => {
                     <img src={me} style={styles.image} alt="" />
                     <p>
                         <sub>
-                            <b>Figure 1:</b> me as a youngin' :)
+                            <b>Figure 1:</b> me as a child exploring what seems to be the inside of a hamper :)
                         </sub>
                     </p>
                 </div>
                 <br />
                 <p>
-                    I'm really interested about how we learn about and from one another, and how
-                    we start doing so as children. This interest led me to study econ and psych
-                    as an undergrad at UW-Madison. I saw them as ways to both study and 
-                    model the behavior of the people around me. Upon graduating, I decided
-                    to continue more down the psych route and that's how I started working in my 
-                    current lab! 
+                    These days, I'm particularly interested about how we learn from and about one another, and how
+                    we start doing so as children. This interest led me to study econ and psych as an undergrad at 
+                    UW-Madison. I saw them as ways to study and model behavior. Upon graduating, I decided to 
+                    continue more down the psych route and that's how I ended up in my current lab! 
                 </p>
                 <br />
                 <br />
@@ -80,15 +83,23 @@ const About: React.FC<AboutProps> = (props) => {
                             hobbies I have are{' '}
                             <Link to="/projects/music">adventuring</Link>{' '}
                             and {' '}
-                            <Link to="/projects/art">creating cool stuff</Link>. You can
+                            <Link to="/projects/art">art</Link>. You can
                             read more about each of these on their respective
-                            pages under my projects tab. Some other hobbies I
+                            pages under my [not] research tab. Some other hobbies I
                             enjoy are thrifting, cooking, spending time with those
                             I care about, and attemping athletic endeavors.
                         </p>
                         <br />
                         <p>
-                            In college, I was also an ra in the dorms.
+                            I must admit, my journey to where I am today isn't quite as
+                            straightforward as I made it seem. At one point I was studying
+                            physics and working on a team drafting a lunar mission proposal
+                            to NASA. At another point, I was living in DC studying art. I have
+                            quite eclectic interests. It didn't always make sense to me at the 
+                            time of where I was going, but that's totally okay. You don't need
+                            to have it all figured out, and in my experience that's something that 
+                            tends to happen when looking back, not forward. After all, how else
+                            would I know what I'm interested in if I didn't explore so much?
                         </p>
                     </div>
                     <div style={styles.verticalImage}>
