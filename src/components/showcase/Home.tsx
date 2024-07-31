@@ -24,17 +24,17 @@ const Home: React.FC<HomeProps> = (props) => {
                 <Link
                     containerStyle={styles.link}
                     to="experience"
-                    text="RESEARCH"
+                    text="research"
                 />
                 <Link
                     containerStyle={styles.link}
                     to="projects"
-                    text="OPEN SCIENCE"
+                    text="[not] research"
                 />
                 <Link
                     containerStyle={styles.link}
                     to="contact"
-                    text="CONTACT"
+                    text="contact"
                 />
             </div>
             <div style={styles.forHireContainer} onMouseDown={goToContact}>

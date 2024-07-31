@@ -57,7 +57,7 @@ const Contact: React.FC<ContactProps> = (props) => {
         try {
             setIsLoading(true);
             const res = await fetch(
-                'https://api.henryheffernan.com/api/contact',
+                'https://formspree.io/f/xovadejr',
                 {
                     method: 'POST',
                     headers: {
@@ -222,7 +222,7 @@ const Contact: React.FC<ContactProps> = (props) => {
                                     <sub>
                                         {formMessage
                                             ? `${formMessage}`
-                                            : ' All messages get forwarded straight to my personal email'}
+                                            : ' All messages get forwarded straight to my email'}
                                     </sub>
                                 </b>
                             </p>
