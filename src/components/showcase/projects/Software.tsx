@@ -56,14 +56,6 @@ const SoftwareProjects: React.FC<SoftwareProjectsProps> = () => {
                     I also really enjoy climbing - or rather trying to climb - various mountains, often 
                     with my friends. With one of my good friends in particular, Aaron, I've
                 </p>
-                <div className="captioned-image">
-                    <VideoAsset src={scroll} />
-                    <p className="caption">
-                        <sub>
-                            <b>Figure 3:</b>
-                        </sub>
-                    </p>
-                </div>
             </div>
         </div>
     );
