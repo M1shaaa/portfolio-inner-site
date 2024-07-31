@@ -26,6 +26,7 @@ const SoftwareProjects: React.FC<SoftwareProjectsProps> = () => {
                     my uniform on and food in hand, I thought to myself just how cool it would be to run 
                     the Madison Ironman.
                 </p>
+                <br />
                 <p>
                     Fast forward to April and I (impulsively) signed up to run the following year. Most of my summer
                     that year was spent trying to get into good enough shape such that I wouldn't embarass myself too
