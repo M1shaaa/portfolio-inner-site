@@ -132,12 +132,12 @@ const styles: StyleSheetCSS = {
         alignItems: 'center',
     },
     computerIcon: {
-        width: 56,
-        height: 56,
+        width: 70,
+        height: 70,
     },
     musicIcon: {
-        width: 48,
-        height: 48,
+        width: 70,
+        height: 70,
     },
     arrowIcon: {
         width: 48,
