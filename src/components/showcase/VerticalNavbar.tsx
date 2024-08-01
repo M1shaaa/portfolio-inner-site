@@ -51,7 +51,7 @@ const VerticalNavbar: React.FC<VerticalNavbarProps> = (props) => {
                         projectsExpanded && styles.expandedLink
                     )}
                     to="projects"
-                    text="OPEN SCIENCE"
+                    text="[NOT] RESEARCH"
                 />
                 {
                     // if current path contains projects
