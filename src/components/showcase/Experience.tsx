@@ -34,8 +34,6 @@ const Experience: React.FC<ExperienceProps> = (props) => {
                     able to make inferences about other people and their mental states. By studying children 
                     in particular, we can see how this ability develops over time. We tend to use a wide 
                     variety of methods to accomplish this. More to come on projects soon!
-                        
-                    }
                 </p>
                 <br />
                 <p>
@@ -132,8 +130,39 @@ const Experience: React.FC<ExperienceProps> = (props) => {
                 </p>
                 <br />
             </div>
+            <div style={styles.headerContainer}>
+                <div style={styles.header}>
+                    <div style={styles.headerRow}>
+                        <h1>SCD Lab</h1>
+                        <a
+                            target="_blank"
+                            rel="noreferrer"
+                            href={'https://www.socialcogdev.com/'}
+                        >
+                            <h4>soccogdevlab</h4>
+                        </a>
+                    </div>
+                    <div style={styles.headerRow}>
+                        <h3>Research Assistant</h3>
+                        <b>
+                            <p>May 2023 - Aug 2023</p>
+                        </b>
+                    </div>
+                </div>
+            </div>
+            <div className="text-block">
+                <p>
+                    This was the my first ever summer internship and it was fantastic! I had the opportunity 
+                    to work with one of the graduate students, Aaron Baker, on a project involving how children 
+                    reason about institutional roles. Specifically, do children consider the consequences of 
+                    actions differently when an agent is occupying an institutional role compared to when they aren't 
+                    occupying one? We also were able to think through and design a model that captured how adults do this 
+                    same process; for instance, how do our perceptions of influence the attributions that we are already making 
+                    about agents from a traditional theory of mind (beliefs; desires) perspective? 
+                </p>
+            </div>
         </div>
-    );
+    ); // <--- Missing closing parenthesis and curly brace
 };
 
 const styles: StyleSheetCSS = {
