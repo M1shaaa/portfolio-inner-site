@@ -10,232 +10,127 @@ const Experience: React.FC<ExperienceProps> = (props) => {
             <div style={styles.headerContainer}>
                 <div style={styles.header}>
                     <div style={styles.headerRow}>
-                        <h1>Hover</h1>
+                        <h1>Social Learning Lab</h1>
                         <a
                             rel="noreferrer"
                             target="_blank"
-                            href={'https://hover.gg/'}
+                            href={'https://sll.stanford.edu'}
                         >
-                            <h4>www.hover.gg</h4>
+                            <h4>sll.stanford.edu</h4>
                         </a>
                     </div>
                     <div style={styles.headerRow}>
-                        <h3>Frontend Engineer</h3>
+                        <h3>predoctoral fellow</h3>
                         <b>
-                            <p>Summer 2020 - Fall 2021</p>
+                            <p>july 2024 - present</p>
                         </b>
                     </div>
                 </div>
             </div>
             <div className="text-block">
                 <p>
-                    Targeted towards online content creators and streamers
-                    looking to build a brand, Hover is the home of over 150K
-                    users. Written in Typescript using React, React-Native,
-                    Framer, Express, and Redux.
+                    i'm currently a working as a post-bacc in the social learning lab under Dr. Gweon at 
+                    stanford university. In our lab we're really curious about how, as people, we're 
+                    able to make inferences about other people and their mental states. By studying children 
+                    in particular, we can see how this ability develops over time. We tend to use a wide 
+                    variety of methods to accomplish this. More to come on projects soon!
+                        
+                    }
                 </p>
                 <br />
-                <ul>
-                    <li>
-                        <p>
-                            Architected and engineered the vertical scrolling
-                            discover player which, at its daily peak, was
-                            responsible for generating over 600,000 views across
-                            20,000 active users.
-                        </p>
-                    </li>
-                    <li>
-                        <p>
-                            Designed and implemented multiple features to
-                            increase app usability and user experience while
-                            ensuring the quality, maintainability and
-                            scalability of the front end as the user base grew
-                            by over 50,000.
-                        </p>
-                    </li>
-                    <li>
-                        <p>
-                            Coordinated major refactors targeted towards app
-                            optimization and performance resulting in a smoother
-                            user experience and accomplished by eliminating
-                            redundant re-renders and API calls by over 50%.
-                        </p>
-                    </li>
-                    <li>
-                        <p>
-                            Directed and executed an internal migration of 3
-                            individual repositories to a single monorepo,
-                            greatly reducing overhead for developing new
-                            features, fixing bugs, and managing dependencies.
-                        </p>
-                    </li>
-                    <li>
-                        <p>
-                            Rebuilt the website with React and shared mobile app
-                            components allowing users to access a wide variety
-                            of app interactions entirely on the web, resulting
-                            in over 700,000 total site visits.
-                        </p>
-                    </li>
-                </ul>
+                <p>
+                    So much of the learning we do is intrinsically a social process; while some exploring and 
+                    learning may happen on our own, much of it is scaffolded by various external agents. On a more 
+                    personal level, I'm particularly intersted in the social inferences we are able to make from 
+                    social interactions. In these social interactions, we are able to learn so much more than 
+                    what is explicitly said or done; how do we are able to effectively do this, especially as 
+                    children? Also, how can we go about designing models that are able to effectively capture this 
+                    process in a meaningful way? 
+                </p>
             </div>
             <div style={styles.headerContainer}>
                 <div style={styles.header}>
                     <div style={styles.headerRow}>
-                        <h1>BrACS</h1>
+                        <h1>Social Interaction Lab</h1>
                         <a
                             target="_blank"
                             rel="noreferrer"
-                            href={'https://bracs.co/'}
+                            href={'https://socialinteractionlab.github.io/'}
                         >
-                            <h4>www.bracs.co</h4>
+                            <h4>socialinteractionlab</h4>
                         </a>
                     </div>
                     <div style={styles.headerRow}>
-                        <h3>Team Lead & Engineer</h3>
+                        <h3>research assistant</h3>
                         <b>
-                            <p>Fall 2021 - Spring 2022</p>
+                            <p>august 2023 - present</p>
                         </b>
                     </div>
                 </div>
             </div>
             <div className="text-block">
                 <p>
-                    Supervised and developed the front end of bracs.co, a
-                    beautifully simple and effective bracket creation and
-                    management engine. Written in Typescript using React and
-                    deployed using AWS Elastic Beanstalk.
+                    Going into my junior year of undergrad, I wanted to get involved in a lab at madison. I hadn't 
+                    really been overly excited about any of the labs before this, but during my summer internship, I 
+                    happened to notice that we were hiring a new professor in the psych department: Robert Hawkins. I had 
+                    some familiarity at the time from reading probmods and his work with Dr. Goodman, so I decided to reach 
+                    out. We were able to connect and had a ton of shared interest. Looking back, I'm so glad it worked out 
+                    this well.  
                 </p>
                 <br />
-                <ul>
-                    <li>
-                        <p>
-                            Managed the project and team members by conducting
-                            bi-weekly stand-ups.
-                        </p>
-                    </li>
-                    <li>
-                        <p>
-                            Architected bracket view UI using React Flow and
-                            custom bracket data types built from binary trees.
-                        </p>
-                    </li>
-                    <li>
-                        <p>
-                            Created conversion algorithms to serialize bracket
-                            tree data to allow for saving in the cloud.
-                        </p>
-                    </li>
-                    <li>
-                        <p>
-                            Implemented bracket generation utilities which
-                            employ gray code for proper team seeding and
-                            placement.
-                        </p>
-                    </li>
-                </ul>
+                <p>
+                    I pretty much dived right into a project working with our postdoc, Claire Bergey, that looked at how 
+                    our speech and communicative act patterns change across development, and how it does so in relation to 
+                    the speech patterns of our parents. By using an NLP model, we were able to automatically classify speech 
+                    acts from a individual-level longitudinal dataset of conversations between children and their caregivers. 
+                </p>
+                <p>
+                    In doing so, we found that children's communicative act use tends to diversify from 14 to 58 months, and that 
+                    their diversity in repertoire was correlated with those of their parents. We also find that children with more 
+                    diverse repertoires have larger vocabularies and more diverse syntactic frames. Read more about the 
+                    paper <a href="https://escholarship.org/content/qt85t9s85w/qt85t9s85w_noSplash_e4daf107da08dd945a5ef45dd63a3291.pdf" target="_blank" rel="noopener noreferrer">here</a>.
+                </p>
+                <p>
+                     Following this project, we've more recently been working on a huge overhaul of a naturalistic dataset. While our paper 
+                     looked at conversational analysis between children and their caregivers, we are also really curious about the kinds 
+                     of conversations that children have with their peers. A lot of childrens' day is spent at day care, preschool, etc--
+                     so what role does this flavor of interaction have on their linguistic development. To explore this, we collected naturalistic 
+                     POV data from children in preschool as well as home recordings. More to come on this soon!
+                </p>
             </div>
             <div style={styles.headerContainer}>
                 <div style={styles.header}>
                     <div style={styles.headerRow}>
-                        <h1>K-F/X</h1>
+                        <h1>CoCoDev Lab</h1>
                         <a
                             target="_blank"
                             rel="noreferrer"
-                            href={'https://kfxnyc.com/'}
+                            href={'https://projects.iq.harvard.edu/ccdlab/home'}
                         >
-                            <h4>www.kfxnyc.com</h4>
+                            <h4>cocodev lab</h4>
                         </a>
                     </div>
                     <div style={styles.headerRow}>
-                        <h3>Special Effects Technician</h3>
+                        <h3>Research Assistant</h3>
                         <b>
-                            <p>Fall 2019, Summer 2021</p>
+                            <p>December 2023 - May 2024</p>
                         </b>
                     </div>
                 </div>
             </div>
             <div className="text-block">
                 <p>
-                    Applied problem solving and technical skills to operate
-                    large equipment such as rain machines, fog machines, small
-                    explosives and general rigging with a professional crew of
-                    50+ people.
+                    This was actually my first psych lab I ever got involved with. I first connected 
+                    with rosie aboody who was the best possible mentor I could have asked for. Together we 
+                    worked on two projects: (1) replicating some of Wellman's Theory of Mind work on 
+                    Lookit as a part of the larger "Garden" project and (2) the effect of our phrasing choices 
+                    on how we view others credibility. After a year on these projects, I started doing some work 
+                    with Junyi Chu on another Lookit Garden project investigating how children reason about 
+                    riddles in the physical domain; e.g. when our intuition is broken about how physical objects 
+                    should function, how do children change their approach and revise their mental models to fit 
+                    the task demands?
                 </p>
                 <br />
-                <h3 style={styles.indent}>Screen Credits:</h3>
-                <ul>
-                    <li style={styles.row}>
-                        <p>• Ray Donovan</p>
-                        <p>
-                            [{' '}
-                            <a
-                                href="https://www.sho.com/ray-donovan"
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                SHOWTIME
-                            </a>{' '}
-                            ]
-                        </p>
-                    </li>
-                    <li style={styles.row}>
-                        <p>• Ray Donovan: The Movie</p>
-                        <p>
-                            [{' '}
-                            <a
-                                href="https://www.sho.com/titles/3508117/ray-donovan-the-movie"
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                SHOWTIME
-                            </a>{' '}
-                            ]
-                        </p>
-                    </li>
-                    <li style={styles.row}>
-                        <p>• Hightown</p>
-                        <p>
-                            [{' '}
-                            <a
-                                href="https://www.starz.com/us/en/series/hightown/57463"
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                STARZ
-                            </a>{' '}
-                            ]
-                        </p>
-                    </li>
-                    <li style={styles.row}>
-                        <p>• Bull</p>
-                        <p>
-                            [{' '}
-                            <a
-                                href="https://www.cbs.com/shows/bull/"
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                CBS
-                            </a>{' '}
-                            ]
-                        </p>
-                    </li>
-                    <li style={styles.row}>
-                        <p>• At Home with Amy Sedaris</p>
-                        <p>
-                            [{' '}
-                            <a
-                                href="https://www.trutv.com/shows/at-home-with-amy-sedaris"
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                truTV
-                            </a>{' '}
-                            ]
-                        </p>
-                    </li>
-                </ul>
             </div>
         </div>
     );
