@@ -34,10 +34,11 @@ const OpenScienceResources: React.FC<OpenScienceResourcesProps> = () => {
 
             <h2>Career Resources</h2>
             <ul>
-                <li><a href="https://puddle-wealth-097.notion.site/Post-Bac-b6452ddc092f48b2b85de5fac19ac831?pvs=4">All things post-bacc</a> - A comprehensive guide for post-baccalaureate opportunities</li>
+                <li><a href="https://puddle-wealth-097.notion.site/Post-Bac-b6452ddc092f48b2b85de5fac19ac831?pvs=4">All things post-bacc</a> 
+                - various listings for for post-baccalaureate opportunities</li>
             </ul>
 
-            <h2>Inspiring Websites</h2>
+            <h2>Other Websites I love</h2>
             <p>Here are some websites I find inspiring:</p>
             <ul>
                 <li><a href="https://www.michellewong.page/home">Michelle Wong</a></li>
