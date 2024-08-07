@@ -21,13 +21,17 @@ const ArtProjects: React.FC<ArtProjectsProps> = (props) => {
             <div className="text-block">
                 <h2>Fashion as art</h2>
                 <br />
-                {/* Add content for Fashion as art here */}
+                <p>
+                    [coming soon!]
+                </p>
                 <br />
             </div>
             <div className="text-block">
                 <h2>Music</h2>
                 <br />
-                {/* Add content for Music here */}
+                <p>
+                    [coming soon!]
+                </p>
                 <br />
             </div>
         </div>
