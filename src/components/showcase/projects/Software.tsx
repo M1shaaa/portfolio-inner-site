@@ -39,22 +39,13 @@ const SoftwareProjects: React.FC<SoftwareProjectsProps> = () => {
             <div className="text-block">
                 <h2>running</h2>
                 <p>
-                    Going into my final year at Madison, I knew I wanted to do something to celebrate graduating. Ideally, I 
-                    wanted find something to do with my dad, who had also gone to Madison. We decided to run an Ultramarathon 
-                    together. Looking at dates and logistics, we decided that the Bryce Canyon ultra would work the best for the 
-                    both of us. I actually ended up deciding to graduate in December so that I could go to my mom's graduation (which 
-                    was happening the same day as the Madison one that Spring). So right after I took my last final, I went to go celebrate 
-                    my mom's graduation before coming back to Madison to move all my stuff out to chicago and finally flying off to Utah. 
-                    It ended up being aorund 58 miles and so! much! fun! It basically combined two of my favorite hobbies: being outside and 
-                    running. It was definitely hard and I walked for much of it, but it was so much more enjoyable than road marathons I had 
-                    done before. 
+                    [coming soon!]
                 </p>
             </div>
             <div className="text-block">
                 <h2>mountaineering</h2>
                 <p>
-                    I also really enjoy climbing - or rather trying to climb - various mountains, often 
-                    with my friends. With one of my good friends in particular, Aaron, I've
+                    [coming soon!]
                 </p>
             </div>
         </div>
