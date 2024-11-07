@@ -49,13 +49,13 @@ const About: React.FC<AboutProps> = (props) => {
                     <img src={me} style={styles.image} alt="" />
                     <p>
                         <sub>
-                            <b>Figure 1:</b> me as a child exploring what seems to be the inside of a hamper :)
+                            me as a child exploring what seems to be the inside of a hamper :)
                         </sub>
                     </p>
                 </div>
                 <br />
                 <p>
-                    These days, I'm particularly interested about how we learn from and about one another, and how
+                    these days, I'm particularly interested about how we learn from and about one another, and how
                     we start doing so as children. This interest led me to study econ and psych as an undergrad at 
                     UW-Madison. I saw them as ways to study and model behavior. Upon graduating, I decided to 
                     continue more down the psych route and that's how I ended up in my current lab! 
@@ -71,7 +71,7 @@ const About: React.FC<AboutProps> = (props) => {
                             flexDirection: 'column',
                         }}
                     >
-                        <h3>My Hobbies</h3>
+                        <h3>my hobbies</h3>
                         <br />
                         <p>
                             Beyond cognitive science, I have a lot of hobbies that I
@@ -109,6 +109,44 @@ const About: React.FC<AboutProps> = (props) => {
                 </div>
                 <br />
                 <br />
+                <div style={{}}>
+    <h3>see me here!</h3>
+    <br />
+    <br />
+    <ul className="text-block">
+        <li>
+            <a 
+                href="https://www.youtube.com/watch?v=gou5KrqtSW0" 
+                target="_blank" 
+                rel="noopener noreferrer"
+            >
+                → a spotlight on my time as a resident advisor
+            </a>
+        </li>
+        <br />
+        <li>
+            <a 
+                href="https://www.instagram.com/uwmadisonls/reel/C0Rx_OXraV7/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+            >
+                → a brief chat about my being a Letters & Science Student at Madison
+            </a>
+        </li>
+        <br />
+        <li>
+            <a 
+                href="https://www.youtube.com/watch?v=3QW6FslVmx8" 
+                target="_blank" 
+                rel="noopener noreferrer"
+            >
+                → highlights from my experience in UW's Global Gateway program
+            </a>
+        </li>
+    </ul>
+</div>
+<br />
+<br />
                 <p>
                     Thanks for reading about me! I really hope that you enjoy
                     exploring the rest of my website
