@@ -103,7 +103,7 @@ const Projects: React.FC<ProjectsProps> = (props) => {
                     icon={loop}
                     iconStyle={styles.loopIcon}
                     title="what's cooking"
-                    subtitle="my current brain loops"
+                    subtitle="what's been looping in my brain lately"
                     route="thoughts"
                 />
             </div>
