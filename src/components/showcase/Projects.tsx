@@ -100,12 +100,12 @@ const Projects: React.FC<ProjectsProps> = (props) => {
                     route="art"
                 />
                 <ProjectBox
-    icon={loop}
-    iconStyle={styles.loopIcon}
-    title="head's full of"
-    subtitle="questions on my mind"
-    route="thoughts"
-/>
+                    icon={loop}
+                    iconStyle={styles.loopIcon}
+                    title="what's cooking"
+                    subtitle="my current brain loops"
+                    route="thoughts"
+                />
             </div>
         </div>
     );
@@ -157,8 +157,8 @@ const styles: StyleSheetCSS = {
         height: 37 * 2,
     },
     loopIcon: {
-        width: 70,
-        height: 70,
+        width: 120,
+        height: 150,
     },
 };
 
