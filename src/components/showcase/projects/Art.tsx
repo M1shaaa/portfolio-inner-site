@@ -57,7 +57,7 @@ const ArtProjects: React.FC = () => {
     return (
         <div className="site-page-content">
             <h1>My Musings</h1>
-            <h3>the liminal space between thought and ether</h3>
+            <h3>that liminal space between my thoughts and the ether</h3>
             <br />
             <div className="text-block">
                 <p>
@@ -68,7 +68,7 @@ const ArtProjects: React.FC = () => {
                     href="https://substack.com/@mishaaaa"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-mono text-lg hover:text-blue-600"
+                    className="hover:text-blue-600"
                 >
                     → Read my latest posts
                 </a>
