@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import software from '../../assets/pictures/projects/software.gif';
-import art from '../../assets/pictures/projects/art.gif';
+import pencil from '../../assets/pictures/projects/pencil.gif';
 import music from '../../assets/pictures/projects/music.gif';
 import loop from '../../assets/pictures/projects/loop.gif';
 
@@ -93,11 +93,11 @@ const Projects: React.FC<ProjectsProps> = (props) => {
                     route="thoughts"
                 />
                 <ProjectBox
-                    icon={art}  // We might want to change this icon later
-                    iconStyle={styles.artIcon}
+                    icon={pencil}
+                    iconStyle={styles.pencilIcon}  // Changed from artIcon to pencilIcon
                     title="my musings"
-                    subtitle="substack: that liminal space between my thought and ether"
-                    route="art"  // We'll keep the route as 'art' for now to avoid breaking things
+                    subtitle="substack: that liminal space between my thoughts and the ether"
+                    route="art"
                 />
                 <ProjectBox
                     icon={music}
@@ -152,9 +152,9 @@ const styles: StyleSheetCSS = {
         width: 48,
         height: 48,
     },
-    artIcon: {
-        width: 21 * 2,
-        height: 37 * 2,
+    pencilIcon: {
+        width: 70,
+        height: 70,
     },
     loopIcon: {
         width: 70,
