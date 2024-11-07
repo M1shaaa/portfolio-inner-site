@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import software from '../../assets/pictures/projects/software.gif';
 import art from '../../assets/pictures/projects/art.gif';
 import music from '../../assets/pictures/projects/music.gif';
+import loop from '../../assets/pictures/projects/loop.gif';
 
 export interface ProjectsProps {}
 
@@ -65,6 +66,7 @@ const ProjectBox: React.FC<ProjectBoxProps> = ({
 };
 
 const Projects: React.FC<ProjectsProps> = (props) => {
+    console.log("Loop image loaded:", loop);
     return (
         <div className="site-page-content">
             <h1>Hobbies</h1>
@@ -97,6 +99,13 @@ const Projects: React.FC<ProjectsProps> = (props) => {
                     subtitle="in a loosely defined sense"
                     route="art"
                 />
+                <ProjectBox
+    icon={loop}
+    iconStyle={styles.loopIcon}
+    title="head's full of"
+    subtitle="questions on my mind"
+    route="thoughts"
+/>
             </div>
         </div>
     );
@@ -146,6 +155,10 @@ const styles: StyleSheetCSS = {
     artIcon: {
         width: 21 * 2,
         height: 37 * 2,
+    },
+    loopIcon: {
+        width: 70,
+        height: 70,
     },
 };
 
