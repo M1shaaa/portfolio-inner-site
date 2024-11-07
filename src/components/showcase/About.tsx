@@ -24,12 +24,14 @@ const About: React.FC<AboutProps> = (props) => {
                         mokeeffe@stanford.edu
                     </a>
                 </p>
+                <br />
                 <p>
                 I'm a predoctoral fellow working in <a href="https://sll.stanford.edu/">Dr. Gweon's Social
                 Learning Lab</a> at Stanford University.
                 </p>
             </div>
             <ResumeDownload />
+            <br />
             <div className="text-block">
                 <h3>a little bit about me</h3>
                 <br />
@@ -133,7 +135,8 @@ const styles: StyleSheetCSS = {
     },
     image: {
         height: 'auto',
-        width: '100%',
+        width: '80%',  // Changed from '100%' to '80%'
+        maxWidth: '500px'  // Added this to ensure it doesn't get too large
     },
     topImage: {
         height: 'auto',

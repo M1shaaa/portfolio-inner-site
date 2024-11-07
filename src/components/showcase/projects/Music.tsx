@@ -39,8 +39,9 @@ const OpenScienceResources: React.FC<OpenScienceResourcesProps> = () => {
             </ul>
 
             <h2>Other Websites I love</h2>
-            <p>Here are some websites I find inspiring:</p>
+            <p>Here are some other websites (from some really cool people) that inspired me when making this one:</p>
             <ul>
+                <li><a href="https://cs.stanford.edu/~kach/">Kartik Chandra</a></li>
                 <li><a href="https://www.michellewong.page/home">Michelle Wong</a></li>
                 <li><a href="https://www.adaniabutto.com/">Adani Abutto</a></li>
             </ul>
