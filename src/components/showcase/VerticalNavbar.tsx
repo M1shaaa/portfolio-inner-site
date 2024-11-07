@@ -53,37 +53,31 @@ const VerticalNavbar: React.FC<VerticalNavbarProps> = (props) => {
                     to="projects"
                     text="[not] research"
                 />
-                {
-                    // if current path contains projects
-                    {projectsExpanded && (
-                        <div style={styles.insetLinks}>
-                            <Link
-                                containerStyle={styles.insetLink}
-                                to="projects/software"
-                                text="adventures"
-                            />
-                            <Link
-                                containerStyle={styles.insetLink}
-                                to="projects/music"
-                                text="open science"
-                            />
-                            <Link
-                                containerStyle={styles.insetLink}
-                                to="projects/art"
-                                text="art"
-                            />
-                            <Link
-                                containerStyle={styles.insetLink}
-                                to="projects/thoughts"
-                                text="head's full of"
-                            />
-                        </div>
-                    )}
-                <Link
-                    containerStyle={styles.link}
-                    to="contact"
-                    text="contact"
-                />
+                {projectsExpanded && (
+                    <div style={styles.insetLinks}>
+                        <Link
+                            containerStyle={styles.insetLink}
+                            to="projects/software"
+                            text="adventures"
+                        />
+                        <Link
+                            containerStyle={styles.insetLink}
+                            to="projects/music"
+                            text="open science"
+                        />
+                        <Link
+                            containerStyle={styles.insetLink}
+                            to="projects/art"
+                            text="art"
+                        />
+                        <Link
+                            containerStyle={styles.insetLink}
+                            to="projects/thoughts"
+                            text="head's full of"
+                        />
+                    </div>
+                )}
+                <Link containerStyle={styles.link} to="contact" text="contact" />
             </div>
             <div style={styles.spacer} />
             <div style={styles.forHireContainer} onMouseDown={goToContact}>
