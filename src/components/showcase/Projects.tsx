@@ -93,11 +93,11 @@ const Projects: React.FC<ProjectsProps> = (props) => {
                     route="thoughts"
                 />
                 <ProjectBox
-                    icon={art}
+                    icon={art}  // We might want to change this icon later
                     iconStyle={styles.artIcon}
-                    title="art"
-                    subtitle="in a loosely defined sense"
-                    route="art"
+                    title="my musings"
+                    subtitle="substack: that liminal space between my thought and ether"
+                    route="art"  // We'll keep the route as 'art' for now to avoid breaking things
                 />
                 <ProjectBox
                     icon={music}
