@@ -157,7 +157,7 @@ const styles: StyleSheetCSS = {
         height: 37 * 2,
     },
     loopIcon: {
-        width: 120,
+        width: 70,
         height: 150,
     },
 };
