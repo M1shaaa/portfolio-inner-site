@@ -15,17 +15,7 @@ const About: React.FC<AboutProps> = (props) => {
             <h3>my name is misha okeeffe</h3>
             <br />
             <div className="text-block">
-                <p>
-                I'm currently a predoctoral fellow working in <a href="https://sll.stanford.edu/">Dr. Gweon's Social
-                Learning Lab</a> at Stanford University. Before working here, I worked with 
-                <a href="https://clairebergey.net/"> Claire Bergey</a> in <a href="https://rdhawkins.com/">Dr. Hawkins'
-                Social Interaction Lab</a>, <a href="https://www.aajbaker.com/">Aaron Baker</a> in 
-                <a href="https://www.socialcogdev.com/"> Dr. Dunham's Social Cognitive Development Lab</a>, and 
-                <a href="https://raboody.github.io/website/"> Rosie Aboody</a> and <a href="https://jchu10.github.io/">Junyi
-                Chu</a> in <a href="https://projects.iq.harvard.edu/ccdlab/home">Dr. Bonawitz's Computational 
-                Cognitive Development Lab</a>.
-                </p>
-                <br />
+            <br />
                 <p>
                     Thanks for checking out my website! I really hope you enjoy(ed) 
                     exploring it as much as I enjoyed building it. If you have any
@@ -33,6 +23,10 @@ const About: React.FC<AboutProps> = (props) => {
                     <a href="mailto:mokeeffe@stanford.edu">
                         mokeeffe@stanford.edu
                     </a>
+                </p>
+                <p>
+                I'm a predoctoral fellow working in <a href="https://sll.stanford.edu/">Dr. Gweon's Social
+                Learning Lab</a> at Stanford University.
                 </p>
             </div>
             <ResumeDownload />
@@ -44,7 +38,7 @@ const About: React.FC<AboutProps> = (props) => {
                     always run off and my parents would find me in some pretty weird spots (on top of a car, 
                     on top of a trellise, inside a lazy susan, and much more). Besides learning about the things around me, 
                     I also learned a lot from the <em>people</em> around me. And, although I'm still interested in 
-                    exploring ideas and testing hypotheses about the world and people around me, I now try to explore
+                    exploring ideas and testing hypotheses about everything around me, I now try to explore
                     this interest in a way that won't worry my parents so much. 
                     
                 </p>
@@ -81,13 +75,13 @@ const About: React.FC<AboutProps> = (props) => {
                             Beyond cognitive science, I have a lot of hobbies that I
                             enjoy doing in my free time. The more tangible
                             hobbies I have are{' '}
-                            <Link to="/projects/music">adventuring</Link>{' '}
+                            <Link to="/projects/software">my adventures</Link>{' '}
                             and {' '}
-                            <Link to="/projects/art">art</Link>. You can
+                            <Link to="/projects/art">my musings</Link>. You can
                             read more about each of these on their respective
                             pages under my 'everything else' tab. Some other hobbies I
                             enjoy are thrifting, cooking, spending time with those
-                            I care about, and attemping athletic endeavors.
+                            I care about, and ~attemping~ athletic endeavors.
                         </p>
                         <br />
                         <p>
