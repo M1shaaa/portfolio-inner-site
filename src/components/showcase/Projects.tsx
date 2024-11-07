@@ -73,7 +73,7 @@ const Projects: React.FC<ProjectsProps> = (props) => {
             <h3>& Resources</h3>
             <br />
             <p>
-                Click on one of the areas below to check out my adventures, art, and some resources 
+                Click on one of the areas below to check out my adventures, thoughts, writing, and some resources 
                 I've compiled that I hope will help. 
             </p>
             <br />
