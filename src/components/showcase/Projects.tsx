@@ -86,11 +86,11 @@ const Projects: React.FC<ProjectsProps> = (props) => {
                     route="software"
                 />
                 <ProjectBox
-                    icon={music}
-                    iconStyle={styles.musicIcon}
-                    title="open science"
-                    subtitle="resources"
-                    route="music"
+                    icon={loop}
+                    iconStyle={styles.loopIcon}
+                    title="what's cooking"
+                    subtitle="what's been on loop in my brain lately"
+                    route="thoughts"
                 />
                 <ProjectBox
                     icon={art}
@@ -100,11 +100,11 @@ const Projects: React.FC<ProjectsProps> = (props) => {
                     route="art"
                 />
                 <ProjectBox
-                    icon={loop}
-                    iconStyle={styles.loopIcon}
-                    title="what's cooking"
-                    subtitle="what's been looping in my brain lately"
-                    route="thoughts"
+                    icon={music}
+                    iconStyle={styles.musicIcon}
+                    title="open science"
+                    subtitle="resources"
+                    route="music"
                 />
             </div>
         </div>
