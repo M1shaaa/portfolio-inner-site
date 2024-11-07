@@ -1,4 +1,4 @@
-// thoughts.tsx
+// src/components/showcase/projects/Thoughts.tsx
 import React from 'react';
 
 const Thoughts: React.FC = () => {
@@ -18,7 +18,7 @@ const Thoughts: React.FC = () => {
           <span className="mx-auto font-mono">Brain.exe</span>
         </div>
         
-        <h1 className="font-mono text-2xl mb-4"my current brain loop</h1>
+        <h1 className="font-mono text-2xl mb-4">my current brain loop</h1>
         
         <div className="bg-white p-4 rounded border border-gray-400">
           {thoughts.map((thought, index) => (
