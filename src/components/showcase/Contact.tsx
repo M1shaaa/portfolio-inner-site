@@ -71,23 +71,26 @@ const Contact: React.FC<ContactProps> = (props) => {
                     }),
                 }
             );
-            // the response will be either {success: true} or {success: false, error: message}
-            const data = (await res.json()) as
-                | {
-                      success: false;
-                      error: string;
-                  }
-                | { success: true };
-            if (data.success) {
+            const data = await res.json();
+            if (data.ok || data.success) {  // Check for both ok and success
                 setFormMessage(`Message successfully sent. Thank you ${name}!`);
+                // Reset form fields
                 setCompany('');
                 setEmail('');
                 setName('');
                 setMessage('');
                 setFormMessageColor(colors.blue);
                 setIsLoading(false);
+                
+                // Optional: scroll to top of form
+                window.scrollTo(0, 0);
+                
+                // Optional: refresh the page after a short delay
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);  // 2 second delay to show the success message
             } else {
-                setFormMessage(data.error);
+                setFormMessage(data.error || 'Error sending message. Please try again.');
                 setFormMessageColor(colors.red);
                 setIsLoading(false);
             }
