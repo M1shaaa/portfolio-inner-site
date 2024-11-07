@@ -109,38 +109,41 @@ const About: React.FC<AboutProps> = (props) => {
                 </div>
                 <br />
                 <br />
-                <div style={{}}>
+                <div style={{ flexDirection: 'column' }}>  {/* Add flexDirection: 'column' */}
     <h3>see me here!</h3>
     <br />
     <br />
-    <ul className="text-block">
-        <li>
+    <ul className="text-block" style={{ marginLeft: '0px', padding: '0' }}>  {/* Add margin and padding control */}
+        <li style={{ listStyle: 'none' }}>  {/* Remove bullet points */}
             <a 
                 href="https://www.youtube.com/watch?v=gou5KrqtSW0" 
                 target="_blank" 
                 rel="noopener noreferrer"
+                className="hover:text-blue-600"
             >
-                → a spotlight on my time as a resident advisor
+                a spotlight on my time as a resident advisor
             </a>
         </li>
         <br />
-        <li>
+        <li style={{ listStyle: 'none' }}>
             <a 
                 href="https://www.instagram.com/uwmadisonls/reel/C0Rx_OXraV7/" 
                 target="_blank" 
                 rel="noopener noreferrer"
+                className="hover:text-blue-600"
             >
-                → a brief chat about my being a Letters & Science Student at Madison
+                a chat about being a Letters & Science Student at Madison
             </a>
         </li>
         <br />
-        <li>
+        <li style={{ listStyle: 'none' }}>
             <a 
                 href="https://www.youtube.com/watch?v=3QW6FslVmx8" 
                 target="_blank" 
                 rel="noopener noreferrer"
+                className="hover:text-blue-600"
             >
-                → highlights from my experience in UW's Global Gateway program
+                highlights from my experience in UW's Global Gateway program
             </a>
         </li>
     </ul>
