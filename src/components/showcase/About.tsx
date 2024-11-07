@@ -85,7 +85,7 @@ const About: React.FC<AboutProps> = (props) => {
                             and {' '}
                             <Link to="/projects/art">art</Link>. You can
                             read more about each of these on their respective
-                            pages under my [not] research tab. Some other hobbies I
+                            pages under my 'everything else' tab. Some other hobbies I
                             enjoy are thrifting, cooking, spending time with those
                             I care about, and attemping athletic endeavors.
                         </p>
