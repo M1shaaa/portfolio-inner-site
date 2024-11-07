@@ -109,7 +109,9 @@ const About: React.FC<AboutProps> = (props) => {
                 </div>
                 <br />
                 <br />
+                <br />
                 <div style={{ flexDirection: 'column' }}>  {/* Add flexDirection: 'column' */}
+                <br />
     <h3>see me here!</h3>
     <br />
     <br />
@@ -151,7 +153,7 @@ const About: React.FC<AboutProps> = (props) => {
 <br />
 <br />
                 <p>
-                    Thanks for reading about me! I really hope that you enjoy
+                    Thanks for reading! I really hope that you enjoy
                     exploring the rest of my website
                 </p>
                 <br />
