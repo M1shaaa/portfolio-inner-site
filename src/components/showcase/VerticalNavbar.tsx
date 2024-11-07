@@ -73,7 +73,7 @@ const VerticalNavbar: React.FC<VerticalNavbarProps> = (props) => {
                         <Link
                             containerStyle={styles.insetLink}
                             to="projects/thoughts"
-                            text="head's full of"
+                            text="What's cooking"  // Changed from "head's full of"
                         />
                     </div>
                 )}
