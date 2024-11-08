@@ -145,3 +145,5 @@ const styles: StyleSheetCSS = {
         width: '100%',
     },
 };
+
+export default VerticalNavbar; 
