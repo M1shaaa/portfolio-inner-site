@@ -92,25 +92,13 @@ const VerticalNavbar: React.FC<VerticalNavbarProps> = (props) => {
 const styles: StyleSheetCSS = {
     navbar: {
         width: 300,
-        height: '100vh',  // Changed from 100% to 100vh
+        height: '100vh',
         flexDirection: 'column',
         padding: 48,
         boxSizing: 'border-box',
         position: 'fixed',
-        overflowY: 'auto',  // Changed from 'hidden' to 'auto'
-        overflowX: 'hidden',  // Keep horizontal overflow hidden
-        scrollbarWidth: 'thin',  // For Firefox
-        msOverflowStyle: 'none',  // For IE
-        '&::-webkit-scrollbar': {  // For Chrome/Safari
-            width: '8px',
-        },
-        '&::-webkit-scrollbar-track': {
-            background: 'transparent',
-        },
-        '&::-webkit-scrollbar-thumb': {
-            background: '#888',
-            borderRadius: '4px',
-        },
+        overflowY: 'auto',
+        overflowX: 'hidden',
     },
     header: {
         flexDirection: 'column',
@@ -154,9 +142,6 @@ const styles: StyleSheetCSS = {
     },
     forHireContainer: {
         cursor: 'pointer',
-
         width: '100%',
     },
 };
-
-export default VerticalNavbar;
