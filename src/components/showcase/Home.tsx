@@ -81,7 +81,7 @@ const styles: StyleSheet = {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        width: 10, // Reduced from 32px (about 60% of original)
+        width: 5, // Reduced from 32px (about 60% of original)
     },
     social: {
         width: 15, // Reduced from 32px
@@ -98,7 +98,7 @@ const styles: StyleSheet = {
     marioImage: {
         height: 32,
         width: 32,
-        marginTop: 5,
+        marginTop: 2,
     }
 };
 
