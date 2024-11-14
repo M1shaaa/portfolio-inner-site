@@ -98,7 +98,7 @@ const styles: StyleSheet = {
     marioImage: {
         height: 32,
         width: 32,
-        marginTop: 2,
+        marginTop: 0,
     }
 };
 
