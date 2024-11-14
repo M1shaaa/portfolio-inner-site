@@ -252,4 +252,6 @@ const styles: StyleSheetCSS = {
     },
 };
 
+};
+
 export default Home;
