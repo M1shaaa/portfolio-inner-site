@@ -10,7 +10,6 @@ import gsIcon from '../../assets/pictures/contact-gs.png';
 import ghIcon from '../../assets/pictures/contact-gh.png';
 import inIcon from '../../assets/pictures/contact-in.png';
 
-// Define StyleSheet type
 interface StyleSheet {
     [key: string]: React.CSSProperties;
 }
@@ -20,6 +19,13 @@ export interface HomeProps {}
 interface MarioAnimationProps {
     isAnimating: boolean;
     position: number;
+}
+
+interface SocialBoxProps {
+    icon: string;
+    link: string;
+    position: number;
+    onActivate: () => void;
 }
 
 const styles: StyleSheet = {
@@ -62,36 +68,52 @@ const styles: StyleSheet = {
     linkContainer: {
         textDecoration: 'none',
         display: 'block',
-        marginRight: 8,
+        width: 24,
+        height: 24,
+        margin: '0 12px',
     },
     socialsContainer: {
         position: 'fixed',
-        bottom: 20,
+        bottom: 40,
         left: 20,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
     },
     socials: {
         display: 'flex',
         flexDirection: 'row',
+        alignItems: 'center',
+        position: 'relative',
     },
     mariosContainer: {
-        position: 'relative',
+        position: 'absolute',
+        top: '100%',
+        left: 0,
+        right: 0,
         height: 32,
         marginTop: 8,
+        display: 'flex',
+        justifyContent: 'space-around',
     },
     social: {
-        width: 36,
-        height: 36,
+        width: 24,
+        height: 24,
         justifyContent: 'center',
         alignItems: 'center',
+        display: 'flex',
     },
     socialImage: {
-        width: 36,
-        height: 36,
+        width: '100%',
+        height: '100%',
+        objectFit: 'contain',
     },
     marioContainer: {
         position: 'absolute',
-        top: 0,
-        transform: 'translateX(-50%)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 48,
     },
     marioImage: {
         height: 32,
@@ -103,7 +125,7 @@ const styles: StyleSheet = {
 const MarioAnimation: React.FC<MarioAnimationProps> = ({ isAnimating, position }) => (
     <div style={{
         ...styles.marioContainer,
-        left: `${position * 44}px`,
+        left: `${position * 48}px`,
     }}>
         <img 
             src={isAnimating ? marioPunch : marioStill}
@@ -112,13 +134,6 @@ const MarioAnimation: React.FC<MarioAnimationProps> = ({ isAnimating, position }
         />
     </div>
 );
-
-interface SocialBoxProps {
-    icon: string;
-    link: string;
-    position: number;
-    onActivate: () => void;
-}
 
 const SocialBox: React.FC<SocialBoxProps> = ({ link, icon, onActivate }) => {
     const handleClick = (e: React.MouseEvent) => {
@@ -200,15 +215,15 @@ const Home: React.FC<HomeProps> = (props) => {
                             }}
                         />
                     ))}
-                </div>
-                <div style={styles.mariosContainer}>
-                    {socialLinks.map((_, index) => (
-                        <MarioAnimation
-                            key={index}
-                            isAnimating={activeMario === index}
-                            position={index}
-                        />
-                    ))}
+                    <div style={styles.mariosContainer}>
+                        {socialLinks.map((_, index) => (
+                            <MarioAnimation
+                                key={index}
+                                isAnimating={activeMario === index}
+                                position={index}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>
