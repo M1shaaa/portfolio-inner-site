@@ -65,55 +65,37 @@ const styles: StyleSheet = {
         marginBottom: 16,
         lineHeight: 0.9,
     },
-    linkContainer: {
-        textDecoration: 'none',
-        display: 'block',
-        width: 24,
-        height: 24,
-        margin: '0 12px',
-    },
     socialsContainer: {
         position: 'fixed',
-        bottom: 40,
+        bottom: 60, // Moved up more to make room for Mario
         left: 20,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
     },
     socials: {
         display: 'flex',
         flexDirection: 'row',
-        alignItems: 'center',
-        position: 'relative',
-    },
-    mariosContainer: {
-        position: 'absolute',
-        top: '100%',
-        left: 0,
-        right: 0,
-        height: 32,
-        marginTop: 8,
-        display: 'flex',
-        justifyContent: 'space-around',
+        gap: '24px', // Space between social icons
     },
     social: {
-        width: 24,
-        height: 24,
+        width: 32,
+        height: 32,
+        display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        display: 'flex',
     },
     socialImage: {
         width: '100%',
         height: '100%',
         objectFit: 'contain',
     },
+    mariosContainer: {
+        marginTop: 16, // Space between social icons and Mario
+        position: 'relative',
+        height: 32,
+    },
     marioContainer: {
         position: 'absolute',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 48,
+        top: 0,
+        width: 32,
     },
     marioImage: {
         height: 32,
@@ -125,7 +107,7 @@ const styles: StyleSheet = {
 const MarioAnimation: React.FC<MarioAnimationProps> = ({ isAnimating, position }) => (
     <div style={{
         ...styles.marioContainer,
-        left: `${position * 48}px`,
+        left: `${position * 56}px`, // 32px (icon width) + 24px (gap) = 56px
     }}>
         <img 
             src={isAnimating ? marioPunch : marioStill}
@@ -150,7 +132,6 @@ const SocialBox: React.FC<SocialBoxProps> = ({ link, icon, onActivate }) => {
             rel="noreferrer" 
             href={link}
             onClick={handleClick}
-            style={styles.linkContainer}
         >
             <div className="big-button-container" style={styles.social}>
                 <img src={icon} alt="" style={styles.socialImage} />
@@ -215,15 +196,15 @@ const Home: React.FC<HomeProps> = (props) => {
                             }}
                         />
                     ))}
-                    <div style={styles.mariosContainer}>
-                        {socialLinks.map((_, index) => (
-                            <MarioAnimation
-                                key={index}
-                                isAnimating={activeMario === index}
-                                position={index}
-                            />
-                        ))}
-                    </div>
+                </div>
+                <div style={styles.mariosContainer}>
+                    {socialLinks.map((_, index) => (
+                        <MarioAnimation
+                            key={index}
+                            isAnimating={activeMario === index}
+                            position={index}
+                        />
+                    ))}
                 </div>
             </div>
         </div>
