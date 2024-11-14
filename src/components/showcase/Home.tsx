@@ -12,57 +12,69 @@ import inIcon from '../../assets/pictures/contact-in.png';
 
 export interface HomeProps {}
 
-interface AnimatedSocialBoxProps {
-    icon: string;
-    link: string;
-    boxPosition: number;
+interface MarioAnimationProps {
+    isAnimating: boolean;
+    position: number;
 }
 
-const AnimatedSocialBox: React.FC<AnimatedSocialBoxProps> = ({ link, icon, boxPosition }) => {
-    const [isAnimating, setIsAnimating] = useState(false);
+const MarioAnimation: React.FC<MarioAnimationProps> = ({ isAnimating, position }) => (
+    <div style={{
+        ...styles.marioContainer,
+        left: `${position * 44}px`, // 44px = icon width (36px) + gap (8px)
+    }}>
+        <img 
+            src={isAnimating ? marioPunch : marioStill}
+            alt=""
+            style={styles.marioImage}
+        />
+    </div>
+);
 
+interface SocialBoxProps {
+    icon: string;
+    link: string;
+    position: number;
+    onActivate: () => void;
+}
+
+const SocialBox: React.FC<SocialBoxProps> = ({ link, icon, onActivate }) => {
     const handleClick = (e: React.MouseEvent) => {
         e.preventDefault();
-        setIsAnimating(true);
+        onActivate();
         
         setTimeout(() => {
             window.open(link, '_blank');
-            setIsAnimating(false);
-        }, 500);
+        }, 500); // Adjust based on your GIF duration
     };
 
     return (
-        <div style={styles.container}>
-            <a 
-                rel="noreferrer" 
-                href={link}
-                onClick={handleClick}
-                style={styles.linkContainer}
-            >
-                <div className="big-button-container" style={styles.social}>
-                    <img src={icon} alt="" style={styles.socialImage} />
-                </div>
-            </a>
-            <div style={{
-                ...styles.marioContainer,
-                left: `${boxPosition * 44}px`,
-            }}>
-                <img 
-                    src={isAnimating ? marioPunch : marioStill}
-                    alt=""
-                    style={styles.marioImage}
-                />
+        <a 
+            rel="noreferrer" 
+            href={link}
+            onClick={handleClick}
+            style={styles.linkContainer}
+        >
+            <div className="big-button-container" style={styles.social}>
+                <img src={icon} alt="" style={styles.socialImage} />
             </div>
-        </div>
+        </a>
     );
 };
 
 const Home: React.FC<HomeProps> = (props) => {
     const navigate = useNavigate();
+    const [activeMario, setActiveMario] = useState<number | null>(null);
 
     const goToContact = () => {
         navigate('/contact');
     };
+
+    const socialLinks = [
+        { icon: ghIcon, link: 'https://github.com/M1shaaa' },
+        { icon: inIcon, link: 'https://www.linkedin.com/in/misha-o-keeffe-099348262/' },
+        { icon: twitterIcon, link: 'https://x.com/mish_uhhh' },
+        { icon: gsIcon, link: 'https://scholar.google.com/citations?user=j41CbesAAAAJ&hl=en' },
+    ];
 
     return (
         <div style={styles.page}>
@@ -93,31 +105,75 @@ const Home: React.FC<HomeProps> = (props) => {
             </div>
             <div style={styles.socialsContainer}>
                 <div style={styles.socials}>
-                    <AnimatedSocialBox
-                        icon={ghIcon}
-                        link={'https://github.com/M1shaaa'}
-                        boxPosition={0}
-                    />
-                    <AnimatedSocialBox
-                        icon={inIcon}
-                        link={'https://www.linkedin.com/in/misha-o-keeffe-099348262/'}
-                        boxPosition={1}
-                    />
-                    <AnimatedSocialBox
-                        icon={twitterIcon}
-                        link={'https://x.com/mish_uhhh'}
-                        boxPosition={2}
-                    />
-                    <AnimatedSocialBox
-                        icon={gsIcon}
-                        link={'https://scholar.google.com/citations?user=j41CbesAAAAJ&hl=en'}
-                        boxPosition={3}
-                    />
+                    {socialLinks.map((social, index) => (
+                        <SocialBox
+                            key={index}
+                            icon={social.icon}
+                            link={social.link}
+                            position={index}
+                            onActivate={() => {
+                                setActiveMario(index);
+                                setTimeout(() => setActiveMario(null), 500);
+                            }}
+                        />
+                    ))}
+                </div>
+                <div style={styles.mariosContainer}>
+                    {socialLinks.map((_, index) => (
+                        <MarioAnimation
+                            key={index}
+                            isAnimating={activeMario === index}
+                            position={index}
+                        />
+                    ))}
                 </div>
             </div>
         </div>
     );
 };
+
+const styles: StyleSheetCSS = {
+    // ... keep existing styles ...
+    linkContainer: {
+        textDecoration: 'none',
+        display: 'block',
+        marginRight: 8,
+    },
+    socialsContainer: {
+        position: 'fixed',
+        bottom: 20,
+        left: 20,
+    },
+    socials: {
+        display: 'flex',
+        flexDirection: 'row',
+    },
+    mariosContainer: {
+        position: 'relative',
+        height: 32, // Height of Mario image
+        marginTop: 8,
+    },
+    social: {
+        width: 36,
+        height: 36,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    socialImage: {
+        width: 36,
+        height: 36,
+    },
+    marioContainer: {
+        position: 'absolute',
+        top: 0,
+        transform: 'translateX(-50%)',
+    },
+    marioImage: {
+        height: 32,
+        width: 32,
+        objectFit: 'contain',
+    },
+
 
 const styles: StyleSheetCSS = {
     page: {
