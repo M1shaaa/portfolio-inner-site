@@ -10,6 +10,11 @@ import gsIcon from '../../assets/pictures/contact-gs.png';
 import ghIcon from '../../assets/pictures/contact-gh.png';
 import inIcon from '../../assets/pictures/contact-in.png';
 
+// Define StyleSheet type
+interface StyleSheet {
+    [key: string]: React.CSSProperties;
+}
+
 export interface HomeProps {}
 
 interface MarioAnimationProps {
@@ -17,10 +22,88 @@ interface MarioAnimationProps {
     position: number;
 }
 
+const styles: StyleSheet = {
+    page: {
+        left: 0,
+        right: 0,
+        top: 0,
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        height: '100%',
+    },
+    header: {
+        textAlign: 'center',
+        marginBottom: 64,
+        marginTop: 64,
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    buttons: {
+        justifyContent: 'space-between',
+    },
+    link: {
+        padding: 16,
+    },
+    forHireContainer: {
+        marginTop: 64,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        cursor: 'pointer',
+    },
+    name: {
+        fontSize: 72,
+        marginBottom: 16,
+        lineHeight: 0.9,
+    },
+    linkContainer: {
+        textDecoration: 'none',
+        display: 'block',
+        marginRight: 8,
+    },
+    socialsContainer: {
+        position: 'fixed',
+        bottom: 20,
+        left: 20,
+    },
+    socials: {
+        display: 'flex',
+        flexDirection: 'row',
+    },
+    mariosContainer: {
+        position: 'relative',
+        height: 32,
+        marginTop: 8,
+    },
+    social: {
+        width: 36,
+        height: 36,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    socialImage: {
+        width: 36,
+        height: 36,
+    },
+    marioContainer: {
+        position: 'absolute',
+        top: 0,
+        transform: 'translateX(-50%)',
+    },
+    marioImage: {
+        height: 32,
+        width: 32,
+        objectFit: 'contain',
+    },
+};
+
 const MarioAnimation: React.FC<MarioAnimationProps> = ({ isAnimating, position }) => (
     <div style={{
         ...styles.marioContainer,
-        left: `${position * 44}px`, // 44px = icon width (36px) + gap (8px)
+        left: `${position * 44}px`,
     }}>
         <img 
             src={isAnimating ? marioPunch : marioStill}
@@ -44,7 +127,7 @@ const SocialBox: React.FC<SocialBoxProps> = ({ link, icon, onActivate }) => {
         
         setTimeout(() => {
             window.open(link, '_blank');
-        }, 500); // Adjust based on your GIF duration
+        }, 500);
     };
 
     return (
@@ -130,128 +213,6 @@ const Home: React.FC<HomeProps> = (props) => {
             </div>
         </div>
     );
-};
-
-const styles: StyleSheetCSS = {
-    // ... keep existing styles ...
-    linkContainer: {
-        textDecoration: 'none',
-        display: 'block',
-        marginRight: 8,
-    },
-    socialsContainer: {
-        position: 'fixed',
-        bottom: 20,
-        left: 20,
-    },
-    socials: {
-        display: 'flex',
-        flexDirection: 'row',
-    },
-    mariosContainer: {
-        position: 'relative',
-        height: 32, // Height of Mario image
-        marginTop: 8,
-    },
-    social: {
-        width: 36,
-        height: 36,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    socialImage: {
-        width: 36,
-        height: 36,
-    },
-    marioContainer: {
-        position: 'absolute',
-        top: 0,
-        transform: 'translateX(-50%)',
-    },
-    marioImage: {
-        height: 32,
-        width: 32,
-        objectFit: 'contain',
-    },
-
-
-const styles: StyleSheetCSS = {
-    page: {
-        left: 0,
-        right: 0,
-        top: 0,
-        position: 'absolute',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        height: '100%',
-    },
-    header: {
-        textAlign: 'center',
-        marginBottom: 64,
-        marginTop: 64,
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    buttons: {
-        justifyContent: 'space-between',
-    },
-    link: {
-        padding: 16,
-    },
-    forHireContainer: {
-        marginTop: 64,
-        width: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        cursor: 'pointer',
-    },
-    name: {
-        fontSize: 72,
-        marginBottom: 16,
-        lineHeight: 0.9,
-    },
-    container: {
-        position: 'relative',
-        marginRight: 8,
-    },
-    linkContainer: {
-        textDecoration: 'none',
-        display: 'block',
-    },
-    socialsContainer: {
-        position: 'fixed',
-        bottom: 20,
-        left: 20,
-    },
-    socials: {
-        display: 'flex',
-        flexDirection: 'row',
-        gap: '8px',
-    },
-    social: {
-        width: 36,
-        height: 36,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    socialImage: {
-        width: 36,
-        height: 36,
-    },
-    marioContainer: {
-        position: 'absolute',
-        bottom: -40,
-        transform: 'translateX(-50%)',
-        zIndex: -1,
-    },
-    marioImage: {
-        height: 32,
-        width: 'auto',
-    },
-};
-
 };
 
 export default Home;
