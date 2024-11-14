@@ -67,7 +67,7 @@ const styles: StyleSheet = {
     },
     socialsContainer: {
         position: 'fixed',
-        bottom: 40, // Moved down from 60px
+        bottom: 30, // Moved down from 60px
         left: 20,
         display: 'flex',
         flexDirection: 'column',
@@ -75,17 +75,17 @@ const styles: StyleSheet = {
     socials: {
         display: 'flex',
         flexDirection: 'row',
-        gap: '36px', // Increased from 24px for more horizontal spacing
+        gap: '70px', // Increased from 24px for more horizontal spacing
     },
     socialWrapper: {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        width: 20, // Reduced from 32px (about 60% of original)
+        width: 15, // Reduced from 32px (about 60% of original)
     },
     social: {
-        width: 20, // Reduced from 32px
-        height: 20, // Reduced from 32px
+        width: 15, // Reduced from 32px
+        height: 15, // Reduced from 32px
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -117,7 +117,7 @@ const SocialBox: React.FC<SocialBoxProps> = ({ link, icon, onActivate }) => {
         
         setTimeout(() => {
             window.open(link, '_blank');
-        }, 500);
+        }, 1000);
     };
 
     return (
