@@ -18,7 +18,7 @@ export interface HomeProps {}
 
 interface MarioAnimationProps {
     isAnimating: boolean;
-    index: number; // Changed from position to index
+    index: number;
 }
 
 interface SocialBoxProps {
@@ -29,7 +29,42 @@ interface SocialBoxProps {
 }
 
 const styles: StyleSheet = {
-    // ... other styles remain the same ...
+    page: {
+        left: 0,
+        right: 0,
+        top: 0,
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        height: '100%',
+    },
+    header: {
+        textAlign: 'center',
+        marginBottom: 64,
+        marginTop: 64,
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    buttons: {
+        justifyContent: 'space-between',
+    },
+    link: {
+        padding: 16,
+    },
+    forHireContainer: {
+        marginTop: 64,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        cursor: 'pointer',
+    },
+    name: {
+        fontSize: 72,
+        marginBottom: 16,
+        lineHeight: 0.9,
+    },
     socialsContainer: {
         position: 'fixed',
         bottom: 60,
@@ -46,7 +81,7 @@ const styles: StyleSheet = {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        width: 32, // Match social icon width
+        width: 32,
     },
     social: {
         width: 32,
@@ -63,7 +98,7 @@ const styles: StyleSheet = {
     marioImage: {
         height: 32,
         width: 32,
-        marginTop: 16, // Space between icon and Mario
+        marginTop: 16,
     }
 };
 
@@ -115,7 +150,31 @@ const Home: React.FC<HomeProps> = (props) => {
 
     return (
         <div style={styles.page}>
-            {/* ... other elements remain the same ... */}
+            <div style={styles.header}>
+                <h1 style={styles.name}>misha okeeffe</h1>
+                <h2>personal website</h2>
+            </div>
+            <div style={styles.buttons}>
+                <Link containerStyle={styles.link} to="about" text="about me" />
+                <Link
+                    containerStyle={styles.link}
+                    to="experience"
+                    text="research"
+                />
+                <Link
+                    containerStyle={styles.link}
+                    to="projects"
+                    text="everything else"
+                />
+                <Link
+                    containerStyle={styles.link}
+                    to="contact"
+                    text="contact"
+                />
+            </div>
+            <div style={styles.forHireContainer} onMouseDown={goToContact}>
+                {/* <img src={forhire} alt="" /> */}
+            </div>
             <div style={styles.socialsContainer}>
                 <div style={styles.socials}>
                     {socialLinks.map((social, index) => (
