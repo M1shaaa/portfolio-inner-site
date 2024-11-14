@@ -1,81 +1,81 @@
-import React from 'react';
-import { Link } from '../general';
-import { useNavigate } from 'react-router';
+import React, { useState } from 'react';
+import marioPunch from '../../assets/pictures/mario-hit.gif';
+import marioStill from '../../assets/pictures/mario-still.png';
 
-// Import social media icons
-import twitterIcon from '../../assets/pictures/contact-twitter.png';
-import gsIcon from '../../assets/pictures/contact-gs.png';
-import ghIcon from '../../assets/pictures/contact-gh.png';
-import inIcon from '../../assets/pictures/contact-in.png';
-
-export interface HomeProps {}
-
-interface SocialBoxProps {
+interface AnimatedSocialBoxProps {
     icon: string;
     link: string;
+    boxPosition: number; // To offset Mario horizontally under each box
 }
 
-const SocialBox: React.FC<SocialBoxProps> = ({ link, icon }) => {
-    return (
-        <a rel="noreferrer" target="_blank" href={link}>
-            <div className="big-button-container" style={styles.social}>
-                <img src={icon} alt="" style={styles.socialImage} />
-            </div>
-        </a>
-    );
-};
+const AnimatedSocialBox: React.FC<AnimatedSocialBoxProps> = ({ link, icon, boxPosition }) => {
+    const [isAnimating, setIsAnimating] = useState(false);
 
-const Home: React.FC<HomeProps> = (props) => {
-    const navigate = useNavigate();
-
-    const goToContact = () => {
-        navigate('/contact');
+    const handleClick = (e: React.MouseEvent) => {
+        e.preventDefault(); // Prevent immediate navigation
+        setIsAnimating(true);
+        
+        // Wait for animation to complete before navigating
+        setTimeout(() => {
+            window.open(link, '_blank');
+            setIsAnimating(false);
+        }, 500); // Adjust timing based on your GIF duration
     };
 
     return (
+        <div style={styles.container}>
+            <a 
+                rel="noreferrer" 
+                href={link}
+                onClick={handleClick}
+                style={styles.linkContainer}
+            >
+                <div className="big-button-container" style={styles.social}>
+                    <img src={icon} alt="" style={styles.socialImage} />
+                </div>
+            </a>
+            <div style={{
+                ...styles.marioContainer,
+                left: `${boxPosition * 44}px`, // 44px = social icon width + gap
+            }}>
+                <img 
+                    src={isAnimating ? marioPunch : marioStill}
+                    alt=""
+                    style={styles.marioImage}
+                />
+            </div>
+        </div>
+    );
+};
+
+// Updated Home component code - replace the previous SocialBox components with these:
+const Home: React.FC<HomeProps> = (props) => {
+    // ... other code remains the same ...
+
+    return (
         <div style={styles.page}>
-            <div style={styles.header}>
-                <h1 style={styles.name}>misha okeeffe</h1>
-                <h2>personal website</h2>
-            </div>
-            <div style={styles.buttons}>
-                <Link containerStyle={styles.link} to="about" text="about me" />
-                <Link
-                    containerStyle={styles.link}
-                    to="experience"
-                    text="research"
-                />
-                <Link
-                    containerStyle={styles.link}
-                    to="projects"
-                    text="everything else"
-                />
-                <Link
-                    containerStyle={styles.link}
-                    to="contact"
-                    text="contact"
-                />
-            </div>
-            <div style={styles.forHireContainer} onMouseDown={goToContact}>
-                {/* <img src={forhire} alt="" /> */}
-            </div>
+            {/* ... other elements remain the same ... */}
             <div style={styles.socialsContainer}>
                 <div style={styles.socials}>
-                    <SocialBox
+                    <AnimatedSocialBox
                         icon={ghIcon}
                         link={'https://github.com/M1shaaa'}
+                        boxPosition={0}
                     />
-                    <SocialBox
+                    <AnimatedSocialBox
                         icon={inIcon}
                         link={'https://www.linkedin.com/in/misha-o-keeffe-099348262/'}
+                        boxPosition={1}
                     />
-                    <SocialBox
+                    <AnimatedSocialBox
                         icon={twitterIcon}
                         link={'https://x.com/mish_uhhh'}
+                        boxPosition={2}
                     />
-                    <SocialBox
+                    <AnimatedSocialBox
                         icon={gsIcon}
                         link={'https://scholar.google.com/citations?user=j41CbesAAAAJ&hl=en'}
+                        boxPosition={3}
                     />
                 </div>
             </div>
@@ -84,61 +84,34 @@ const Home: React.FC<HomeProps> = (props) => {
 };
 
 const styles: StyleSheetCSS = {
-    page: {
-        left: 0,
-        right: 0,
-        top: 0,
-        position: 'absolute',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        height: '100%',
+    // ... keep existing styles ...
+    container: {
+        position: 'relative',
+        marginRight: 8,
     },
-    header: {
-        textAlign: 'center',
-        marginBottom: 64,
-        marginTop: 64,
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    buttons: {
-        justifyContent: 'space-between',
-    },
-    link: {
-        padding: 16,
-    },
-    forHireContainer: {
-        marginTop: 64,
-        width: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        cursor: 'pointer',
-    },
-    name: {
-        fontSize: 72,
-        marginBottom: 16,
-        lineHeight: 0.9,
-    },
-    socialsContainer: {
-        position: 'fixed',
-        bottom: 20,
-        left: 20,
-    },
-    socials: {
-        display: 'flex',
-        flexDirection: 'row',
-        gap: '8px',
+    linkContainer: {
+        textDecoration: 'none',
+        display: 'block',
     },
     social: {
-        width: 4,
-        height: 4,
+        width: 36,
+        height: 36,
         justifyContent: 'center',
         alignItems: 'center',
     },
     socialImage: {
         width: 36,
         height: 36,
+    },
+    marioContainer: {
+        position: 'absolute',
+        bottom: -40, // Adjust this value to position Mario vertically
+        transform: 'translateX(-50%)', // Center Mario under the box
+        zIndex: -1,
+    },
+    marioImage: {
+        height: 32, // Adjust size as needed
+        width: 'auto',
     },
 };
 
