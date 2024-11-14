@@ -68,7 +68,7 @@ const styles: StyleSheet = {
     socialsContainer: {
         position: 'fixed',
         bottom: 10, // Moved down from 60px
-        left: 25,
+        left: 30,
         display: 'flex',
         flexDirection: 'column',
     },
@@ -84,8 +84,8 @@ const styles: StyleSheet = {
         width: 5, // Reduced from 32px (about 60% of original)
     },
     social: {
-        width: 15, // Reduced from 32px
-        height: 15, // Reduced from 32px
+        width: 30, // Reduced from 32px
+        height: 30, // Reduced from 32px
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
