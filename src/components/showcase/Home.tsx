@@ -1,10 +1,29 @@
 import React from 'react';
 import { Link } from '../general';
-
-import forhire from '../../assets/pictures/forHireGif.gif';
 import { useNavigate } from 'react-router';
 
+// Import social media icons
+import twitterIcon from '../../assets/pictures/contact-twitter.png';
+import gsIcon from '../../assets/pictures/contact-gs.png';
+import ghIcon from '../../assets/pictures/contact-gh.png';
+import inIcon from '../../assets/pictures/contact-in.png';
+
 export interface HomeProps {}
+
+interface SocialBoxProps {
+    icon: string;
+    link: string;
+}
+
+const SocialBox: React.FC<SocialBoxProps> = ({ link, icon }) => {
+    return (
+        <a rel="noreferrer" target="_blank" href={link}>
+            <div className="big-button-container" style={styles.social}>
+                <img src={icon} alt="" style={styles.socialImage} />
+            </div>
+        </a>
+    );
+};
 
 const Home: React.FC<HomeProps> = (props) => {
     const navigate = useNavigate();
@@ -40,6 +59,26 @@ const Home: React.FC<HomeProps> = (props) => {
             <div style={styles.forHireContainer} onMouseDown={goToContact}>
                 {/* <img src={forhire} alt="" /> */}
             </div>
+            <div style={styles.socialsContainer}>
+                <div style={styles.socials}>
+                    <SocialBox
+                        icon={ghIcon}
+                        link={'https://github.com/M1shaaa'}
+                    />
+                    <SocialBox
+                        icon={inIcon}
+                        link={'https://www.linkedin.com/in/misha-o-keeffe-099348262/'}
+                    />
+                    <SocialBox
+                        icon={twitterIcon}
+                        link={'https://x.com/mish_uhhh'}
+                    />
+                    <SocialBox
+                        icon={gsIcon}
+                        link={'https://scholar.google.com/citations?user=j41CbesAAAAJ&hl=en'}
+                    />
+                </div>
+            </div>
         </div>
     );
 };
@@ -59,7 +98,6 @@ const styles: StyleSheetCSS = {
         textAlign: 'center',
         marginBottom: 64,
         marginTop: 64,
-
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
@@ -67,14 +105,7 @@ const styles: StyleSheetCSS = {
     buttons: {
         justifyContent: 'space-between',
     },
-    image: {
-        width: 800,
-    },
     link: {
-        padding: 16,
-    },
-    nowHiring: {
-        backgroundColor: 'red',
         padding: 16,
     },
     forHireContainer: {
@@ -88,6 +119,26 @@ const styles: StyleSheetCSS = {
         fontSize: 72,
         marginBottom: 16,
         lineHeight: 0.9,
+    },
+    socialsContainer: {
+        position: 'fixed',
+        bottom: 20,
+        left: 20,
+    },
+    socials: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: '8px',
+    },
+    social: {
+        width: 4,
+        height: 4,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    socialImage: {
+        width: 36,
+        height: 36,
     },
 };
 
