@@ -68,7 +68,7 @@ const styles: StyleSheet = {
     socialsContainer: {
         position: 'fixed',
         bottom: 10, // Moved down from 60px
-        left: 20,
+        left: 25,
         display: 'flex',
         flexDirection: 'column',
     },
