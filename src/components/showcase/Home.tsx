@@ -67,7 +67,7 @@ const styles: StyleSheet = {
     },
     socialsContainer: {
         position: 'fixed',
-        bottom: 60,
+        bottom: 40, // Moved down from 60px
         left: 20,
         display: 'flex',
         flexDirection: 'column',
@@ -75,17 +75,17 @@ const styles: StyleSheet = {
     socials: {
         display: 'flex',
         flexDirection: 'row',
-        gap: '24px',
+        gap: '36px', // Increased from 24px for more horizontal spacing
     },
     socialWrapper: {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        width: 32,
+        width: 20, // Reduced from 32px (about 60% of original)
     },
     social: {
-        width: 32,
-        height: 32,
+        width: 20, // Reduced from 32px
+        height: 20, // Reduced from 32px
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
