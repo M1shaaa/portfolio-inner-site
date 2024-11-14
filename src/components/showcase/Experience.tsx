@@ -3,6 +3,64 @@ import ResumeDownload from './ResumeDownload';
 
 export interface ExperienceProps {}
 
+interface StyleSheet {
+    [key: string]: React.CSSProperties;
+}
+
+const styles: StyleSheet = {
+    header: {
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    skillRow: {
+        flex: 1,
+        justifyContent: 'space-between',
+    },
+    skillName: {
+        minWidth: 56,
+    },
+    skill: {
+        flex: 1,
+        padding: 8,
+        alignItems: 'center',
+    },
+    progressBar: {
+        flex: 1,
+        background: 'red',
+        marginLeft: 8,
+        height: 8,
+    },
+    hoverLogo: {
+        height: 32,
+        marginBottom: 16,
+    },
+    headerContainer: {
+        alignItems: 'flex-end',
+        width: '100%',
+        justifyContent: 'center',
+    },
+    hoverText: {
+        marginBottom: 8,
+    },
+    indent: {
+        marginLeft: 24,
+    },
+    headerRow: {
+        justifyContent: 'space-between',
+        alignItems: 'flex-end',
+    },
+    row: {
+        display: 'flex',
+        justifyContent: 'space-between',
+    },
+    bulletPoints: {
+        marginLeft: 20,
+        marginTop: 8,
+        marginBottom: 16,
+    }
+};
+
 const Experience: React.FC<ExperienceProps> = (props) => {
     return (
         <div className="site-page-content">
@@ -133,66 +191,6 @@ const Experience: React.FC<ExperienceProps> = (props) => {
             </div>
         </div>
     );
-};
-
-const styles: StyleSheet = {
-    // ... existing styles ...
-    bulletPoints: {
-        marginLeft: 20,
-        marginTop: 8,
-        marginBottom: 16,
-    }
-};
-
-export default Experience;
-
-const styles: StyleSheetCSS = {
-    header: {
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        width: '100%',
-    },
-    skillRow: {
-        flex: 1,
-        justifyContent: 'space-between',
-    },
-    skillName: {
-        minWidth: 56,
-    },
-    skill: {
-        flex: 1,
-        padding: 8,
-        alignItems: 'center',
-    },
-    progressBar: {
-        flex: 1,
-        background: 'red',
-        marginLeft: 8,
-        height: 8,
-    },
-    hoverLogo: {
-        height: 32,
-        marginBottom: 16,
-    },
-    headerContainer: {
-        alignItems: 'flex-end',
-        width: '100%',
-        justifyContent: 'center',
-    },
-    hoverText: {
-        marginBottom: 8,
-    },
-    indent: {
-        marginLeft: 24,
-    },
-    headerRow: {
-        justifyContent: 'space-between',
-        alignItems: 'flex-end',
-    },
-    row: {
-        display: 'flex',
-        justifyContent: 'space-between',
-    },
 };
 
 export default Experience;
