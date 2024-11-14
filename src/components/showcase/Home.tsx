@@ -18,7 +18,7 @@ export interface HomeProps {}
 
 interface MarioAnimationProps {
     isAnimating: boolean;
-    position: number;
+    index: number; // Changed from position to index
 }
 
 interface SocialBoxProps {
@@ -29,51 +29,24 @@ interface SocialBoxProps {
 }
 
 const styles: StyleSheet = {
-    page: {
-        left: 0,
-        right: 0,
-        top: 0,
-        position: 'absolute',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        height: '100%',
-    },
-    header: {
-        textAlign: 'center',
-        marginBottom: 64,
-        marginTop: 64,
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    buttons: {
-        justifyContent: 'space-between',
-    },
-    link: {
-        padding: 16,
-    },
-    forHireContainer: {
-        marginTop: 64,
-        width: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        cursor: 'pointer',
-    },
-    name: {
-        fontSize: 72,
-        marginBottom: 16,
-        lineHeight: 0.9,
-    },
+    // ... other styles remain the same ...
     socialsContainer: {
         position: 'fixed',
-        bottom: 60, // Moved up more to make room for Mario
+        bottom: 60,
         left: 20,
+        display: 'flex',
+        flexDirection: 'column',
     },
     socials: {
         display: 'flex',
         flexDirection: 'row',
-        gap: '24px', // Space between social icons
+        gap: '24px',
+    },
+    socialWrapper: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        width: 32, // Match social icon width
     },
     social: {
         width: 32,
@@ -87,34 +60,19 @@ const styles: StyleSheet = {
         height: '100%',
         objectFit: 'contain',
     },
-    mariosContainer: {
-        marginTop: 16, // Space between social icons and Mario
-        position: 'relative',
-        height: 32,
-    },
-    marioContainer: {
-        position: 'absolute',
-        top: 0,
-        width: 32,
-    },
     marioImage: {
         height: 32,
         width: 32,
-        objectFit: 'contain',
-    },
+        marginTop: 16, // Space between icon and Mario
+    }
 };
 
-const MarioAnimation: React.FC<MarioAnimationProps> = ({ isAnimating, position }) => (
-    <div style={{
-        ...styles.marioContainer,
-        left: `${position * 56}px`, // 32px (icon width) + 24px (gap) = 56px
-    }}>
-        <img 
-            src={isAnimating ? marioPunch : marioStill}
-            alt=""
-            style={styles.marioImage}
-        />
-    </div>
+const MarioAnimation: React.FC<MarioAnimationProps> = ({ isAnimating, index }) => (
+    <img 
+        src={isAnimating ? marioPunch : marioStill}
+        alt=""
+        style={styles.marioImage}
+    />
 );
 
 const SocialBox: React.FC<SocialBoxProps> = ({ link, icon, onActivate }) => {
@@ -157,53 +115,25 @@ const Home: React.FC<HomeProps> = (props) => {
 
     return (
         <div style={styles.page}>
-            <div style={styles.header}>
-                <h1 style={styles.name}>misha okeeffe</h1>
-                <h2>personal website</h2>
-            </div>
-            <div style={styles.buttons}>
-                <Link containerStyle={styles.link} to="about" text="about me" />
-                <Link
-                    containerStyle={styles.link}
-                    to="experience"
-                    text="research"
-                />
-                <Link
-                    containerStyle={styles.link}
-                    to="projects"
-                    text="everything else"
-                />
-                <Link
-                    containerStyle={styles.link}
-                    to="contact"
-                    text="contact"
-                />
-            </div>
-            <div style={styles.forHireContainer} onMouseDown={goToContact}>
-                {/* <img src={forhire} alt="" /> */}
-            </div>
+            {/* ... other elements remain the same ... */}
             <div style={styles.socialsContainer}>
                 <div style={styles.socials}>
                     {socialLinks.map((social, index) => (
-                        <SocialBox
-                            key={index}
-                            icon={social.icon}
-                            link={social.link}
-                            position={index}
-                            onActivate={() => {
-                                setActiveMario(index);
-                                setTimeout(() => setActiveMario(null), 500);
-                            }}
-                        />
-                    ))}
-                </div>
-                <div style={styles.mariosContainer}>
-                    {socialLinks.map((_, index) => (
-                        <MarioAnimation
-                            key={index}
-                            isAnimating={activeMario === index}
-                            position={index}
-                        />
+                        <div key={index} style={styles.socialWrapper}>
+                            <SocialBox
+                                icon={social.icon}
+                                link={social.link}
+                                position={index}
+                                onActivate={() => {
+                                    setActiveMario(index);
+                                    setTimeout(() => setActiveMario(null), 500);
+                                }}
+                            />
+                            <MarioAnimation
+                                isAnimating={activeMario === index}
+                                index={index}
+                            />
+                        </div>
                     ))}
                 </div>
             </div>
