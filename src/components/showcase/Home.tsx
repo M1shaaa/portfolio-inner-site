@@ -67,7 +67,7 @@ const styles: StyleSheet = {
     },
     socialsContainer: {
         position: 'fixed',
-        bottom: 30, // Moved down from 60px
+        bottom: 10, // Moved down from 60px
         left: 20,
         display: 'flex',
         flexDirection: 'column',
@@ -81,7 +81,7 @@ const styles: StyleSheet = {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        width: 15, // Reduced from 32px (about 60% of original)
+        width: 10, // Reduced from 32px (about 60% of original)
     },
     social: {
         width: 15, // Reduced from 32px
@@ -98,7 +98,7 @@ const styles: StyleSheet = {
     marioImage: {
         height: 32,
         width: 32,
-        marginTop: 16,
+        marginTop: 5,
     }
 };
 
