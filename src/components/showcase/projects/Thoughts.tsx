@@ -2,7 +2,10 @@ import React from 'react';
 
 const Thoughts: React.FC = () => {
   const thoughts = [
-    "How do cameras even work?",
+    "where do we draw the line between words and non-words?",
+    "how do we transmit information through light, like in fiber optic cables?",
+    "what's the difference between learning and discovering something?",
+    "How do cameras work?",
     "Why do cats purr but dogs bark?",
     "What is the human equivalent of plants using scent signals?",
     "Why do we experience time linearly?",
