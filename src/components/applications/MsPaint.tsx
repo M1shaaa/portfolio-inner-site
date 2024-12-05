@@ -13,57 +13,95 @@ const TOOLS = {
     ERASER: 'eraser',
     LINE: 'line',
     RECTANGLE: 'rectangle',
+    CIRCLE: 'circle',
 };
+
+const SIZES = [2, 4, 6, 8, 10];
 
 const styles: StyleSheetCSS = {
     container: {
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        backgroundColor: '#f0f0f0',
+        backgroundColor: '#c0c0c0',
     },
     toolbar: {
-        padding: '8px',
-        backgroundColor: '#e1e1e1',
-        borderBottom: '1px solid #999',
+        padding: '4px',
+        backgroundColor: '#c0c0c0',
+        borderTop: '2px solid #ffffff',
+        borderLeft: '2px solid #ffffff',
+        borderRight: '2px solid #808080',
+        borderBottom: '2px solid #808080',
         display: 'flex',
-        flexDirection: 'column',
         gap: '8px',
     },
     toolSection: {
         display: 'flex',
-        gap: '4px',
+        gap: '2px',
+        borderTop: '1px solid #808080',
+        borderLeft: '1px solid #808080',
+        borderRight: '1px solid #ffffff',
+        borderBottom: '1px solid #ffffff',
+        padding: '2px',
     },
     toolButton: {
-        padding: '4px 8px',
+        width: '28px',
+        height: '28px',
+        padding: '2px',
         cursor: 'pointer',
-        border: '1px solid #999',
-        backgroundColor: '#fff',
+        backgroundColor: '#c0c0c0',
+        border: '2px outset #ffffff',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     selectedTool: {
-        backgroundColor: '#ccc',
-        borderColor: '#666',
+        border: '2px inset #ffffff',
+        backgroundColor: '#808080',
+    },
+    sizeButton: {
+        width: '28px',
+        height: '28px',
+        padding: '2px',
+        cursor: 'pointer',
+        backgroundColor: '#c0c0c0',
+        border: '2px outset #ffffff',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     colorPalette: {
         display: 'flex',
         flexWrap: 'wrap',
-        gap: '2px',
+        width: '224px',
+        gap: '1px',
+        padding: '2px',
+        borderTop: '1px solid #808080',
+        borderLeft: '1px solid #808080',
+        borderRight: '1px solid #ffffff',
+        borderBottom: '1px solid #ffffff',
     },
     colorButton: {
-        width: '20px',
-        height: '20px',
-        border: '1px solid #999',
+        width: '26px',
+        height: '26px',
+        border: '1px solid #808080',
         cursor: 'pointer',
     },
     selectedColor: {
-        border: '2px solid #000',
+        border: '2px solid #000000',
     },
     canvas: {
-        border: '1px solid #999',
-        margin: '8px',
-        backgroundColor: '#fff',
+        border: '1px solid #808080',
+        margin: '4px',
+        backgroundColor: '#ffffff',
         cursor: 'crosshair',
     },
+    sizeIndicator: {
+        width: '100%',
+        height: '100%',
+        borderRadius: '50%',
+        backgroundColor: 'black',
+    }
 };
 
 const MsPaint: React.FC<MsPaintAppProps> = (props) => {
@@ -71,15 +109,15 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
     const [isDrawing, setIsDrawing] = useState(false);
     const [currentColor, setCurrentColor] = useState('#000000');
     const [currentTool, setCurrentTool] = useState(TOOLS.PENCIL);
-    const [lastPosition, setLastPosition] = useState({ x: 0, y: 0 });
+    const [currentSize, setCurrentSize] = useState(2);
+    const [startPos, setStartPos] = useState({ x: 0, y: 0 });
+    const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-
         const context = canvas.getContext('2d');
         if (!context) return;
-
         context.fillStyle = '#ffffff';
         context.fillRect(0, 0, canvas.width, canvas.height);
     }, []);
@@ -87,18 +125,16 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
     const startDrawing = (e: React.MouseEvent) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-
         setIsDrawing(true);
-        setLastPosition({ x, y });
+        setStartPos({ x, y });
+        setLastPos({ x, y });
     };
 
     const draw = (e: React.MouseEvent) => {
         if (!isDrawing || !canvasRef.current) return;
-
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         if (!context) return;
@@ -108,18 +144,52 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
         const y = e.clientY - rect.top;
 
         context.strokeStyle = currentTool === TOOLS.ERASER ? '#ffffff' : currentColor;
-        context.lineWidth = currentTool === TOOLS.ERASER ? 20 : 2;
+        context.lineWidth = currentSize;
         context.lineCap = 'round';
 
-        context.beginPath();
-        context.moveTo(lastPosition.x, lastPosition.y);
-        context.lineTo(x, y);
-        context.stroke();
-
-        setLastPosition({ x, y });
+        if (currentTool === TOOLS.PENCIL || currentTool === TOOLS.ERASER) {
+            context.beginPath();
+            context.moveTo(lastPos.x, lastPos.y);
+            context.lineTo(x, y);
+            context.stroke();
+            setLastPos({ x, y });
+        }
     };
 
-    const stopDrawing = () => {
+    const stopDrawing = (e: React.MouseEvent) => {
+        if (!isDrawing || !canvasRef.current) return;
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
+        if (!context) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        context.strokeStyle = currentColor;
+        context.lineWidth = currentSize;
+
+        if (currentTool === TOOLS.LINE) {
+            context.beginPath();
+            context.moveTo(startPos.x, startPos.y);
+            context.lineTo(x, y);
+            context.stroke();
+        } else if (currentTool === TOOLS.RECTANGLE) {
+            context.strokeRect(
+                Math.min(startPos.x, x),
+                Math.min(startPos.y, y),
+                Math.abs(x - startPos.x),
+                Math.abs(y - startPos.y)
+            );
+        } else if (currentTool === TOOLS.CIRCLE) {
+            const radius = Math.sqrt(
+                Math.pow(x - startPos.x, 2) + Math.pow(y - startPos.y, 2)
+            );
+            context.beginPath();
+            context.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI);
+            context.stroke();
+        }
+
         setIsDrawing(false);
     };
 
@@ -148,7 +218,27 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
                                 )}
                                 onClick={() => setCurrentTool(tool)}
                             >
-                                {tool}
+                                {tool[0].toUpperCase()}
+                            </button>
+                        ))}
+                    </div>
+                    <div style={styles.toolSection}>
+                        {SIZES.map(size => (
+                            <button
+                                key={size}
+                                style={Object.assign(
+                                    {},
+                                    styles.sizeButton,
+                                    currentSize === size && styles.selectedTool
+                                )}
+                                onClick={() => setCurrentSize(size)}
+                            >
+                                <div 
+                                    style={{
+                                        ...styles.sizeIndicator,
+                                        transform: `scale(${size/10})`
+                                    }}
+                                />
                             </button>
                         ))}
                     </div>
