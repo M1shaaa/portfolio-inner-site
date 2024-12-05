@@ -134,6 +134,7 @@ const styles: StyleSheetCSS = {
 
 const MsPaint: React.FC<MsPaintAppProps> = (props) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const tempCanvasRef = useRef<HTMLCanvasElement>(null);
     const [isDrawing, setIsDrawing] = useState(false);
     const [currentColor, setCurrentColor] = useState('#000000');
     const [currentTool, setCurrentTool] = useState(TOOLS.PENCIL);
@@ -143,11 +144,22 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
 
     useEffect(() => {
         const canvas = canvasRef.current;
-        if (!canvas) return;
+        const tempCanvas = tempCanvasRef.current;
+        if (!canvas || !tempCanvas) return;
+    
         const context = canvas.getContext('2d');
-        if (!context) return;
+        const tempContext = tempCanvas.getContext('2d');
+        if (!context || !tempContext) return;
+    
+        // Set up main canvas
         context.fillStyle = '#ffffff';
         context.fillRect(0, 0, canvas.width, canvas.height);
+    
+        // Set up temp canvas
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+        tempContext.fillStyle = '#ffffff';
+        tempContext.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
     }, []);
 
     const startDrawing = (e: React.MouseEvent) => {
@@ -189,7 +201,7 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
     
             // Clear previous preview
             context.clearRect(0, 0, canvas.width, canvas.height);
-            context.drawImage(tempCanvas.current, 0, 0);
+            context.drawImage(tempCanvasRef.current!, 0, 0);
     
             if (currentTool === TOOLS.LINE) {
                 context.beginPath();
@@ -265,22 +277,31 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
             minimizeWindow={props.onMinimize}
         >
             <div style={styles.container}>
-                <div style={styles.toolbar}>
-                    <div style={styles.toolSection}>
-                        {Object.values(TOOLS).map(tool => (
-                            <button 
-                            key={tool}
-                            style={Object.assign(
-                                {},
-                                styles.toolButton,
-                                currentTool === tool && styles.selectedTool
-                            )}
-                            onClick={() => setCurrentTool(tool)}
-                        >
-                            {TOOL_ICONS[tool]}
-                            </button>
-                        ))}
-                    </div>
+                {/* ... toolbar ... */}
+                <div style={{ position: 'relative' }}>
+                    <canvas
+                        ref={canvasRef}
+                        width={780}
+                        height={500}
+                        style={styles.canvas}
+                        onMouseDown={startDrawing}
+                        onMouseMove={draw}
+                        onMouseUp={stopDrawing}
+                        onMouseLeave={stopDrawing}
+                    />
+                    <canvas
+                        ref={tempCanvasRef}
+                        width={780}
+                        height={500}
+                        style={{
+                            ...styles.canvas,
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            pointerEvents: 'none'
+                        }}
+                    />
+                </div>
                     <div style={styles.toolSection}>
                         {SIZES.map(size => (
                             <button
