@@ -8,6 +8,8 @@ const COLORS = [
     '#ffffff', '#c0c0c0', '#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff'
 ];
 
+const SIZES = [2, 6, 12, 20, 32];
+
 const TOOLS = {
     PENCIL: 'pencil',
     ERASER: 'eraser',
@@ -15,8 +17,6 @@ const TOOLS = {
     RECTANGLE: 'rectangle',
     CIRCLE: 'circle',
 };
-
-const SIZES = [2, 6, 12, 20, 32]; // Much bigger range for tools
 
 const TOOL_ICONS = {
     [TOOLS.PENCIL]: (
@@ -129,60 +129,67 @@ const styles: StyleSheetCSS = {
         height: '100%',
         borderRadius: '50%',
         backgroundColor: 'black',
+    },
+    canvasContainer: {
+        position: 'relative',
+        margin: '4px',
     }
 };
 
 const MsPaint: React.FC<MsPaintAppProps> = (props) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const tempCanvasRef = useRef<HTMLCanvasElement>(null);
+    const overlayCanvasRef = useRef<HTMLCanvasElement>(null);
     const [isDrawing, setIsDrawing] = useState(false);
     const [currentColor, setCurrentColor] = useState('#000000');
     const [currentTool, setCurrentTool] = useState(TOOLS.PENCIL);
-    const [currentSize, setCurrentSize] = useState(2);
+    const [currentSize, setCurrentSize] = useState(SIZES[0]);
     const [startPos, setStartPos] = useState({ x: 0, y: 0 });
     const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
         const canvas = canvasRef.current;
-        const tempCanvas = tempCanvasRef.current;
-        if (!canvas || !tempCanvas) return;
-    
+        const overlayCanvas = overlayCanvasRef.current;
+        if (!canvas || !overlayCanvas) return;
+
         const context = canvas.getContext('2d');
-        const tempContext = tempCanvas.getContext('2d');
-        if (!context || !tempContext) return;
-    
-        // Set up main canvas
+        const overlayContext = overlayCanvas.getContext('2d');
+        if (!context || !overlayContext) return;
+
         context.fillStyle = '#ffffff';
         context.fillRect(0, 0, canvas.width, canvas.height);
-    
-        // Set up temp canvas
-        tempCanvas.width = canvas.width;
-        tempCanvas.height = canvas.height;
-        tempContext.fillStyle = '#ffffff';
-        tempContext.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+        overlayCanvas.width = canvas.width;
+        overlayCanvas.height = canvas.height;
     }, []);
 
     const startDrawing = (e: React.MouseEvent) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
+
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
+
         setIsDrawing(true);
         setStartPos({ x, y });
         setLastPos({ x, y });
     };
 
     const draw = (e: React.MouseEvent) => {
-        if (!isDrawing || !canvasRef.current) return;
+        if (!isDrawing) return;
+
         const canvas = canvasRef.current;
+        const overlayCanvas = overlayCanvasRef.current;
+        if (!canvas || !overlayCanvas) return;
+
         const context = canvas.getContext('2d');
-        if (!context) return;
-    
+        const overlayContext = overlayCanvas.getContext('2d');
+        if (!context || !overlayContext) return;
+
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-    
+
         if (currentTool === TOOLS.PENCIL || currentTool === TOOLS.ERASER) {
             context.strokeStyle = currentTool === TOOLS.ERASER ? '#ffffff' : currentColor;
             context.lineWidth = currentSize;
@@ -193,16 +200,53 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
             context.stroke();
             setLastPos({ x, y });
         } else {
-            // For shapes, draw on temporary context and restore previous state
-            context.save();
-            context.setLineDash([1, 1]); // Dashed preview for shapes
+            // Clear overlay for shape preview
+            overlayContext.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+            overlayContext.strokeStyle = currentColor;
+            overlayContext.lineWidth = currentSize;
+
+            if (currentTool === TOOLS.LINE) {
+                overlayContext.beginPath();
+                overlayContext.moveTo(startPos.x, startPos.y);
+                overlayContext.lineTo(x, y);
+                overlayContext.stroke();
+            } else if (currentTool === TOOLS.RECTANGLE) {
+                overlayContext.strokeRect(
+                    Math.min(startPos.x, x),
+                    Math.min(startPos.y, y),
+                    Math.abs(x - startPos.x),
+                    Math.abs(y - startPos.y)
+                );
+            } else if (currentTool === TOOLS.CIRCLE) {
+                const radius = Math.sqrt(
+                    Math.pow(x - startPos.x, 2) + Math.pow(y - startPos.y, 2)
+                );
+                overlayContext.beginPath();
+                overlayContext.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI);
+                overlayContext.stroke();
+            }
+        }
+    };
+
+    const stopDrawing = (e: React.MouseEvent) => {
+        if (!isDrawing) return;
+
+        const canvas = canvasRef.current;
+        const overlayCanvas = overlayCanvasRef.current;
+        if (!canvas || !overlayCanvas) return;
+
+        const context = canvas.getContext('2d');
+        const overlayContext = overlayCanvas.getContext('2d');
+        if (!context || !overlayContext) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        if (currentTool !== TOOLS.PENCIL && currentTool !== TOOLS.ERASER) {
             context.strokeStyle = currentColor;
             context.lineWidth = currentSize;
-    
-            // Clear previous preview
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            context.drawImage(tempCanvasRef.current!, 0, 0);
-    
+
             if (currentTool === TOOLS.LINE) {
                 context.beginPath();
                 context.moveTo(startPos.x, startPos.y);
@@ -223,42 +267,7 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
                 context.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI);
                 context.stroke();
             }
-            context.restore();
-        }
-    };
-
-    const stopDrawing = (e: React.MouseEvent) => {
-        if (!isDrawing || !canvasRef.current) return;
-        const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
-        if (!context) return;
-
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        context.strokeStyle = currentColor;
-        context.lineWidth = currentSize;
-
-        if (currentTool === TOOLS.LINE) {
-            context.beginPath();
-            context.moveTo(startPos.x, startPos.y);
-            context.lineTo(x, y);
-            context.stroke();
-        } else if (currentTool === TOOLS.RECTANGLE) {
-            context.strokeRect(
-                Math.min(startPos.x, x),
-                Math.min(startPos.y, y),
-                Math.abs(x - startPos.x),
-                Math.abs(y - startPos.y)
-            );
-        } else if (currentTool === TOOLS.CIRCLE) {
-            const radius = Math.sqrt(
-                Math.pow(x - startPos.x, 2) + Math.pow(y - startPos.y, 2)
-            );
-            context.beginPath();
-            context.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI);
-            context.stroke();
+            overlayContext.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
         }
 
         setIsDrawing(false);
@@ -277,31 +286,22 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
             minimizeWindow={props.onMinimize}
         >
             <div style={styles.container}>
-                {/* ... toolbar ... */}
-                <div style={{ position: 'relative' }}>
-                    <canvas
-                        ref={canvasRef}
-                        width={780}
-                        height={500}
-                        style={styles.canvas}
-                        onMouseDown={startDrawing}
-                        onMouseMove={draw}
-                        onMouseUp={stopDrawing}
-                        onMouseLeave={stopDrawing}
-                    />
-                    <canvas
-                        ref={tempCanvasRef}
-                        width={780}
-                        height={500}
-                        style={{
-                            ...styles.canvas,
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            pointerEvents: 'none'
-                        }}
-                    />
-                </div>
+                <div style={styles.toolbar}>
+                    <div style={styles.toolSection}>
+                        {Object.entries(TOOLS).map(([key, tool]) => (
+                            <button 
+                                key={tool}
+                                style={Object.assign(
+                                    {},
+                                    styles.toolButton,
+                                    currentTool === tool && styles.selectedTool
+                                )}
+                                onClick={() => setCurrentTool(tool)}
+                            >
+                                {TOOL_ICONS[tool]}
+                            </button>
+                        ))}
+                    </div>
                     <div style={styles.toolSection}>
                         {SIZES.map(size => (
                             <button
@@ -316,7 +316,7 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
                                 <div 
                                     style={{
                                         ...styles.sizeIndicator,
-                                        transform: `scale(${size/10})`
+                                        transform: `scale(${size/32})`
                                     }}
                                 />
                             </button>
@@ -337,16 +337,31 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
                         ))}
                     </div>
                 </div>
-                <canvas
-                    ref={canvasRef}
-                    width={780}
-                    height={500}
-                    style={styles.canvas}
-                    onMouseDown={startDrawing}
-                    onMouseMove={draw}
-                    onMouseUp={stopDrawing}
-                    onMouseLeave={stopDrawing}
-                />
+                <div style={styles.canvasContainer}>
+                    <canvas
+                        ref={canvasRef}
+                        width={780}
+                        height={500}
+                        style={styles.canvas}
+                        onMouseDown={startDrawing}
+                        onMouseMove={draw}
+                        onMouseUp={stopDrawing}
+                        onMouseLeave={stopDrawing}
+                    />
+                    <canvas
+                        ref={overlayCanvasRef}
+                        width={780}
+                        height={500}
+                        style={{
+                            ...styles.canvas,
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            pointerEvents: 'none',
+                            margin: 0,
+                        }}
+                    />
+                </div>
             </div>
         </Window>
     );
