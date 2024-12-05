@@ -16,7 +16,35 @@ const TOOLS = {
     CIRCLE: 'circle',
 };
 
-const SIZES = [2, 4, 6, 8, 10];
+const SIZES = [2, 6, 12, 20, 32]; // Much bigger range for tools
+
+const TOOL_ICONS = {
+    [TOOLS.PENCIL]: (
+        <svg viewBox="0 0 24 24" width="16" height="16">
+            <path d="M3,17.25V21h3.75L17.81,9.94l-3.75-3.75L3,17.25z M20.71,7.04c0.39-0.39,0.39-1.02,0-1.41l-2.34-2.34 c-0.39-0.39-1.02-0.39-1.41,0l-1.83,1.83l3.75,3.75L20.71,7.04z" fill="currentColor"/>
+        </svg>
+    ),
+    [TOOLS.ERASER]: (
+        <svg viewBox="0 0 24 24" width="16" height="16">
+            <path d="M15.14,3c-0.51,0-1.02,0.19-1.41,0.58L2.58,14.73c-0.78,0.78-0.78,2.05,0,2.83l3.86,3.86C7.8,21.8,9.07,21.8,9.85,21.02 l11.15-11.15c0.78-0.78,0.78-2.05,0-2.83l-3.86-3.86C16.16,3.19,15.65,3,15.14,3z" fill="currentColor"/>
+        </svg>
+    ),
+    [TOOLS.LINE]: (
+        <svg viewBox="0 0 24 24" width="16" height="16">
+            <line x1="4" y1="20" x2="20" y2="4" stroke="currentColor" strokeWidth="2"/>
+        </svg>
+    ),
+    [TOOLS.RECTANGLE]: (
+        <svg viewBox="0 0 24 24" width="16" height="16">
+            <rect x="4" y="4" width="16" height="16" stroke="currentColor" fill="none" strokeWidth="2"/>
+        </svg>
+    ),
+    [TOOLS.CIRCLE]: (
+        <svg viewBox="0 0 24 24" width="16" height="16">
+            <circle cx="12" cy="12" r="8" stroke="currentColor" fill="none" strokeWidth="2"/>
+        </svg>
+    ),
+};
 
 const styles: StyleSheetCSS = {
     container: {
@@ -138,21 +166,52 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         if (!context) return;
-
+    
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-
-        context.strokeStyle = currentTool === TOOLS.ERASER ? '#ffffff' : currentColor;
-        context.lineWidth = currentSize;
-        context.lineCap = 'round';
-
+    
         if (currentTool === TOOLS.PENCIL || currentTool === TOOLS.ERASER) {
+            context.strokeStyle = currentTool === TOOLS.ERASER ? '#ffffff' : currentColor;
+            context.lineWidth = currentSize;
+            context.lineCap = 'round';
             context.beginPath();
             context.moveTo(lastPos.x, lastPos.y);
             context.lineTo(x, y);
             context.stroke();
             setLastPos({ x, y });
+        } else {
+            // For shapes, draw on temporary context and restore previous state
+            context.save();
+            context.setLineDash([1, 1]); // Dashed preview for shapes
+            context.strokeStyle = currentColor;
+            context.lineWidth = currentSize;
+    
+            // Clear previous preview
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(tempCanvas.current, 0, 0);
+    
+            if (currentTool === TOOLS.LINE) {
+                context.beginPath();
+                context.moveTo(startPos.x, startPos.y);
+                context.lineTo(x, y);
+                context.stroke();
+            } else if (currentTool === TOOLS.RECTANGLE) {
+                context.strokeRect(
+                    Math.min(startPos.x, x),
+                    Math.min(startPos.y, y),
+                    Math.abs(x - startPos.x),
+                    Math.abs(y - startPos.y)
+                );
+            } else if (currentTool === TOOLS.CIRCLE) {
+                const radius = Math.sqrt(
+                    Math.pow(x - startPos.x, 2) + Math.pow(y - startPos.y, 2)
+                );
+                context.beginPath();
+                context.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI);
+                context.stroke();
+            }
+            context.restore();
         }
     };
 
@@ -210,15 +269,15 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
                     <div style={styles.toolSection}>
                         {Object.values(TOOLS).map(tool => (
                             <button 
-                                key={tool}
-                                style={Object.assign(
-                                    {},
-                                    styles.toolButton,
-                                    currentTool === tool && styles.selectedTool
-                                )}
-                                onClick={() => setCurrentTool(tool)}
-                            >
-                                {tool[0].toUpperCase()}
+                            key={tool}
+                            style={Object.assign(
+                                {},
+                                styles.toolButton,
+                                currentTool === tool && styles.selectedTool
+                            )}
+                            onClick={() => setCurrentTool(tool)}
+                        >
+                            {TOOL_ICONS[tool]}
                             </button>
                         ))}
                     </div>
