@@ -11,6 +11,8 @@ import DesktopShortcut, { DesktopShortcutProps } from './DesktopShortcut';
 import Scrabble from '../applications/Scrabble';
 import { IconName } from '../../assets/icons';
 import Credits from '../applications/Credits';
+import MsPaint from '../applications/MsPaint';
+
 
 export interface DesktopProps {}
 
@@ -65,6 +67,12 @@ const APPLICATIONS: {
         name: 'Credits',
         shortcutIcon: 'credits',
         component: Credits,
+    },
+    mspaint: {
+        key: 'mspaint',
+        name: 'MS Paint',
+        shortcutIcon: 'computerSmall',
+        component: MsPaint,
     },
 };
 
