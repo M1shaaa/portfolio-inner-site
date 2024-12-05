@@ -38,6 +38,12 @@ const APPLICATIONS: {
         shortcutIcon: 'showcaseIcon',
         component: ShowcaseExplorer,
     },
+    mspaint: {
+        key: 'mspaint',
+        name: 'MS Paint',
+        shortcutIcon: 'mspaintIcon',
+        component: MsPaint,
+    },
     trail: {
         key: 'trail',
         name: 'The Oregon Trail',
@@ -67,13 +73,7 @@ const APPLICATIONS: {
         name: 'Credits',
         shortcutIcon: 'credits',
         component: Credits,
-    },
-    mspaint: {
-        key: 'mspaint',
-        name: 'MS Paint',
-        shortcutIcon: 'computerSmall',
-        component: MsPaint,
-    },
+    }
 };
 
 const Desktop: React.FC<DesktopProps> = (props) => {
@@ -233,20 +233,21 @@ const Desktop: React.FC<DesktopProps> = (props) => {
                 );
             })}
             <div style={styles.shortcuts}>
-                {shortcuts.map((shortcut, i) => {
-                    return (
-                        <div
-                            style={Object.assign({}, styles.shortcutContainer, {
-                                top: i * 104,
-                            })}
-                            key={shortcut.shortcutName}
-                        >
-                            <DesktopShortcut
-                                icon={shortcut.icon}
-                                shortcutName={shortcut.shortcutName}
-                                onOpen={shortcut.onOpen}
-                            />
-                        </div>
+            {shortcuts.map((shortcut, i) => {
+                return (
+                    <div
+                        style={Object.assign({}, styles.shortcutContainer, {
+                            top: Math.floor(i / 2) * 104,
+                            left: (i % 2) * 120,
+                        })}
+                        key={shortcut.shortcutName}
+                    >
+                        <DesktopShortcut
+                            icon={shortcut.icon}
+                            shortcutName={shortcut.shortcutName}
+                            onOpen={shortcut.onOpen}
+                        />
+                    </div>
                     );
                 })}
             </div>
