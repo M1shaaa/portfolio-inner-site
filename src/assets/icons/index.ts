@@ -18,6 +18,7 @@ import windowExplorerIcon from './windowExplorerIcon.png';
 import windowsStartIcon from './windowsStartIcon.png';
 import scrabbleIcon from './scrabbleIcon.png';
 import close from './close.png';
+import mspaintIcon from './mspaintIcon.png';
 
 const icons = {
     windowResize: windowResize,
@@ -32,6 +33,7 @@ const icons = {
     volumeOff: volumeOff,
     credits: credits,
     scrabbleIcon: scrabbleIcon,
+    mspaintIcon: mspaintIcon,
     henordleIcon: henordleIcon,
     close: close,
     windowGameIcon: windowGameIcon,
