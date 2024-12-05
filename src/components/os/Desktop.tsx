@@ -40,7 +40,7 @@ const APPLICATIONS: {
     },
     mspaint: {
         key: 'mspaint',
-        name: 'MS Paint',
+        name: 'ms (misha) paint',
         shortcutIcon: 'mspaintIcon',
         component: MsPaint,
     },
@@ -238,7 +238,7 @@ const Desktop: React.FC<DesktopProps> = (props) => {
                     <div
                         style={Object.assign({}, styles.shortcutContainer, {
                             top: Math.floor(i / 2) * 104,
-                            left: (i % 2) * 120,
+                            left: (i % 2) * 100,
                         })}
                         key={shortcut.shortcutName}
                     >
