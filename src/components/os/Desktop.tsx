@@ -238,7 +238,7 @@ const Desktop: React.FC<DesktopProps> = (props) => {
                     <div
                         style={Object.assign({}, styles.shortcutContainer, {
                             top: Math.floor(i / 2) * 104,
-                            left: (i % 2) * 120,
+                            left: (i % 2) * 160,
                         })}
                         key={shortcut.shortcutName}
                     >
