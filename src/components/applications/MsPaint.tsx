@@ -177,36 +177,39 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
 
     const draw = (e: React.MouseEvent) => {
         if (!isDrawing) return;
-
+    
         const canvas = canvasRef.current;
         const overlayCanvas = overlayCanvasRef.current;
         if (!canvas || !overlayCanvas) return;
-
-        const context = canvas.getContext('2d');
-        const overlayContext = overlayCanvas.getContext('2d');
-        if (!context || !overlayContext) return;
-
+    
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-
+    
+        // Get both contexts
+        const context = canvas.getContext('2d');
+        const overlayContext = overlayCanvas.getContext('2d');
+        if (!context || !overlayContext) return;
+    
         if (currentTool === TOOLS.PENCIL || currentTool === TOOLS.ERASER) {
+            // Draw directly on main canvas for pencil/eraser
+            context.beginPath();
             context.strokeStyle = currentTool === TOOLS.ERASER ? '#ffffff' : currentColor;
             context.lineWidth = currentSize;
             context.lineCap = 'round';
-            context.beginPath();
+            context.lineJoin = 'round';  // Add this for smoother lines
             context.moveTo(lastPos.x, lastPos.y);
             context.lineTo(x, y);
             context.stroke();
             setLastPos({ x, y });
         } else {
-            // Clear overlay for shape preview
+            // Clear and redraw on overlay for shape preview
             overlayContext.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+            overlayContext.beginPath();
             overlayContext.strokeStyle = currentColor;
             overlayContext.lineWidth = currentSize;
-
+    
             if (currentTool === TOOLS.LINE) {
-                overlayContext.beginPath();
                 overlayContext.moveTo(startPos.x, startPos.y);
                 overlayContext.lineTo(x, y);
                 overlayContext.stroke();
@@ -221,7 +224,6 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
                 const radius = Math.sqrt(
                     Math.pow(x - startPos.x, 2) + Math.pow(y - startPos.y, 2)
                 );
-                overlayContext.beginPath();
                 overlayContext.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI);
                 overlayContext.stroke();
             }
@@ -230,25 +232,26 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
 
     const stopDrawing = (e: React.MouseEvent) => {
         if (!isDrawing) return;
-
+    
         const canvas = canvasRef.current;
         const overlayCanvas = overlayCanvasRef.current;
         if (!canvas || !overlayCanvas) return;
-
+    
         const context = canvas.getContext('2d');
         const overlayContext = overlayCanvas.getContext('2d');
         if (!context || !overlayContext) return;
-
+    
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-
+    
         if (currentTool !== TOOLS.PENCIL && currentTool !== TOOLS.ERASER) {
+            // Draw the final shape on the main canvas
+            context.beginPath();
             context.strokeStyle = currentColor;
             context.lineWidth = currentSize;
-
+    
             if (currentTool === TOOLS.LINE) {
-                context.beginPath();
                 context.moveTo(startPos.x, startPos.y);
                 context.lineTo(x, y);
                 context.stroke();
@@ -263,12 +266,16 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
                 const radius = Math.sqrt(
                     Math.pow(x - startPos.x, 2) + Math.pow(y - startPos.y, 2)
                 );
-                context.beginPath();
                 context.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI);
                 context.stroke();
             }
+    
+            // Clear the overlay after drawing the final shape
             overlayContext.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
         }
+    
+        setIsDrawing(false);
+    };
 
         setIsDrawing(false);
     };
