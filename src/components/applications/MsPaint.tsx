@@ -256,7 +256,57 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
             minimizeWindow={props.onMinimize}
         >
             <div style={styles.container}>
-                {/* Toolbar remains the same */}
+            <div style={styles.toolbar}>
+                    <div style={styles.toolSection}>
+                        {Object.entries(TOOLS).map(([key, tool]) => (
+                            <button 
+                                key={tool}
+                                style={Object.assign(
+                                    {},
+                                    styles.toolButton,
+                                    currentTool === tool && styles.selectedTool
+                                )}
+                                onClick={() => setCurrentTool(tool)}
+                            >
+                                {TOOL_ICONS[tool]}
+                            </button>
+                        ))}
+                    </div>
+                    <div style={styles.toolSection}>
+                        {SIZES.map(size => (
+                            <button
+                                key={size}
+                                style={Object.assign(
+                                    {},
+                                    styles.sizeButton,
+                                    currentSize === size && styles.selectedTool
+                                )}
+                                onClick={() => setCurrentSize(size)}
+                            >
+                                <div 
+                                    style={{
+                                        ...styles.sizeIndicator,
+                                        transform: `scale(${size/32})`
+                                    }}
+                                />
+                            </button>
+                        ))}
+                    </div>
+                    <div style={styles.colorPalette}>
+                        {COLORS.map(color => (
+                            <div
+                                key={color}
+                                style={Object.assign(
+                                    {},
+                                    styles.colorButton,
+                                    { backgroundColor: color },
+                                    currentColor === color && styles.selectedColor
+                                )}
+                                onClick={() => setCurrentColor(color)}
+                            />
+                        ))}
+                    </div>
+                </div>
                 <div style={styles.canvasContainer}>
                     <canvas
                         ref={canvasRef}
