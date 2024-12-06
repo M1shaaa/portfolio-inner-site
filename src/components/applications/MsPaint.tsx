@@ -120,9 +120,11 @@ const styles: StyleSheetCSS = {
     },
     canvas: {
         border: '1px solid #808080',
-        margin: '4px',
         backgroundColor: '#ffffff',
         cursor: 'crosshair',
+        // Ensure the canvas isn't being affected by any positioning
+        position: 'static',
+        display: 'block',
     },
     sizeIndicator: {
         width: '100%',
@@ -133,6 +135,11 @@ const styles: StyleSheetCSS = {
     canvasContainer: {
         position: 'relative',
         margin: '4px',
+        flex: 1,
+        // Remove any absolute positioning that might cause layering issues
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 };
 
@@ -158,28 +165,37 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
         context.fillRect(0, 0, canvas.width, canvas.height);
     }, []);
 
-    const startDrawing = (e: React.MouseEvent) => {
+    const getMousePos = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        const canvas = canvasRef.current;
+        if (!canvas) return { x: 0, y: 0 };
+
+        const rect = canvas.getBoundingClientRect();
+        // Calculate position relative to the canvas, accounting for any scaling
+        return {
+            x: ((e.clientX - rect.left) * canvas.width) / rect.width,
+            y: ((e.clientY - rect.top) * canvas.height) / rect.height,
+        };
+    };
+
+    const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
         const context = canvas.getContext('2d');
         if (!context) return;
 
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
+        const pos = getMousePos(e);
+        
         setIsDrawing(true);
-        setStartPos({ x, y });
-        setLastPos({ x, y });
+        setStartPos(pos);
+        setLastPos(pos);
 
         // Save the canvas state before starting any drawing
         setSavedImageData(context.getImageData(0, 0, canvas.width, canvas.height));
 
         if (currentTool === TOOLS.PENCIL || currentTool === TOOLS.ERASER) {
             context.beginPath();
-            context.moveTo(x, y);
-            context.lineTo(x, y);
+            context.moveTo(pos.x, pos.y);
             context.strokeStyle = currentTool === TOOLS.ERASER ? '#ffffff' : currentColor;
             context.lineWidth = currentSize;
             context.lineCap = 'round';
@@ -187,27 +203,24 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
         }
     };
 
-    const draw = (e: React.MouseEvent) => {
+    const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (!isDrawing || !canvasRef.current) return;
 
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         if (!context) return;
 
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        const pos = getMousePos(e);
 
         if (currentTool === TOOLS.PENCIL || currentTool === TOOLS.ERASER) {
-            // For freehand drawing, continue from the last position
             context.beginPath();
             context.moveTo(lastPos.x, lastPos.y);
-            context.lineTo(x, y);
+            context.lineTo(pos.x, pos.y);
             context.strokeStyle = currentTool === TOOLS.ERASER ? '#ffffff' : currentColor;
             context.lineWidth = currentSize;
             context.lineCap = 'round';
             context.stroke();
-            setLastPos({ x, y });
+            setLastPos(pos);
         } else {
             // For shapes, restore the original state and draw the preview
             if (savedImageData) {
@@ -222,20 +235,20 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
                 case TOOLS.LINE:
                     context.beginPath();
                     context.moveTo(startPos.x, startPos.y);
-                    context.lineTo(x, y);
+                    context.lineTo(pos.x, pos.y);
                     context.stroke();
                     break;
                 case TOOLS.RECTANGLE:
                     context.strokeRect(
-                        Math.min(startPos.x, x),
-                        Math.min(startPos.y, y),
-                        Math.abs(x - startPos.x),
-                        Math.abs(y - startPos.y)
+                        Math.min(startPos.x, pos.x),
+                        Math.min(startPos.y, pos.y),
+                        Math.abs(pos.x - startPos.x),
+                        Math.abs(pos.y - startPos.y)
                     );
                     break;
                 case TOOLS.CIRCLE:
                     const radius = Math.sqrt(
-                        Math.pow(x - startPos.x, 2) + Math.pow(y - startPos.y, 2)
+                        Math.pow(pos.x - startPos.x, 2) + Math.pow(pos.y - startPos.y, 2)
                     );
                     context.beginPath();
                     context.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI);
@@ -245,7 +258,7 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
         }
     };
 
-    const stopDrawing = (e: React.MouseEvent) => {
+    const stopDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (!isDrawing) return;
 
         // For shapes, make sure to draw the final shape
