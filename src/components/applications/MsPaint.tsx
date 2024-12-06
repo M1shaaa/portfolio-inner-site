@@ -144,7 +144,6 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
     const [currentSize, setCurrentSize] = useState(SIZES[0]);
     const [startPos, setStartPos] = useState({ x: 0, y: 0 });
     const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
-    // Store the canvas state before starting a shape
     const [savedImageData, setSavedImageData] = useState<ImageData | null>(null);
 
     useEffect(() => {
@@ -154,6 +153,7 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
         const context = canvas.getContext('2d');
         if (!context) return;
 
+        // Set initial white background
         context.fillStyle = '#ffffff';
         context.fillRect(0, 0, canvas.width, canvas.height);
     }, []);
@@ -173,16 +173,17 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
         setStartPos({ x, y });
         setLastPos({ x, y });
 
-        // Save the canvas state before starting a shape
-        if (currentTool !== TOOLS.PENCIL && currentTool !== TOOLS.ERASER) {
-            setSavedImageData(context.getImageData(0, 0, canvas.width, canvas.height));
-        }
+        // Save the canvas state before starting any drawing
+        setSavedImageData(context.getImageData(0, 0, canvas.width, canvas.height));
 
         if (currentTool === TOOLS.PENCIL || currentTool === TOOLS.ERASER) {
             context.beginPath();
-            context.arc(x, y, currentSize/2, 0, Math.PI * 2);
-            context.fillStyle = currentTool === TOOLS.ERASER ? '#ffffff' : currentColor;
-            context.fill();
+            context.moveTo(x, y);
+            context.lineTo(x, y);
+            context.strokeStyle = currentTool === TOOLS.ERASER ? '#ffffff' : currentColor;
+            context.lineWidth = currentSize;
+            context.lineCap = 'round';
+            context.stroke();
         }
     };
 
@@ -198,6 +199,7 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
         const y = e.clientY - rect.top;
 
         if (currentTool === TOOLS.PENCIL || currentTool === TOOLS.ERASER) {
+            // For freehand drawing, continue from the last position
             context.beginPath();
             context.moveTo(lastPos.x, lastPos.y);
             context.lineTo(x, y);
@@ -207,7 +209,7 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
             context.stroke();
             setLastPos({ x, y });
         } else {
-            // Restore the saved state before drawing preview
+            // For shapes, restore the original state and draw the preview
             if (savedImageData) {
                 context.putImageData(savedImageData, 0, 0);
             }
@@ -216,29 +218,41 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
             context.strokeStyle = currentColor;
             context.lineWidth = currentSize;
 
-            if (currentTool === TOOLS.LINE) {
-                context.moveTo(startPos.x, startPos.y);
-                context.lineTo(x, y);
-                context.stroke();
-            } else if (currentTool === TOOLS.RECTANGLE) {
-                context.strokeRect(
-                    Math.min(startPos.x, x),
-                    Math.min(startPos.y, y),
-                    Math.abs(x - startPos.x),
-                    Math.abs(y - startPos.y)
-                );
-            } else if (currentTool === TOOLS.CIRCLE) {
-                const radius = Math.sqrt(
-                    Math.pow(x - startPos.x, 2) + Math.pow(y - startPos.y, 2)
-                );
-                context.beginPath();
-                context.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI);
-                context.stroke();
+            switch (currentTool) {
+                case TOOLS.LINE:
+                    context.beginPath();
+                    context.moveTo(startPos.x, startPos.y);
+                    context.lineTo(x, y);
+                    context.stroke();
+                    break;
+                case TOOLS.RECTANGLE:
+                    context.strokeRect(
+                        Math.min(startPos.x, x),
+                        Math.min(startPos.y, y),
+                        Math.abs(x - startPos.x),
+                        Math.abs(y - startPos.y)
+                    );
+                    break;
+                case TOOLS.CIRCLE:
+                    const radius = Math.sqrt(
+                        Math.pow(x - startPos.x, 2) + Math.pow(y - startPos.y, 2)
+                    );
+                    context.beginPath();
+                    context.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI);
+                    context.stroke();
+                    break;
             }
         }
     };
 
-    const stopDrawing = () => {
+    const stopDrawing = (e: React.MouseEvent) => {
+        if (!isDrawing) return;
+
+        // For shapes, make sure to draw the final shape
+        if (currentTool !== TOOLS.PENCIL && currentTool !== TOOLS.ERASER) {
+            draw(e);
+        }
+        
         setIsDrawing(false);
         setSavedImageData(null);
     };
@@ -256,7 +270,6 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
             minimizeWindow={props.onMinimize}
         >
             <div style={styles.container}>
-                {/* Toolbar remains the same */}
                 <div style={styles.canvasContainer}>
                     <canvas
                         ref={canvasRef}
