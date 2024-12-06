@@ -141,18 +141,17 @@ const styles: StyleSheetCSS = {
     },
     canvasContainer: {
         position: 'relative',
-        margin: '4px',
         flex: 1,
         display: 'flex',
+        padding: '4px',
         overflow: 'hidden',
+        backgroundColor: '#fff',
     },
     canvas: {
+        flex: 1,
         border: '1px solid #808080',
-        margin: '4px',
         backgroundColor: '#ffffff',
         cursor: 'crosshair',
-        width: '100%',
-        height: '100%',
     },
     sizeIndicator: {
         width: '100%',
@@ -199,28 +198,42 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
     useEffect(() => {
         const updateCanvasSize = () => {
             const canvas = canvasRef.current;
-            if (!canvas) return;
-
-            const container = canvas.parentElement;
-            if (!container) return;
-
-            // Store current drawing
+            const container = canvas?.parentElement;
+            if (!canvas || !container) return;
+    
+            // Save the current drawing
             const context = canvas.getContext('2d');
             if (!context) return;
             const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-
-            // Update canvas size
-            canvas.width = container.clientWidth - 8;
-            canvas.height = container.clientHeight - 8;
-
-            // Restore drawing
+    
+            // Calculate new dimensions (subtract margins and borders)
+            const newWidth = container.clientWidth - 10;
+            const newHeight = container.clientHeight - 10;
+    
+            // Update canvas dimensions
+            canvas.width = newWidth;
+            canvas.height = newHeight;
+    
+            // Restore the drawing
             context.putImageData(imageData, 0, 0);
         };
-
-        window.addEventListener('resize', updateCanvasSize);
+    
+        // Call once on mount
         updateCanvasSize();
-
-        return () => window.removeEventListener('resize', updateCanvasSize);
+    
+        // Create a ResizeObserver to watch the container's size
+        const resizeObserver = new ResizeObserver(updateCanvasSize);
+        const container = canvasRef.current?.parentElement;
+        if (container) {
+            resizeObserver.observe(container);
+        }
+    
+        return () => {
+            if (container) {
+                resizeObserver.unobserve(container);
+            }
+            resizeObserver.disconnect();
+        };
     }, []);
 
     const startDrawing = (e: React.MouseEvent) => {
@@ -317,7 +330,6 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
             closeWindow={props.onClose}
             onInteract={props.onInteract}
             minimizeWindow={props.onMinimize}
-            resizable={true}
         >
             <div style={styles.container}>
                 <div style={styles.toolbar}>
