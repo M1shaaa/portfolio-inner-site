@@ -105,16 +105,30 @@ const styles: StyleSheetCSS = {
         justifyContent: 'center',
         alignItems: 'center',
     },
-    colorPalette: {
+    colorSection: {
         display: 'flex',
-        flexWrap: 'wrap',
-        width: '224px',
-        gap: '1px',
+        flexDirection: 'column',
+        gap: '4px',
         padding: '2px',
         borderTop: '1px solid #808080',
         borderLeft: '1px solid #808080',
         borderRight: '1px solid #ffffff',
         borderBottom: '1px solid #ffffff',
+    },
+    moviePalette: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        marginBottom: '4px',
+    },
+    movieName: {
+        width: '100px',
+        fontSize: '12px',
+        fontFamily: 'Arial',
+    },
+    movieColors: {
+        display: 'flex',
+        gap: '4px',
     },
     colorButton: {
         width: '26px',
@@ -125,11 +139,20 @@ const styles: StyleSheetCSS = {
     selectedColor: {
         border: '2px solid #000000',
     },
+    canvasContainer: {
+        position: 'relative',
+        margin: '4px',
+        flex: 1,
+        display: 'flex',
+        overflow: 'hidden',
+    },
     canvas: {
         border: '1px solid #808080',
         margin: '4px',
         backgroundColor: '#ffffff',
         cursor: 'crosshair',
+        width: '100%',
+        height: '100%',
     },
     sizeIndicator: {
         width: '100%',
@@ -137,10 +160,6 @@ const styles: StyleSheetCSS = {
         borderRadius: '50%',
         backgroundColor: 'black',
     },
-    canvasContainer: {
-        position: 'relative',
-        margin: '4px',
-    }
 };
 
 const MsPaint: React.FC<MsPaintAppProps> = (props) => {
@@ -151,8 +170,20 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
     const [currentSize, setCurrentSize] = useState(SIZES[0]);
     const [startPos, setStartPos] = useState({ x: 0, y: 0 });
     const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
-    // Store the canvas state before starting a shape
     const [savedImageData, setSavedImageData] = useState<ImageData | null>(null);
+
+    const handleToolClick = (tool: string) => {
+        setCurrentTool(tool);
+        if (tool === TOOLS.CLEAR) {
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+            const context = canvas.getContext('2d');
+            if (!context) return;
+            context.fillStyle = '#ffffff';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            setCurrentTool(TOOLS.PENCIL);
+        }
+    };
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -163,6 +194,33 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
 
         context.fillStyle = '#ffffff';
         context.fillRect(0, 0, canvas.width, canvas.height);
+    }, []);
+
+    useEffect(() => {
+        const updateCanvasSize = () => {
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+
+            const container = canvas.parentElement;
+            if (!container) return;
+
+            // Store current drawing
+            const context = canvas.getContext('2d');
+            if (!context) return;
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+            // Update canvas size
+            canvas.width = container.clientWidth - 8;
+            canvas.height = container.clientHeight - 8;
+
+            // Restore drawing
+            context.putImageData(imageData, 0, 0);
+        };
+
+        window.addEventListener('resize', updateCanvasSize);
+        updateCanvasSize();
+
+        return () => window.removeEventListener('resize', updateCanvasSize);
     }, []);
 
     const startDrawing = (e: React.MouseEvent) => {
@@ -180,7 +238,6 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
         setStartPos({ x, y });
         setLastPos({ x, y });
 
-        // Save the canvas state before starting a shape
         if (currentTool !== TOOLS.PENCIL && currentTool !== TOOLS.ERASER) {
             setSavedImageData(context.getImageData(0, 0, canvas.width, canvas.height));
         }
@@ -214,7 +271,6 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
             context.stroke();
             setLastPos({ x, y });
         } else {
-            // Restore the saved state before drawing preview
             if (savedImageData) {
                 context.putImageData(savedImageData, 0, 0);
             }
@@ -239,22 +295,9 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
                     Math.pow(x - startPos.x, 2) + Math.pow(y - startPos.y, 2)
                 );
                 context.beginPath();
-                context.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI);
+                context.arc(startPos.x, startPos.y, radius, 0, Math.PI * 2);
                 context.stroke();
             }
-        }
-    };
-
-    const handleToolClick = (tool: string) => {
-        setCurrentTool(tool);
-        if (tool === TOOLS.CLEAR) {
-            const canvas = canvasRef.current;
-            if (!canvas) return;
-            const context = canvas.getContext('2d');
-            if (!context) return;
-            context.fillStyle = '#ffffff';
-            context.fillRect(0, 0, canvas.width, canvas.height);
-            setCurrentTool(TOOLS.PENCIL); // Reset to pencil after clearing
         }
     };
 
@@ -274,6 +317,7 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
             closeWindow={props.onClose}
             onInteract={props.onInteract}
             minimizeWindow={props.onMinimize}
+            resizable={true}
         >
             <div style={styles.container}>
                 <div style={styles.toolbar}>
@@ -337,8 +381,6 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
                 <div style={styles.canvasContainer}>
                     <canvas
                         ref={canvasRef}
-                        width={780}
-                        height={500}
                         style={styles.canvas}
                         onMouseDown={startDrawing}
                         onMouseMove={draw}
