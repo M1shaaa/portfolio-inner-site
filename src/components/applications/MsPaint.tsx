@@ -273,9 +273,6 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
             // Clear the overlay after drawing the final shape
             overlayContext.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
         }
-    
-        setIsDrawing(false);
-    };
 
         setIsDrawing(false);
     };
