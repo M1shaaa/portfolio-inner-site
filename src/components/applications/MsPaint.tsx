@@ -162,71 +162,50 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
         overlayCanvas.height = canvas.height;
     }, []);
 
-    const startDrawing = (e: React.MouseEvent) => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        setIsDrawing(true);
-        setStartPos({ x, y });
-        setLastPos({ x, y });
-    };
-
     const draw = (e: React.MouseEvent) => {
-        if (!isDrawing) return;
+        if (!isDrawing || !canvasRef.current) return;
     
         const canvas = canvasRef.current;
-        const overlayCanvas = overlayCanvasRef.current;
-        if (!canvas || !overlayCanvas) return;
+        const context = canvas.getContext('2d');
+        if (!context) return;
     
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-    
-        // Get both contexts
-        const context = canvas.getContext('2d');
-        const overlayContext = overlayCanvas.getContext('2d');
-        if (!context || !overlayContext) return;
     
         if (currentTool === TOOLS.PENCIL || currentTool === TOOLS.ERASER) {
-            // Draw directly on main canvas for pencil/eraser
             context.beginPath();
+            context.moveTo(lastPos.x, lastPos.y);
+            context.lineTo(x, y);
             context.strokeStyle = currentTool === TOOLS.ERASER ? '#ffffff' : currentColor;
             context.lineWidth = currentSize;
             context.lineCap = 'round';
-            context.lineJoin = 'round';  // Add this for smoother lines
-            context.moveTo(lastPos.x, lastPos.y);
-            context.lineTo(x, y);
             context.stroke();
             setLastPos({ x, y });
-        } else {
-            // Clear and redraw on overlay for shape preview
-            overlayContext.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-            overlayContext.beginPath();
-            overlayContext.strokeStyle = currentColor;
-            overlayContext.lineWidth = currentSize;
+        }
+    };
     
-            if (currentTool === TOOLS.LINE) {
-                overlayContext.moveTo(startPos.x, startPos.y);
-                overlayContext.lineTo(x, y);
-                overlayContext.stroke();
-            } else if (currentTool === TOOLS.RECTANGLE) {
-                overlayContext.strokeRect(
-                    Math.min(startPos.x, x),
-                    Math.min(startPos.y, y),
-                    Math.abs(x - startPos.x),
-                    Math.abs(y - startPos.y)
-                );
-            } else if (currentTool === TOOLS.CIRCLE) {
-                const radius = Math.sqrt(
-                    Math.pow(x - startPos.x, 2) + Math.pow(y - startPos.y, 2)
-                );
-                overlayContext.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI);
-                overlayContext.stroke();
-            }
+    const startDrawing = (e: React.MouseEvent) => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+    
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+    
+        setIsDrawing(true);
+        setStartPos({ x, y });
+        setLastPos({ x, y });
+    
+        // For immediate dot with pencil/eraser
+        if (currentTool === TOOLS.PENCIL || currentTool === TOOLS.ERASER) {
+            const context = canvas.getContext('2d');
+            if (!context) return;
+            
+            context.beginPath();
+            context.arc(x, y, currentSize/2, 0, Math.PI * 2);
+            context.fillStyle = currentTool === TOOLS.ERASER ? '#ffffff' : currentColor;
+            context.fill();
         }
     };
 
@@ -341,7 +320,8 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
                         ))}
                     </div>
                 </div>
-                <div style={styles.canvasContainer}>
+                <div style={styles.container}>
+                    {/* ... toolbar ... */}
                     <canvas
                         ref={canvasRef}
                         width={780}
