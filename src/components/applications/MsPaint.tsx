@@ -245,6 +245,19 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
         }
     };
 
+    const handleToolClick = (tool: string) => {
+        setCurrentTool(tool);
+        if (tool === TOOLS.CLEAR) {
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+            const context = canvas.getContext('2d');
+            if (!context) return;
+            context.fillStyle = '#ffffff';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            setCurrentTool(TOOLS.PENCIL); // Reset to pencil after clearing
+        }
+    };
+
     const stopDrawing = () => {
         setIsDrawing(false);
         setSavedImageData(null);
@@ -263,7 +276,7 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
             minimizeWindow={props.onMinimize}
         >
             <div style={styles.container}>
-            <div style={styles.toolbar}>
+                <div style={styles.toolbar}>
                     <div style={styles.toolSection}>
                         {Object.entries(TOOLS).map(([key, tool]) => (
                             <button 
@@ -273,7 +286,7 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
                                     styles.toolButton,
                                     currentTool === tool && styles.selectedTool
                                 )}
-                                onClick={() => setCurrentTool(tool)}
+                                onClick={() => handleToolClick(tool)}
                             >
                                 {TOOL_ICONS[tool]}
                             </button>
@@ -300,25 +313,26 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
                         ))}
                     </div>
                     <div style={styles.colorSection}>
-                    {Object.entries(MOVIE_PALETTES).map(([movie, colors]) => (
-                        <div key={movie} style={styles.moviePalette}>
-                            <div style={styles.movieName}>{movie}</div>
-                            <div style={styles.movieColors}>
-                                {colors.map(color => (
-                                    <div
-                                        key={color}
-                                        style={Object.assign(
-                                            {},
-                                            styles.colorButton,
-                                            { backgroundColor: color },
-                                            currentColor === color && styles.selectedColor
-                                        )}
-                                        onClick={() => setCurrentColor(color)}
-                                    />
-                                ))}
+                        {Object.entries(MOVIE_PALETTES).map(([movie, colors]) => (
+                            <div key={movie} style={styles.moviePalette}>
+                                <div style={styles.movieName}>{movie}</div>
+                                <div style={styles.movieColors}>
+                                    {colors.map(color => (
+                                        <div
+                                            key={color}
+                                            style={Object.assign(
+                                                {},
+                                                styles.colorButton,
+                                                { backgroundColor: color },
+                                                currentColor === color && styles.selectedColor
+                                            )}
+                                            onClick={() => setCurrentColor(color)}
+                                        />
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
                 <div style={styles.canvasContainer}>
                     <canvas
