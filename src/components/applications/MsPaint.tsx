@@ -139,19 +139,18 @@ const styles: StyleSheetCSS = {
     selectedColor: {
         border: '2px solid #000000',
     },
-    canvasContainer: {
-        position: 'relative',
-        flex: 1,
-        display: 'flex',
-        padding: '4px',
-        overflow: 'hidden',
-        backgroundColor: '#fff',
-    },
     canvas: {
-        flex: 1,
+        width: '100%',
+        height: '100%',
         border: '1px solid #808080',
         backgroundColor: '#ffffff',
         cursor: 'crosshair',
+    },
+    canvasContainer: {
+        flex: 1,
+        position: 'relative',
+        margin: '4px',
+        display: 'flex',
     },
     sizeIndicator: {
         width: '100%',
@@ -321,16 +320,40 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
 
     return (
         <Window
-            top={40}
-            left={100}
-            width={800}
-            height={600}
-            windowBarIcon="mspaintIcon"
-            windowTitle="ms paint"
-            closeWindow={props.onClose}
-            onInteract={props.onInteract}
-            minimizeWindow={props.onMinimize}
-        >
+        top={40}
+        left={100}
+        width={800}
+        height={600}
+        windowBarIcon="mspaintIcon"
+        windowTitle="ms paint"
+        closeWindow={props.onClose}
+        onInteract={props.onInteract}
+        minimizeWindow={props.onMinimize}
+        onWidthChange={(width) => {
+            const canvas = canvasRef.current;
+            if (canvas) {
+                // Save current drawing
+                const context = canvas.getContext('2d');
+                if (context) {
+                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                    canvas.width = width - 20; // Account for padding/borders
+                    context.putImageData(imageData, 0, 0);
+                }
+            }
+        }}
+        onHeightChange={(height) => {
+            const canvas = canvasRef.current;
+            if (canvas) {
+                // Save current drawing
+                const context = canvas.getContext('2d');
+                if (context) {
+                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                    canvas.height = height - 80; // Account for toolbar and padding
+                    context.putImageData(imageData, 0, 0);
+                }
+            }
+        }}
+    >
             <div style={styles.container}>
                 <div style={styles.toolbar}>
                     <div style={styles.toolSection}>
