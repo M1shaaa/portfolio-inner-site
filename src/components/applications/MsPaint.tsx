@@ -3,10 +3,11 @@ import Window from '../os/Window';
 
 export interface MsPaintAppProps extends WindowAppProps {}
 
-const COLORS = [
-    '#000000', '#808080', '#800000', '#808000', '#008000', '#008080', '#000080', '#800080',
-    '#ffffff', '#c0c0c0', '#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff'
-];
+const MOVIE_PALETTES = {
+    'Fantastic Mr. Fox': ['#DD8D29', '#E2D200', '#46ACC8', '#E58601', '#B40F20'],
+    'Rushmore': ['#AC1109', '#D4A84B', '#7C1E1E', '#EBC944', '#0B0F26'],
+    'Grand Budapest': ['#F1BB7B', '#FD6467', '#5B1A18', '#D67236', '#E6A0C4'],
+};
 
 const SIZES = [2, 6, 12, 20, 32];
 
@@ -16,6 +17,7 @@ const TOOLS = {
     LINE: 'line',
     RECTANGLE: 'rectangle',
     CIRCLE: 'circle',
+    CLEAR: 'clear',
 };
 
 const TOOL_ICONS = {
@@ -42,6 +44,11 @@ const TOOL_ICONS = {
     [TOOLS.CIRCLE]: (
         <svg viewBox="0 0 24 24" width="16" height="16">
             <circle cx="12" cy="12" r="8" stroke="currentColor" fill="none" strokeWidth="2"/>
+        </svg>
+    ),
+    [TOOLS.CLEAR]: (
+        <svg viewBox="0 0 24 24" width="16" height="16">
+            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/>
         </svg>
     ),
 };
@@ -292,20 +299,26 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
                             </button>
                         ))}
                     </div>
-                    <div style={styles.colorPalette}>
-                        {COLORS.map(color => (
-                            <div
-                                key={color}
-                                style={Object.assign(
-                                    {},
-                                    styles.colorButton,
-                                    { backgroundColor: color },
-                                    currentColor === color && styles.selectedColor
-                                )}
-                                onClick={() => setCurrentColor(color)}
-                            />
-                        ))}
-                    </div>
+                    <div style={styles.colorSection}>
+                    {Object.entries(MOVIE_PALETTES).map(([movie, colors]) => (
+                        <div key={movie} style={styles.moviePalette}>
+                            <div style={styles.movieName}>{movie}</div>
+                            <div style={styles.movieColors}>
+                                {colors.map(color => (
+                                    <div
+                                        key={color}
+                                        style={Object.assign(
+                                            {},
+                                            styles.colorButton,
+                                            { backgroundColor: color },
+                                            currentColor === color && styles.selectedColor
+                                        )}
+                                        onClick={() => setCurrentColor(color)}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    ))}
                 </div>
                 <div style={styles.canvasContainer}>
                     <canvas
