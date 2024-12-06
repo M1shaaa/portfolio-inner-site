@@ -293,7 +293,7 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
             width={800}
             height={600}
             windowBarIcon="mspaintIcon"
-            windowTitle="ms paint"
+            windowTitle="ms (misha) paint"
             closeWindow={props.onClose}
             onInteract={props.onInteract}
             minimizeWindow={props.onMinimize}
