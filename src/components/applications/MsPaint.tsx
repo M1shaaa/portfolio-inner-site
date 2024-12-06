@@ -212,11 +212,11 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
     const stopDrawing = (e: React.MouseEvent) => {
         if (!isDrawing) return;
     
-        const canvas = canvasRef.current;
+        const canvas = canvasRef.current;        // Drawing on main canvas
         const overlayCanvas = overlayCanvasRef.current;
         if (!canvas || !overlayCanvas) return;
     
-        const context = canvas.getContext('2d');
+        const context = canvas.getContext('2d');        // Drawing on main canvas
         const overlayContext = overlayCanvas.getContext('2d');
         if (!context || !overlayContext) return;
     
@@ -225,6 +225,9 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
         const y = e.clientY - rect.top;
     
         if (currentTool !== TOOLS.PENCIL && currentTool !== TOOLS.ERASER) {
+            // Clear the overlay first
+            overlayContext.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+    
             // Draw the final shape on the main canvas
             context.beginPath();
             context.strokeStyle = currentColor;
@@ -248,11 +251,8 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
                 context.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI);
                 context.stroke();
             }
-    
-            // Clear the overlay after drawing the final shape
-            overlayContext.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
         }
-
+    
         setIsDrawing(false);
     };
 
@@ -263,7 +263,7 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
             width={800}
             height={600}
             windowBarIcon="mspaintIcon"
-            windowTitle="ms paint"
+            windowTitle="ms (misha) paint"
             closeWindow={props.onClose}
             onInteract={props.onInteract}
             minimizeWindow={props.onMinimize}
@@ -273,30 +273,35 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
                     {/* ... toolbar content stays the same ... */}
                 </div>
                 <div style={styles.canvasContainer}>
-                    <canvas
-                        ref={canvasRef}
-                        width={780}
-                        height={500}
-                        style={styles.canvas}
-                        onMouseDown={startDrawing}
-                        onMouseMove={draw}
-                        onMouseUp={stopDrawing}
-                        onMouseLeave={stopDrawing}
-                    />
-                    <canvas
-                        ref={overlayCanvasRef}
-                        width={780}
-                        height={500}
-                        style={{
-                            ...styles.canvas,
-                            position: 'absolute',
-                            top: 4,  // Match the margin of the main canvas
-                            left: 4,
-                            pointerEvents: 'none',
-                            margin: 0,
-                        }}
-                    />
-                </div>
+                <canvas
+                    ref={overlayCanvasRef}
+                    width={780}
+                    height={500}
+                    style={{
+                        ...styles.canvas,
+                        position: 'absolute',
+                        top: 4,
+                        left: 4,
+                        pointerEvents: 'none',
+                        margin: 0,
+                        zIndex: 1  // Add this
+                    }}
+                />
+                <canvas
+                    ref={canvasRef}
+                    width={780}
+                    height={500}
+                    style={{
+                        ...styles.canvas,
+                        position: 'relative',
+                        zIndex: 0  // Add this
+                    }}
+                    onMouseDown={startDrawing}
+                    onMouseMove={draw}
+                    onMouseUp={stopDrawing}
+                    onMouseLeave={stopDrawing}
+                />
+            </div>
             </div>
         </Window>
     );
