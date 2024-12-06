@@ -139,18 +139,18 @@ const styles: StyleSheetCSS = {
     selectedColor: {
         border: '2px solid #000000',
     },
+    canvasContainer: {
+        position: 'relative',
+        flex: 1,
+        display: 'flex',
+        margin: '4px',
+        overflow: 'hidden',
+    },
     canvas: {
-        width: '100%',
-        height: '100%',
+        flex: 1,
         border: '1px solid #808080',
         backgroundColor: '#ffffff',
         cursor: 'crosshair',
-    },
-    canvasContainer: {
-        flex: 1,
-        position: 'relative',
-        margin: '4px',
-        display: 'flex',
     },
     sizeIndicator: {
         width: '100%',
@@ -163,6 +163,7 @@ const styles: StyleSheetCSS = {
 const MsPaint: React.FC<MsPaintAppProps> = (props) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isDrawing, setIsDrawing] = useState(false);
+    const [windowSize, setWindowSize] = useState({ width: 800, height: 600 });
     const [currentColor, setCurrentColor] = useState('#000000');
     const [currentTool, setCurrentTool] = useState(TOOLS.PENCIL);
     const [currentSize, setCurrentSize] = useState(SIZES[0]);
@@ -183,6 +184,7 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
         }
     };
 
+    // Update canvas size whenever window size changes
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -190,50 +192,16 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
         const context = canvas.getContext('2d');
         if (!context) return;
 
-        context.fillStyle = '#ffffff';
-        context.fillRect(0, 0, canvas.width, canvas.height);
-    }, []);
+        // Save the current drawing
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
 
-    useEffect(() => {
-        const updateCanvasSize = () => {
-            const canvas = canvasRef.current;
-            const container = canvas?.parentElement;
-            if (!canvas || !container) return;
-    
-            // Save the current drawing
-            const context = canvas.getContext('2d');
-            if (!context) return;
-            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-    
-            // Calculate new dimensions (subtract margins and borders)
-            const newWidth = container.clientWidth - 10;
-            const newHeight = container.clientHeight - 10;
-    
-            // Update canvas dimensions
-            canvas.width = newWidth;
-            canvas.height = newHeight;
-    
-            // Restore the drawing
-            context.putImageData(imageData, 0, 0);
-        };
-    
-        // Call once on mount
-        updateCanvasSize();
-    
-        // Create a ResizeObserver to watch the container's size
-        const resizeObserver = new ResizeObserver(updateCanvasSize);
-        const container = canvasRef.current?.parentElement;
-        if (container) {
-            resizeObserver.observe(container);
-        }
-    
-        return () => {
-            if (container) {
-                resizeObserver.unobserve(container);
-            }
-            resizeObserver.disconnect();
-        };
-    }, []);
+        // Update canvas size (subtracting space for toolbar and borders)
+        canvas.width = windowSize.width - 20;
+        canvas.height = windowSize.height - 100;  // Account for toolbar height
+
+        // Restore the drawing
+        context.putImageData(imageData, 0, 0);
+    }, [windowSize]);
 
     const startDrawing = (e: React.MouseEvent) => {
         const canvas = canvasRef.current;
@@ -320,40 +288,18 @@ const MsPaint: React.FC<MsPaintAppProps> = (props) => {
 
     return (
         <Window
-        top={40}
-        left={100}
-        width={800}
-        height={600}
-        windowBarIcon="mspaintIcon"
-        windowTitle="ms paint"
-        closeWindow={props.onClose}
-        onInteract={props.onInteract}
-        minimizeWindow={props.onMinimize}
-        onWidthChange={(width) => {
-            const canvas = canvasRef.current;
-            if (canvas) {
-                // Save current drawing
-                const context = canvas.getContext('2d');
-                if (context) {
-                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-                    canvas.width = width - 20; // Account for padding/borders
-                    context.putImageData(imageData, 0, 0);
-                }
-            }
-        }}
-        onHeightChange={(height) => {
-            const canvas = canvasRef.current;
-            if (canvas) {
-                // Save current drawing
-                const context = canvas.getContext('2d');
-                if (context) {
-                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-                    canvas.height = height - 80; // Account for toolbar and padding
-                    context.putImageData(imageData, 0, 0);
-                }
-            }
-        }}
-    >
+            top={40}
+            left={100}
+            width={800}
+            height={600}
+            windowBarIcon="mspaintIcon"
+            windowTitle="ms paint"
+            closeWindow={props.onClose}
+            onInteract={props.onInteract}
+            minimizeWindow={props.onMinimize}
+            onWidthChange={(width) => setWindowSize(prev => ({ ...prev, width }))}
+            onHeightChange={(height) => setWindowSize(prev => ({ ...prev, height }))}
+        >
             <div style={styles.container}>
                 <div style={styles.toolbar}>
                     <div style={styles.toolSection}>
