@@ -24,33 +24,40 @@ const SoftwareProjects: React.FC<SoftwareProjectsProps> = () => {
             </div>
             <div className="text-block">
                 <h2>ultra running</h2>
+                <br />
                 <h4>the 100 miler</h4>
                 <p>
                     [coming soon!] 
                 </p>
+                <br />
                 <h4>the 50 miler</h4>
                 <p>
                     [coming soon!] 
                 </p>
             </div>
             <div className="text-block">
+            <br />
                 <h2>mountain climbing</h2>
                 <h4>nevado de tolima - Colombia (17,100')</h4>
                 <p>
                     [coming soon!] 
                 </p>
+                <br />
                 <h4>mt. shasta (14,179')</h4>
                 <p>
                     [coming soon!] 
                 </p>
+                <br />
                 <h4>mt. whitney (14,505')</h4>
                 <p>
                     [coming soon!] 
                 </p>
+                <br />
                 <h4>longs peak (14,259′')</h4>
                 <p>
                     [coming soon!] 
                 </p>
+                <br />
                 <h4>longs peak (14,438′')</h4>
                 <p>
                     [coming soon!] 
