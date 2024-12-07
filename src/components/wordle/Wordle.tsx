@@ -401,7 +401,7 @@ const styles: StyleSheetCSS = {
     },
     header: {
         flexShrink: 1,
-        paddingTop: 32,
+        paddingTop: 22,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
@@ -409,7 +409,7 @@ const styles: StyleSheetCSS = {
     keyboardContainer: {
         flexShrink: 1,
 
-        paddingBottom: 24,
+        paddingBottom: 20,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
