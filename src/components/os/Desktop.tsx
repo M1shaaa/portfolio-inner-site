@@ -11,8 +11,6 @@ import DesktopShortcut, { DesktopShortcutProps } from './DesktopShortcut';
 import Scrabble from '../applications/Scrabble';
 import Photos from '../applications/Photos';
 import ghibliAudio from '../../assets/audio/ghibli.mp3';  // Add this line
-import volumeOn from '../../assets/icons/volumeOn.png';
-import volumeOff from '../../assets/icons/volumeOff.png';
 import { IconName } from '../../assets/icons';
 import MsPaint from '../applications/MsPaint';
 
@@ -90,6 +88,11 @@ const Desktop: React.FC<DesktopProps> = (props) => {
     const [isSoundOn, setIsSoundOn] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
+    const images = {
+        volumeOn: require('../../assets/icons/volumeOn.png'),
+        volumeOff: require('../../assets/icons/volumeOff.png')
+    };
+
     useEffect(() => {
         if (shutdown === true) {
             rebootDesktop();
@@ -119,22 +122,30 @@ const Desktop: React.FC<DesktopProps> = (props) => {
     }, []);
 
     const toggleSound = useCallback(() => {
+        console.log('Toggle sound clicked');
+        console.log('Current isSoundOn:', isSoundOn);
+        console.log('AudioRef exists:', !!audioRef.current);
+        
         if (audioRef.current) {
             if (isSoundOn) {
-                console.log('Pausing audio');
+                console.log('Attempting to pause');
                 audioRef.current.pause();
+                // Add volume check
+                audioRef.current.volume = 0;
             } else {
-                console.log('Playing audio');
-                // Add error handling for play()
+                console.log('Attempting to play');
+                // Set volume explicitly
+                audioRef.current.volume = 1;
                 audioRef.current.play().catch(e => {
-                    console.error('Error playing audio:', e);
+                    console.error('Play error:', e);
                 });
             }
             setIsSoundOn(!isSoundOn);
-        } else {
-            console.log('Audio ref is null');
+            console.log('Icon should now show:', !isSoundOn ? 'volumeOn' : 'volumeOff');
         }
     }, [isSoundOn]);
+
+    
 
     useEffect(() => {
         const newShortcuts: DesktopShortcutProps[] = [];
@@ -299,8 +310,8 @@ const Desktop: React.FC<DesktopProps> = (props) => {
 
             <div style={styles.soundControl} onClick={toggleSound}>
                 <img
-                    alt=""
-                    src={isSoundOn ? volumeOn : volumeOff}
+                    alt="volume control"
+                    src={isSoundOn ? images.volumeOn : images.volumeOff}
                     style={{
                         imageRendering: 'pixelated',
                         userSelect: 'none',
