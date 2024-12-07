@@ -73,6 +73,12 @@ const APPLICATIONS: {
         name: 'Credits',
         shortcutIcon: 'credits',
         component: Credits,
+    },
+    photos: {
+        key: 'photos',
+        name: 'Photos',
+        shortcutIcon: 'folderIcon',
+        component: Photos,
     }
 };
 

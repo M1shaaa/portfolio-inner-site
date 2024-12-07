@@ -17,6 +17,7 @@ import windowGameIcon from './windowGameIcon.png';
 import windowExplorerIcon from './windowExplorerIcon.png';
 import windowsStartIcon from './windowsStartIcon.png';
 import scrabbleIcon from './scrabbleIcon.png';
+import folderIcon from './folderIcon.png';
 import close from './close.png';
 import mspaintIcon from './mspaintIcon.png';
 
