@@ -10,6 +10,8 @@ import Toolbar from './Toolbar';
 import DesktopShortcut, { DesktopShortcutProps } from './DesktopShortcut';
 import Scrabble from '../applications/Scrabble';
 import Photos from '../applications/Photos';
+import volumeOn from '../../assets/icons/volumeOn.png';
+import volumeOff from '../../assets/icons/volumeOff.png';
 import { IconName } from '../../assets/icons';
 import MsPaint from '../applications/MsPaint';
 
@@ -84,12 +86,33 @@ const Desktop: React.FC<DesktopProps> = (props) => {
     const [shutdown, setShutdown] = useState(false);
     const [numShutdowns, setNumShutdowns] = useState(1);
 
+    const [isSoundOn, setIsSoundOn] = useState(false);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+
     useEffect(() => {
         if (shutdown === true) {
             rebootDesktop();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [shutdown]);
+
+    useEffect(() => {
+        audioRef.current = new Audio('/assets/audio/background-music.mp3');
+        if (audioRef.current) {
+            audioRef.current.loop = true;
+        }
+    }, []);
+
+    const toggleSound = useCallback(() => {
+        if (audioRef.current) {
+            if (isSoundOn) {
+                audioRef.current.pause();
+            } else {
+                audioRef.current.play();
+            }
+            setIsSoundOn(!isSoundOn);
+        }
+    }, [isSoundOn]);
 
     useEffect(() => {
         const newShortcuts: DesktopShortcutProps[] = [];
@@ -251,6 +274,24 @@ const Desktop: React.FC<DesktopProps> = (props) => {
                     );
                 })}
             </div>
+
+            <div style={styles.soundControl} onClick={toggleSound}>
+                <img
+                    alt=""
+                    src={isSoundOn ? volumeOn : volumeOff}
+                    style={{
+                        imageRendering: 'pixelated',
+                        userSelect: 'none',
+                        pointerEvents: 'none',
+                        cursor: 'pointer',
+                        height: 18,
+                    }}
+                />
+                <p style={{ fontSize: 12, fontFamily: 'MSSerif' }}>
+                    {new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                </p>
+            </div>
+
             <Toolbar
                 windows={windows}
                 toggleMinimize={toggleMinimize}
@@ -287,6 +328,27 @@ const styles: StyleSheetCSS = {
     minimized: {
         pointerEvents: 'none',
         opacity: 0,
+    },
+    soundControl: {
+        position: 'fixed',
+        bottom: 0,
+        right: 4,
+        flexShrink: 1,
+        width: 86,
+        height: 24,
+        boxSizing: 'border-box',
+        marginRight: 4,
+        paddingLeft: 4,
+        paddingRight: 4,
+        borderWidth: 1,
+        borderStyle: 'solid',
+        borderColor: '#86898D #ffffff #ffffff #86898D',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        display: 'flex',
+        cursor: 'pointer',
+        backgroundColor: Colors.lightGray,
+        zIndex: 9999,
     },
 };
 
