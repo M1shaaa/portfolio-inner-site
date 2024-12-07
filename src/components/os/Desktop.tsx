@@ -9,6 +9,7 @@ import Henordle from '../applications/Henordle';
 import Toolbar from './Toolbar';
 import DesktopShortcut, { DesktopShortcutProps } from './DesktopShortcut';
 import Scrabble from '../applications/Scrabble';
+import Photos from '../applications/Photos';
 import { IconName } from '../../assets/icons';
 import Credits from '../applications/Credits';
 import MsPaint from '../applications/MsPaint';

@@ -31,6 +31,7 @@ const icons = {
     showcaseIcon: showcaseIcon,
     doomIcon: doomIcon,
     volumeOn: volumeOn,
+    folderIcon: folderIcon,
     volumeOff: volumeOff,
     credits: credits,
     scrabbleIcon: scrabbleIcon,
