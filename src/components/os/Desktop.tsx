@@ -11,7 +11,6 @@ import DesktopShortcut, { DesktopShortcutProps } from './DesktopShortcut';
 import Scrabble from '../applications/Scrabble';
 import Photos from '../applications/Photos';
 import { IconName } from '../../assets/icons';
-import Credits from '../applications/Credits';
 import MsPaint from '../applications/MsPaint';
 
 
@@ -68,12 +67,6 @@ const APPLICATIONS: {
         name: 'mishdle',
         shortcutIcon: 'henordleIcon',
         component: Henordle,
-    },
-    credits: {
-        key: 'credits',
-        name: 'Credits',
-        shortcutIcon: 'credits',
-        component: Credits,
     },
     photos: {
         key: 'photos',
