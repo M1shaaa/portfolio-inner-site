@@ -43,6 +43,7 @@ const OpenScienceResources: React.FC<OpenScienceResourcesProps> = () => {
            <ul>
                <li><a href="https://cs.stanford.edu/~kach/" target="_blank" rel="noopener noreferrer">Kartik Chandra</a></li>
                <li><a href="https://www.michellewong.page/home" target="_blank" rel="noopener noreferrer">Michelle Wong</a></li>
+               <li><a href="https://kefangpsych.github.io/intro.html" target="_blank" rel="noopener noreferrer">Ke Fang</a></li>
                <li><a href="https://www.adaniabutto.com/" target="_blank" rel="noopener noreferrer">Adani Abutto</a></li>
            </ul>
        </div>
