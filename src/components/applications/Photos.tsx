@@ -1,10 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Window from '../os/Window';
 import { PHOTOS, PhotoItem } from './photoData';
 
 export interface PhotosAppProps extends WindowAppProps {}
 
+const ImageViewer: React.FC<{
+    photo: PhotoItem;
+    onClose: () => void;
+}> = ({ photo, onClose }) => {
+    return (
+        <Window
+            top={80}
+            left={220}
+            width={500}
+            height={400}
+            windowBarIcon="folderIcon"
+            windowTitle={photo.name}
+            closeWindow={onClose}
+            onInteract={() => {}}
+            minimizeWindow={() => {}}
+        >
+            <div style={styles.imageViewerContainer}>
+                <img 
+                    src={photo.path} 
+                    alt={photo.name}
+                    style={styles.fullImage}
+                />
+            </div>
+        </Window>
+    );
+};
+
 const Photos: React.FC<PhotosAppProps> = (props) => {
+    const [selectedImage, setSelectedImage] = useState<PhotoItem | null>(null);
+
     return (
         <Window
             top={60}
@@ -31,10 +60,10 @@ const Photos: React.FC<PhotosAppProps> = (props) => {
                 </div>
                 <div style={styles.content}>
                     <div style={styles.headerRow}>
-                        <div style={styles.headerCell}>Name</div>
-                        <div style={styles.headerCell}>Type</div>
-                        <div style={styles.headerCell}>Size</div>
-                        <div style={styles.headerCell}>Modified</div>
+                        <div style={{...styles.headerCell, width: '40%'}}>Name</div>
+                        <div style={{...styles.headerCell, width: '20%'}}>Type</div>
+                        <div style={{...styles.headerCell, width: '20%'}}>Size</div>
+                        <div style={{...styles.headerCell, width: '20%'}}>Modified</div>
                     </div>
                     <div style={styles.fileList}>
                         {PHOTOS.map((photo: PhotoItem) => (
@@ -49,18 +78,19 @@ const Photos: React.FC<PhotosAppProps> = (props) => {
                                     e.currentTarget.style.backgroundColor = '';
                                     e.currentTarget.style.color = '';
                                 }}
+                                onDoubleClick={() => setSelectedImage(photo)}
                             >
-                                <div style={styles.fileCell}>
-                                <img 
-                                    src={photo.path} 
-                                    alt="" 
-                                    style={styles.thumbnail}
-                                />
+                                <div style={{...styles.fileCell, width: '40%'}}>
+                                    <img 
+                                        src={photo.path} 
+                                        alt="" 
+                                        style={styles.thumbnail}
+                                    />
                                     {photo.name}
                                 </div>
-                                <div style={styles.fileCell}>{photo.type}</div>
-                                <div style={styles.fileCell}>{photo.size}</div>
-                                <div style={styles.fileCell}>{photo.dateModified}</div>
+                                <div style={{...styles.fileCell, width: '20%'}}>{photo.type}</div>
+                                <div style={{...styles.fileCell, width: '20%'}}>{photo.size}</div>
+                                <div style={{...styles.fileCell, width: '20%'}}>{photo.dateModified}</div>
                             </div>
                         ))}
                     </div>
@@ -69,6 +99,12 @@ const Photos: React.FC<PhotosAppProps> = (props) => {
                     16 object(s)
                 </div>
             </div>
+            {selectedImage && (
+                <ImageViewer 
+                    photo={selectedImage} 
+                    onClose={() => setSelectedImage(null)}
+                />
+            )}
         </Window>
     );
 };
@@ -103,6 +139,7 @@ const styles: StyleSheetCSS = {
         flex: 1,
         backgroundColor: '#ffffff',
         overflow: 'auto',
+        width: '100%',
     },
     headerRow: {
         display: 'flex',
@@ -110,27 +147,28 @@ const styles: StyleSheetCSS = {
         backgroundColor: '#c0c0c0',
         position: 'sticky',
         top: 0,
+        width: '100%',
     },
     headerCell: {
         padding: '4px 8px',
         fontSize: '12px',
         fontWeight: 'bold',
-        flex: 1,
         borderRight: '1px solid #808080',
     },
     fileList: {
         display: 'flex',
         flexDirection: 'column',
+        width: '100%',
     },
     fileRow: {
         display: 'flex',
         borderBottom: '1px solid #e0e0e0',
         cursor: 'default',
+        width: '100%',
     },
     fileCell: {
         padding: '4px 8px',
         fontSize: '12px',
-        flex: 1,
         display: 'flex',
         alignItems: 'center',
         whiteSpace: 'nowrap',
@@ -147,6 +185,20 @@ const styles: StyleSheetCSS = {
         padding: '2px 4px',
         borderTop: '1px solid #808080',
         fontSize: '12px',
+    },
+    imageViewerContainer: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#ffffff',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'auto',
+    },
+    fullImage: {
+        maxWidth: '100%',
+        maxHeight: '100%',
+        objectFit: 'contain',
     },
 };
 
