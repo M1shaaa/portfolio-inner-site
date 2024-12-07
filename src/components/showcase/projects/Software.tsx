@@ -38,6 +38,7 @@ const SoftwareProjects: React.FC<SoftwareProjectsProps> = () => {
             <div className="text-block">
             <br />
                 <h2>mountain climbing</h2>
+                <br />
                 <h4>nevado de tolima - Colombia (17,100')</h4>
                 <p>
                     [coming soon!] 
