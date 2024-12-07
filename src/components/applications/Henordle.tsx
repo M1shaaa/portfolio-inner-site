@@ -10,7 +10,7 @@ const HenordleApp: React.FC<HenordleAppProps> = (props) => {
             top={20}
             left={300}
             width={600}
-            height={860}
+            height={600}
             windowBarIcon="windowGameIcon"
             windowTitle="mishdle"
             closeWindow={props.onClose}
