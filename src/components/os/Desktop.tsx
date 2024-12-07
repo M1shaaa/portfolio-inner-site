@@ -97,7 +97,7 @@ const Desktop: React.FC<DesktopProps> = (props) => {
     }, [shutdown]);
 
     useEffect(() => {
-        audioRef.current = new Audio('/assets/audio/background-music.mp3');
+        audioRef.current = new Audio('/assets/audio/ghibli.mp3');
         if (audioRef.current) {
             audioRef.current.loop = true;
         }
