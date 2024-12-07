@@ -96,21 +96,42 @@ const Desktop: React.FC<DesktopProps> = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [shutdown]);
 
+    const [audioLoaded, setAudioLoaded] = useState(false);
+
     useEffect(() => {
-        audioRef.current = new Audio('/assets/audio/ghibli.mp3');
-        if (audioRef.current) {
-            audioRef.current.loop = true;
-        }
+        const audio = new Audio('/assets/audio/ghibli.mp3');
+        audio.addEventListener('canplaythrough', () => {
+            setAudioLoaded(true);
+        });
+        audio.addEventListener('error', (e) => {
+            console.error('Audio error:', e);
+        });
+        audio.loop = true;
+        audioRef.current = audio;
+        
+        return () => {
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current = null;
+            }
+        };
     }, []);
 
     const toggleSound = useCallback(() => {
         if (audioRef.current) {
             if (isSoundOn) {
+                console.log('Pausing audio');
                 audioRef.current.pause();
             } else {
-                audioRef.current.play();
+                console.log('Playing audio');
+                // Add error handling for play()
+                audioRef.current.play().catch(e => {
+                    console.error('Error playing audio:', e);
+                });
             }
             setIsSoundOn(!isSoundOn);
+        } else {
+            console.log('Audio ref is null');
         }
     }, [isSoundOn]);
 
