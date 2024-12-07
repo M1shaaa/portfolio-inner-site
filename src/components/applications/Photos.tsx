@@ -1,6 +1,6 @@
 import React from 'react';
 import Window from '../os/Window';
-import { PHOTOS, PhotoItem } from './photoData.ts';
+import { PHOTOS, PhotoItem } from './photoData';
 
 export interface PhotosAppProps extends WindowAppProps {}
 

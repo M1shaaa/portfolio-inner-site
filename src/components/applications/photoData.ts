@@ -1,4 +1,4 @@
-interface PhotoItem {
+export interface PhotoItem {
     name: string;
     path: string;
     type: string;
