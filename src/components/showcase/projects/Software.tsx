@@ -18,7 +18,7 @@ const SoftwareProjects: React.FC<SoftwareProjectsProps> = () => {
             <div className="text-block">
                 <h2>the ironman</h2>
                 <p>
-                    [coming soon!]
+                    [still building out this page -- coming soon!]
                 </p>
                 <br />
             </div>
