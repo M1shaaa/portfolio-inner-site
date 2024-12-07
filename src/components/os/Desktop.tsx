@@ -10,6 +10,7 @@ import Toolbar from './Toolbar';
 import DesktopShortcut, { DesktopShortcutProps } from './DesktopShortcut';
 import Scrabble from '../applications/Scrabble';
 import Photos from '../applications/Photos';
+import ghibliAudio from '../../assets/audio/ghibli.mp3';  // Add this line
 import volumeOn from '../../assets/icons/volumeOn.png';
 import volumeOff from '../../assets/icons/volumeOff.png';
 import { IconName } from '../../assets/icons';
@@ -99,9 +100,9 @@ const Desktop: React.FC<DesktopProps> = (props) => {
     const [audioLoaded, setAudioLoaded] = useState(false);
 
     useEffect(() => {
-        const audio = new Audio('/assets/audio/ghibli.mp3');
+        const audio = new Audio(ghibliAudio);
         audio.addEventListener('canplaythrough', () => {
-            setAudioLoaded(true);
+            console.log('Audio loaded and ready to play');
         });
         audio.addEventListener('error', (e) => {
             console.error('Audio error:', e);
