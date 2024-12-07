@@ -425,12 +425,12 @@ const styles: StyleSheetCSS = {
     },
     letterBox: {
         padding: 12,
-        paddingTop: 16,
-        minWidth: 42,
+        paddingTop: 12,
+        minWidth: 32,
 
         justifyContent: 'center',
         alignItems: 'center',
-        paddingBottom: 16,
+        paddingBottom: 12,
         margin: 4,
     },
     keyboardRow: {},
