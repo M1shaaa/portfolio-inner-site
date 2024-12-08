@@ -73,14 +73,6 @@ const Photos: React.FC<PhotosAppProps> = ({ onClose, onMinimize, onInteract }) =
         }
     };
 
-    import React, { useState } from 'react';
-import Window from '../os/Window';
-
-// ... imports and PHOTOS array stay the same ...
-
-const Photos: React.FC<PhotosAppProps> = ({ onClose, onMinimize, onInteract }) => {
-    // ... state and handlers stay the same ...
-
     return (
         <Window
             top={60}
@@ -158,7 +150,7 @@ const styles: StyleSheetCSS = {
     fileList: {
         flex: 1,
         overflowY: 'auto',
-        overflowX: 'hidden', // Prevent horizontal scrolling
+        overflowX: 'hidden',
     },
     fileItem: {
         padding: '4px 8px',
@@ -167,10 +159,10 @@ const styles: StyleSheetCSS = {
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
-        width: '100%', // Ensure items take full width
-        boxSizing: 'border-box', // Include padding in width calculation
+        width: '100%',
+        boxSizing: 'border-box',
         minHeight: '24px',
-        display: 'block', // Change from flex to block
+        display: 'block',
     },
     imageViewer: {
         flex: 1,
