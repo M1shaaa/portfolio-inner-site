@@ -57,6 +57,14 @@ export interface PhotosAppProps extends WindowAppProps {}
 const Photos: React.FC<PhotosAppProps> = (props) => {
     const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
+    const nextImage = () => {
+        setSelectedIndex((prev) => (prev + 1) % PHOTOS.length);
+    };
+
+    const previousImage = () => {
+        setSelectedIndex((prev) => (prev - 1 + PHOTOS.length) % PHOTOS.length);
+    };
+
     return (
         <Window
             top={60}
@@ -78,29 +86,47 @@ const Photos: React.FC<PhotosAppProps> = (props) => {
                 </div>
                 <div style={styles.main}>
                     {/* Left side - File list */}
-                    <div style={styles.fileListContainer}>
-                        {PHOTOS.map((photo, index) => (
-                            <div 
-                                key={photo.name}
-                                style={{
-                                    ...styles.fileRow,
-                                    backgroundColor: index === selectedIndex ? '#000080' : 'transparent',
-                                    color: index === selectedIndex ? '#ffffff' : '#000000',
-                                }}
-                                onClick={() => setSelectedIndex(index)}
-                            >
-                                {photo.name}
-                            </div>
-                        ))}
+                    <div style={styles.fileList}>
+                        <div style={styles.fileListInner}>
+                            {PHOTOS.map((photo, index) => (
+                                <div 
+                                    key={photo.name}
+                                    style={{
+                                        ...styles.fileRow,
+                                        backgroundColor: index === selectedIndex ? '#000080' : 'transparent',
+                                        color: index === selectedIndex ? '#ffffff' : '#000000',
+                                    }}
+                                    onClick={() => setSelectedIndex(index)}
+                                >
+                                    {photo.name}
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
-                    {/* Right side - Image preview */}
+                    {/* Right side - Image viewer */}
                     <div style={styles.imageViewer}>
-                        <img
-                            src={PHOTOS[selectedIndex].image}
-                            alt={PHOTOS[selectedIndex].name}
-                            style={styles.previewImage}
-                        />
+                        <div style={styles.imageContainer}>
+                            <img
+                                src={PHOTOS[selectedIndex].image}
+                                alt={PHOTOS[selectedIndex].name}
+                                style={styles.previewImage}
+                            />
+                        </div>
+                        <div style={styles.navigationBar}>
+                            <button 
+                                style={styles.navButton} 
+                                onClick={previousImage}
+                            >
+                                ◄
+                            </button>
+                            <button 
+                                style={styles.navButton} 
+                                onClick={nextImage}
+                            >
+                                ►
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div style={styles.statusBar}>
@@ -133,11 +159,20 @@ const styles = {
         flex: 1,
         overflow: 'hidden',
     },
-    fileListContainer: {
+    fileList: {
         width: '200px',
         backgroundColor: '#ffffff',
         borderRight: '1px solid #808080',
-        overflow: 'auto',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    fileListInner: {
+        flex: 1,
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        display: 'flex',
+        flexDirection: 'column', // This ensures vertical stacking
     },
     fileRow: {
         padding: '2px 4px',
@@ -147,19 +182,48 @@ const styles = {
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         userSelect: 'none',
+        minHeight: '20px',
+        alignItems: 'center',
     },
     imageViewer: {
         flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
         backgroundColor: '#ffffff',
+        padding: '8px',
+    },
+    imageContainer: {
+        flex: 1,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: '8px',
+        overflow: 'hidden',
     },
     previewImage: {
         maxWidth: '100%',
         maxHeight: '100%',
         objectFit: 'contain',
+    },
+    navigationBar: {
+        display: 'flex',
+        justifyContent: 'center',
+        gap: '8px',
+        padding: '8px',
+        backgroundColor: '#c0c0c0',
+        marginTop: '8px',
+    },
+    navButton: {
+        backgroundColor: '#c0c0c0',
+        border: '2px outset #ffffff',
+        cursor: 'pointer',
+        padding: '4px 8px',
+        fontSize: '12px',
+        minWidth: '24px',
+        height: '24px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        userSelect: 'none',
     },
     statusBar: {
         padding: '2px 4px',
