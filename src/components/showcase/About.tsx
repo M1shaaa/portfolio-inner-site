@@ -1,202 +1,208 @@
-import React from 'react';
-import me from '../../assets/pictures/workingAtComputer.jpg';
-import meNow from '../../assets/pictures/currentme.jpg';
-import { Link } from 'react-router-dom';
-import ResumeDownload from './ResumeDownload';
+import React, { useState } from 'react';
+import Window from '../os/Window';
 
-export interface AboutProps {}
+// Import all images
+import img4893 from '../../assets/pictures/IMG_4893.png';
+import img1010037 from '../../assets/pictures/P1010037.jpg';
+import img5203 from '../../assets/pictures/IMG_5203.jpg';
+import img4960 from '../../assets/pictures/IMG_4960.jpg';
+import img4792 from '../../assets/pictures/IMG_4792.jpg';
+import img2211 from '../../assets/pictures/IMG_2211.jpeg';
+import img4508 from '../../assets/pictures/IMG_4508.jpg';
+import img2757 from '../../assets/pictures/IMG_2757.jpg';
+import img3194 from '../../assets/pictures/IMG_3194.jpg';
+import img0077 from '../../assets/pictures/IMG_0077.jpg';
+import img0106 from '../../assets/pictures/IMG_0106.jpg';
+import img3348 from '../../assets/pictures/IMG_3348.jpg';
+import img0602 from '../../assets/pictures/IMG_0602.jpg';
+import img3527 from '../../assets/pictures/IMG_3527.jpg';
+import img3878 from '../../assets/pictures/IMG_3878.jpg';
+import img1477 from '../../assets/pictures/IMG_1477.jpg';
 
-const About: React.FC<AboutProps> = (props) => {
+interface PhotoItem {
+    name: string;
+    path: string;
+    type: string;
+    size: string;
+    dateModified: string;
+}
+
+const PHOTOS: PhotoItem[] = [
+    { name: 'IMG_4893.png', path: img4893, type: 'PNG Image', size: '1.2 MB', dateModified: '12/06/2024' },
+    { name: 'P1010037.jpg', path: img1010037, type: 'JPEG Image', size: '856 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_5203.jpg', path: img5203, type: 'JPEG Image', size: '945 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_4960.jpg', path: img4960, type: 'JPEG Image', size: '768 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_4792.jpg', path: img4792, type: 'JPEG Image', size: '892 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_2211.jpeg', path: img2211, type: 'JPEG Image', size: '1.1 MB', dateModified: '12/06/2024' },
+    { name: 'IMG_4508.jpg', path: img4508, type: 'JPEG Image', size: '934 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_2757.jpg', path: img2757, type: 'JPEG Image', size: '825 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_3194.jpg', path: img3194, type: 'JPEG Image', size: '967 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_0077.jpg', path: img0077, type: 'JPEG Image', size: '912 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_0106.jpg', path: img0106, type: 'JPEG Image', size: '843 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_3348.jpg', path: img3348, type: 'JPEG Image', size: '978 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_0602.jpg', path: img0602, type: 'JPEG Image', size: '890 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_3527.jpg', path: img3527, type: 'JPEG Image', size: '923 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_3878.jpg', path: img3878, type: 'JPEG Image', size: '857 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_1477.jpg', path: img1477, type: 'JPEG Image', size: '901 KB', dateModified: '12/06/2024' }
+];
+
+export interface PhotosAppProps extends WindowAppProps {}
+
+const Photos: React.FC<PhotosAppProps> = (props) => {
+    const [selectedIndex, setSelectedIndex] = useState<number>(0);
+
+    const nextImage = () => {
+        setSelectedIndex((prev) => (prev + 1) % PHOTOS.length);
+    };
+
+    const previousImage = () => {
+        setSelectedIndex((prev) => (prev - 1 + PHOTOS.length) % PHOTOS.length);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'ArrowRight') {
+            nextImage();
+        } else if (e.key === 'ArrowLeft') {
+            previousImage();
+        }
+    };
+
     return (
-        // add on resize listener
-        <div className="site-page-content">
-            {/* <img src={me} style={styles.topImage} alt="" /> */}
-            <h1 style={{ marginLeft: -16 }}>welcome!</h1>
-            <h3>my name is misha okeeffe</h3>
-            <br />
-            <div className="text-block">
-            <br />
-                <p>
-                    Thanks for checking out my website! I really hope you enjoy(ed) 
-                    exploring it as much as I enjoyed building it. If you have any
-                    questions or comments, feel free to shoot me an email at{' '}
-                    <a href="mailto:mokeeffe@stanford.edu">
-                        mokeeffe@stanford.edu
-                    </a>
-                </p>
-                <br />
-                <p>
-                I'm a predoctoral fellow working in <a href="https://sll.stanford.edu/">Dr. Gweon's Social
-                Learning Lab</a> at Stanford University.
-                </p>
-            </div>
-            <ResumeDownload />
-            <br />
-            <div className="text-block">
-                <h3>a little bit about me</h3>
-                <br />
-                <p>
-                    I've always been super curious about how the world works. When I was a kid, I used to
-                    always run off and my parents would find me in some pretty weird spots (on top of a car, 
-                    on top of a trellise, inside a lazy susan, and much more). Besides learning about the things around me, 
-                    I also learned a lot from the <em>people</em> around me. And, although I'm still interested in 
-                    exploring ideas and testing hypotheses about everything around me, I now try to explore
-                    this interest in a way that won't worry my parents so much. 
-                    
-                </p>
-                <br />
-                <div className="captioned-image">
-                    <img src={me} style={styles.image} alt="" />
-                    <p>
-                        <sub>
-                            me as a child exploring what seems to be the inside of a hamper :)
-                        </sub>
-                    </p>
-                </div>
-                <br />
-                <p>
-                    these days, I'm particularly interested about how we learn from and about one another, and how
-                    we start doing so as children. This interest led me to study econ and psych as an undergrad at 
-                    UW-Madison. I saw them as ways to study and model behavior. Upon graduating, I decided to 
-                    continue more down the psych route and that's how I ended up in my current lab! 
-                </p>
-                <br />
-                <br />
-                <div style={{}}>
-                    <div
-                        style={{
-                            flex: 1,
-                            textAlign: 'justify',
-                            alignSelf: 'center',
-                            flexDirection: 'column',
-                        }}
-                    >
-                        <h3>my hobbies</h3>
-                        <br />
-                        <p>
-                            Beyond cognitive science, I have a lot of hobbies that I
-                            enjoy doing in my free time. The more tangible
-                            hobbies I have are{' '}
-                            <Link to="/projects/software">my adventures</Link>{' '}
-                            and {' '}
-                            <Link to="/projects/art">my musings</Link>. You can
-                            read more about each of these on their respective
-                            pages under my 'everything else' tab. Some other hobbies I
-                            enjoy are thrifting, cooking, spending time with those
-                            I care about, and ~attemping~ athletic endeavors.
-                        </p>
-                        <br />
-                        <p>
-                            I must admit, my journey to where I am today isn't quite as
-                            straightforward as I made it seem. At one point I was studying
-                            physics and working on a team drafting a lunar mission proposal
-                            to NASA. At another point, I was living in DC studying art. I have
-                            quite eclectic interests. It didn't always make sense to me at the 
-                            time of where I was going, but that's totally okay. You don't need
-                            to have it all figured out, and in my experience that's something that 
-                            tends to happen when looking back, not forward. After all, how else
-                            would I know what I'm interested in if I didn't explore so much?
-                        </p>
-                    </div>
-                    <div style={styles.verticalImage}>
-                        <img src={meNow} style={styles.image} alt="" />
-                        <p>
-                            <sub>
-                                <b>Figure 2:</b> a more current photo of myself
-                            </sub>
-                        </p>
+        <Window
+            top={60}
+            left={200}
+            width={800}
+            height={500}
+            windowBarIcon="folderIcon"
+            windowTitle="Photos"
+            closeWindow={props.onClose}
+            onInteract={props.onInteract}
+            minimizeWindow={props.onMinimize}
+        >
+            <div style={styles.container} tabIndex={0} onKeyDown={handleKeyDown}>
+                {/* File List */}
+                <div style={styles.fileListContainer}>
+                    <div style={styles.fileList}>
+                        {PHOTOS.map((photo, index) => (
+                            <div
+                                key={photo.name}
+                                style={{
+                                    ...styles.fileItem,
+                                    backgroundColor: index === selectedIndex ? '#000080' : 'transparent',
+                                    color: index === selectedIndex ? '#ffffff' : '#000000'
+                                }}
+                                onClick={() => setSelectedIndex(index)}
+                            >
+                                <div style={styles.fileDetails}>
+                                    {photo.name}
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
-                <br />
-                <br />
-                <br />
-                <div style={{ flexDirection: 'column' }}>  {/* Add flexDirection: 'column' */}
-                <br />
-    <h3>see me here!</h3>
-    <br />
-    <br />
-    <ul className="text-block" style={{ marginLeft: '0px', padding: '0' }}>  {/* Add margin and padding control */}
-        <li style={{ listStyle: 'none' }}>  {/* Remove bullet points */}
-            <a 
-                href="https://www.youtube.com/watch?v=gou5KrqtSW0" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:text-blue-600"
-            >
-                a spotlight on my time as a resident advisor
-            </a>
-        </li>
-        <br />
-        <li style={{ listStyle: 'none' }}>
-            <a 
-                href="https://www.instagram.com/uwmadisonls/reel/C0Rx_OXraV7/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:text-blue-600"
-            >
-                a chat about being a Letters & Science Student at Madison
-            </a>
-        </li>
-        <br />
-        <li style={{ listStyle: 'none' }}>
-            <a 
-                href="https://www.youtube.com/watch?v=3QW6FslVmx8" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:text-blue-600"
-            >
-                highlights from my experience in UW's Global Gateway program
-            </a>
-        </li>
-    </ul>
-</div>
-<br />
-<br />
-                <p>
-                    Thanks for reading! I really hope that you enjoy
-                    exploring the rest of my website
-                </p>
-                <br />
-                <p>
-                    If you have any questions or comments I would love to hear
-                    them. You can reach me through the{' '}
-                    <Link to="/contact">contact page</Link> or shoot me an email
-                    at{' '}
-                    <a href="mailto:mokeeffe@stanford.edu">
-                        mokeeffe@stanford.edu
-                    </a>
-                </p>
+
+                {/* Photo Viewer */}
+                <div style={styles.imageViewer}>
+                    <div style={styles.imageContainer}>
+                        <img
+                            src={PHOTOS[selectedIndex].path}
+                            alt={PHOTOS[selectedIndex].name}
+                            style={styles.previewImage}
+                        />
+                    </div>
+                    <div style={styles.navigationBar}>
+                        <button 
+                            style={styles.navButton} 
+                            onClick={previousImage}
+                        >
+                            ◄
+                        </button>
+                        <button 
+                            style={styles.navButton} 
+                            onClick={nextImage}
+                        >
+                            ►
+                        </button>
+                    </div>
+                </div>
             </div>
-        </div>
+        </Window>
     );
 };
 
 const styles: StyleSheetCSS = {
-    contentHeader: {
-        marginBottom: 16,
-        fontSize: 48,
+    container: {
+        display: 'flex',
+        height: '100%',
+        backgroundColor: '#c0c0c0',
+        outline: 'none',
     },
-    image: {
-        height: 'auto',
-        width: '80%',  // Changed from '100%' to '80%'
-        maxWidth: '500px'  // Added this to ensure it doesn't get too large
-    },
-    topImage: {
-        height: 'auto',
-        width: '100%',
-        marginBottom: 32,
-    },
-    verticalImage: {
-        alignSelf: 'center',
-        // width: '80%',
-        marginLeft: 32,
-        flex: 0.8,
-
-        alignItems: 'center',
-        // marginBottom: 32,
-        textAlign: 'center',
+    fileListContainer: {
+        width: '200px',
+        backgroundColor: '#ffffff',
+        borderRight: '1px solid #808080',
+        display: 'flex',
         flexDirection: 'column',
+    },
+    fileList: {
+        flex: 1,
+        overflow: 'auto',
+    },
+    fileItem: {
+        padding: '4px 8px',
+        cursor: 'default',
+        fontSize: '12px',
+        display: 'flex',
+        alignItems: 'center',
+        height: '24px',
+        lineHeight: '24px',
+    },
+    fileDetails: {
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+    },
+    imageViewer: {
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: '#ffffff',
+        padding: '8px',
+    },
+    imageContainer: {
+        flex: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'hidden',
+        backgroundColor: '#ffffff',
+    },
+    previewImage: {
+        maxWidth: '100%',
+        maxHeight: '100%',
+        objectFit: 'contain',
+    },
+    navigationBar: {
+        display: 'flex',
+        justifyContent: 'center',
+        gap: '8px',
+        padding: '8px',
+        backgroundColor: '#c0c0c0',
+        marginTop: '8px',
+    },
+    navButton: {
+        backgroundColor: '#c0c0c0',
+        border: '2px outset #ffffff',
+        cursor: 'pointer',
+        padding: '4px 8px',
+        fontSize: '12px',
+        minWidth: '24px',
+        height: '24px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        userSelect: 'none',
     },
 };
 
-export default About;
+export default Photos;
