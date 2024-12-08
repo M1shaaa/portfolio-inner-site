@@ -1,45 +1,27 @@
 import React, { useState } from 'react';
 import Window from '../os/Window';
 import { PHOTOS, PhotoItem } from './photoData';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export interface PhotosAppProps extends WindowAppProps {}
 
-const ImageViewer: React.FC<{
-    photo: PhotoItem;
-    onClose: () => void;
-}> = ({ photo, onClose }) => {
-    return (
-        <Window
-            top={80}
-            left={220}
-            width={500}
-            height={400}
-            windowBarIcon="folderIcon"
-            windowTitle={photo.name}
-            closeWindow={onClose}
-            onInteract={() => {}}
-            minimizeWindow={() => {}}
-        >
-            <div style={styles.imageViewerContainer}>
-                <img 
-                    src={photo.path} 
-                    alt={photo.name}
-                    style={styles.fullImage}
-                />
-            </div>
-        </Window>
-    );
-};
-
 const Photos: React.FC<PhotosAppProps> = (props) => {
-    const [selectedImage, setSelectedImage] = useState<PhotoItem | null>(null);
+    const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+
+    const nextImage = () => {
+        setSelectedImageIndex((prev) => (prev + 1) % PHOTOS.length);
+    };
+
+    const previousImage = () => {
+        setSelectedImageIndex((prev) => (prev - 1 + PHOTOS.length) % PHOTOS.length);
+    };
 
     return (
         <Window
             top={60}
             left={200}
-            width={600}
-            height={400}
+            width={800}
+            height={500}
             windowBarIcon="folderIcon"
             windowTitle="Photos"
             closeWindow={props.onClose}
@@ -58,53 +40,80 @@ const Photos: React.FC<PhotosAppProps> = (props) => {
                         Address: C:\My Pictures
                     </div>
                 </div>
-                <div style={styles.content}>
-                    <div style={styles.headerRow}>
-                        <div style={{...styles.headerCell, width: '40%'}}>Name</div>
-                        <div style={{...styles.headerCell, width: '20%'}}>Type</div>
-                        <div style={{...styles.headerCell, width: '20%'}}>Size</div>
-                        <div style={{...styles.headerCell, width: '20%'}}>Modified</div>
-                    </div>
-                    <div style={styles.fileList}>
-                        {PHOTOS.map((photo: PhotoItem) => (
-                            <div 
-                                key={photo.name} 
-                                style={styles.fileRow}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = '#000080';
-                                    e.currentTarget.style.color = '#ffffff';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = '';
-                                    e.currentTarget.style.color = '';
-                                }}
-                                onDoubleClick={() => setSelectedImage(photo)}
-                            >
-                                <div style={{...styles.fileCell, width: '40%'}}>
-                                    <img 
-                                        src={photo.path} 
-                                        alt="" 
-                                        style={styles.thumbnail}
-                                    />
-                                    {photo.name}
+                <div style={styles.mainContent}>
+                    <div style={styles.fileListContainer}>
+                        <div style={styles.headerRow}>
+                            <div style={{...styles.headerCell, width: '40%'}}>Name</div>
+                            <div style={{...styles.headerCell, width: '20%'}}>Type</div>
+                            <div style={{...styles.headerCell, width: '20%'}}>Size</div>
+                            <div style={{...styles.headerCell, width: '20%'}}>Modified</div>
+                        </div>
+                        <div style={styles.fileList}>
+                            {PHOTOS.map((photo: PhotoItem, index: number) => (
+                                <div 
+                                    key={photo.name} 
+                                    style={{
+                                        ...styles.fileRow,
+                                        backgroundColor: index === selectedImageIndex ? '#000080' : '',
+                                        color: index === selectedImageIndex ? '#ffffff' : ''
+                                    }}
+                                    onClick={() => setSelectedImageIndex(index)}
+                                    onMouseEnter={(e) => {
+                                        if (index !== selectedImageIndex) {
+                                            e.currentTarget.style.backgroundColor = '#000080';
+                                            e.currentTarget.style.color = '#ffffff';
+                                        }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        if (index !== selectedImageIndex) {
+                                            e.currentTarget.style.backgroundColor = '';
+                                            e.currentTarget.style.color = '';
+                                        }
+                                    }}
+                                >
+                                    <div style={{...styles.fileCell, width: '40%'}}>
+                                        <img 
+                                            src={photo.path} 
+                                            alt="" 
+                                            style={styles.thumbnail}
+                                        />
+                                        {photo.name}
+                                    </div>
+                                    <div style={{...styles.fileCell, width: '20%'}}>{photo.type}</div>
+                                    <div style={{...styles.fileCell, width: '20%'}}>{photo.size}</div>
+                                    <div style={{...styles.fileCell, width: '20%'}}>{photo.dateModified}</div>
                                 </div>
-                                <div style={{...styles.fileCell, width: '20%'}}>{photo.type}</div>
-                                <div style={{...styles.fileCell, width: '20%'}}>{photo.size}</div>
-                                <div style={{...styles.fileCell, width: '20%'}}>{photo.dateModified}</div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
+                    </div>
+                    <div style={styles.previewContainer}>
+                        <button 
+                            style={styles.navButton} 
+                            onClick={previousImage}
+                            className="hover:bg-gray-200 active:bg-gray-300"
+                        >
+                            <ChevronLeft size={24} />
+                        </button>
+                        <div style={styles.imageContainer}>
+                            <img 
+                                src={PHOTOS[selectedImageIndex].path} 
+                                alt={PHOTOS[selectedImageIndex].name}
+                                style={styles.previewImage}
+                            />
+                        </div>
+                        <button 
+                            style={styles.navButton} 
+                            onClick={nextImage}
+                            className="hover:bg-gray-200 active:bg-gray-300"
+                        >
+                            <ChevronRight size={24} />
+                        </button>
                     </div>
                 </div>
                 <div style={styles.statusBar}>
-                    16 object(s)
+                    {PHOTOS.length} object(s)
                 </div>
             </div>
-            {selectedImage && (
-                <ImageViewer 
-                    photo={selectedImage} 
-                    onClose={() => setSelectedImage(null)}
-                />
-            )}
         </Window>
     );
 };
@@ -135,11 +144,16 @@ const styles: StyleSheetCSS = {
         padding: '2px 4px',
         fontSize: '12px',
     },
-    content: {
+    mainContent: {
         flex: 1,
-        backgroundColor: '#ffffff',
-        overflow: 'auto',
-        width: '100%',
+        display: 'flex',
+        overflow: 'hidden',
+    },
+    fileListContainer: {
+        width: '50%',
+        display: 'flex',
+        flexDirection: 'column',
+        borderRight: '1px solid #808080',
     },
     headerRow: {
         display: 'flex',
@@ -147,7 +161,6 @@ const styles: StyleSheetCSS = {
         backgroundColor: '#c0c0c0',
         position: 'sticky',
         top: 0,
-        width: '100%',
     },
     headerCell: {
         padding: '4px 8px',
@@ -156,15 +169,14 @@ const styles: StyleSheetCSS = {
         borderRight: '1px solid #808080',
     },
     fileList: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
+        flex: 1,
+        backgroundColor: '#ffffff',
+        overflow: 'auto',
     },
     fileRow: {
         display: 'flex',
         borderBottom: '1px solid #e0e0e0',
         cursor: 'default',
-        width: '100%',
     },
     fileCell: {
         padding: '4px 8px',
@@ -181,24 +193,39 @@ const styles: StyleSheetCSS = {
         marginRight: '4px',
         objectFit: 'cover',
     },
+    previewContainer: {
+        flex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        backgroundColor: '#ffffff',
+        padding: '16px',
+    },
+    imageContainer: {
+        flex: 1,
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'hidden',
+    },
+    previewImage: {
+        maxWidth: '100%',
+        maxHeight: '100%',
+        objectFit: 'contain',
+    },
+    navButton: {
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        padding: '8px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     statusBar: {
         padding: '2px 4px',
         borderTop: '1px solid #808080',
         fontSize: '12px',
-    },
-    imageViewerContainer: {
-        width: '100%',
-        height: '100%',
-        backgroundColor: '#ffffff',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        overflow: 'auto',
-    },
-    fullImage: {
-        maxWidth: '100%',
-        maxHeight: '100%',
-        objectFit: 'contain',
     },
 };
 
