@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Window from '../os/Window';
 import { PHOTOS, PhotoItem } from './photoData';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export interface PhotosAppProps extends WindowAppProps {}
 
@@ -90,9 +89,8 @@ const Photos: React.FC<PhotosAppProps> = (props) => {
                         <button 
                             style={styles.navButton} 
                             onClick={previousImage}
-                            className="hover:bg-gray-200 active:bg-gray-300"
                         >
-                            <ChevronLeft size={24} />
+                            ◄
                         </button>
                         <div style={styles.imageContainer}>
                             <img 
@@ -104,9 +102,8 @@ const Photos: React.FC<PhotosAppProps> = (props) => {
                         <button 
                             style={styles.navButton} 
                             onClick={nextImage}
-                            className="hover:bg-gray-200 active:bg-gray-300"
                         >
-                            <ChevronRight size={24} />
+                            ►
                         </button>
                     </div>
                 </div>
@@ -214,13 +211,17 @@ const styles: StyleSheetCSS = {
         objectFit: 'contain',
     },
     navButton: {
-        background: 'none',
-        border: 'none',
+        backgroundColor: '#c0c0c0',
+        border: '2px outset #ffffff',
         cursor: 'pointer',
-        padding: '8px',
+        padding: '4px 8px',
+        margin: '0 8px',
+        fontSize: '16px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        width: '32px',
+        height: '32px',
     },
     statusBar: {
         padding: '2px 4px',
