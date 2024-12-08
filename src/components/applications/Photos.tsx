@@ -72,7 +72,7 @@ const Photos: React.FC<PhotosAppProps> = (props) => {
             width={800}
             height={500}
             windowBarIcon="folderIcon"
-            windowTitle="Photos"
+            windowTitle="photos that make me smile"
             closeWindow={props.onClose}
             onInteract={props.onInteract}
             minimizeWindow={props.onMinimize}

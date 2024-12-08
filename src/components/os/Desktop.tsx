@@ -71,7 +71,7 @@ const APPLICATIONS: {
     },
     photos: {
         key: 'photos',
-        name: 'Photos',
+        name: 'photos',
         shortcutIcon: 'folderIcon',
         component: Photos,
     }
