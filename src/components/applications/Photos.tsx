@@ -54,24 +54,8 @@ export interface WindowAppProps {
 
 export interface PhotosAppProps extends WindowAppProps {}
 
-const Photos: React.FC<PhotosAppProps> = ({ onClose, onMinimize, onInteract }) => {
+const Photos: React.FC<PhotosAppProps> = (props) => {
     const [selectedIndex, setSelectedIndex] = useState<number>(0);
-
-    const nextImage = () => {
-        setSelectedIndex((prev) => (prev + 1) % PHOTOS.length);
-    };
-
-    const previousImage = () => {
-        setSelectedIndex((prev) => (prev - 1 + PHOTOS.length) % PHOTOS.length);
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'ArrowRight') {
-            nextImage();
-        } else if (e.key === 'ArrowLeft') {
-            previousImage();
-        }
-    };
 
     return (
         <Window
@@ -81,41 +65,46 @@ const Photos: React.FC<PhotosAppProps> = ({ onClose, onMinimize, onInteract }) =
             height={500}
             windowBarIcon="folderIcon"
             windowTitle="Photos"
-            closeWindow={onClose}
-            onInteract={onInteract}
-            minimizeWindow={onMinimize}
+            closeWindow={props.onClose}
+            onInteract={props.onInteract}
+            minimizeWindow={props.onMinimize}
         >
-            <div style={styles.container} tabIndex={0} onKeyDown={handleKeyDown}>
-                <div style={styles.fileList}>
-                    {PHOTOS.map((photo, index) => (
-                        <div
-                            key={photo.name}
-                            onClick={() => setSelectedIndex(index)}
-                            style={{
-                                padding: '2px 4px',
-                                cursor: 'default',
-                                backgroundColor: index === selectedIndex ? '#000080' : 'transparent',
-                                color: index === selectedIndex ? '#ffffff' : '#000000',
-                                fontSize: '12px'
-                            }}
-                        >
-                            {photo.name}
-                        </div>
-                    ))}
+            <div style={styles.container}>
+                <div style={styles.menuBar}>
+                    <div style={styles.menuItem}>File</div>
+                    <div style={styles.menuItem}>Edit</div>
+                    <div style={styles.menuItem}>View</div>
+                    <div style={styles.menuItem}>Help</div>
                 </div>
+                <div style={styles.main}>
+                    {/* Left side - File list */}
+                    <div style={styles.fileListContainer}>
+                        {PHOTOS.map((photo, index) => (
+                            <div 
+                                key={photo.name}
+                                style={{
+                                    ...styles.fileRow,
+                                    backgroundColor: index === selectedIndex ? '#000080' : 'transparent',
+                                    color: index === selectedIndex ? '#ffffff' : '#000000',
+                                }}
+                                onClick={() => setSelectedIndex(index)}
+                            >
+                                {photo.name}
+                            </div>
+                        ))}
+                    </div>
 
-                <div style={styles.imageViewer}>
-                    <div style={styles.imageContainer}>
+                    {/* Right side - Image preview */}
+                    <div style={styles.imageViewer}>
                         <img
                             src={PHOTOS[selectedIndex].image}
                             alt={PHOTOS[selectedIndex].name}
                             style={styles.previewImage}
                         />
                     </div>
-                    <div style={styles.navigationBar}>
-                        <button style={styles.navButton} onClick={previousImage}>◄</button>
-                        <button style={styles.navButton} onClick={nextImage}>►</button>
-                    </div>
+                </div>
+                <div style={styles.statusBar}>
+                    {PHOTOS.length} object(s)
                 </div>
             </div>
         </Window>
@@ -125,58 +114,58 @@ const Photos: React.FC<PhotosAppProps> = ({ onClose, onMinimize, onInteract }) =
 const styles = {
     container: {
         display: 'flex',
+        flexDirection: 'column',
         height: '100%',
         backgroundColor: '#c0c0c0',
-        outline: 'none',
     },
-    fileList: {
+    menuBar: {
+        display: 'flex',
+        padding: '2px 0',
+        borderBottom: '1px solid #808080',
+    },
+    menuItem: {
+        padding: '0 8px',
+        cursor: 'default',
+        fontSize: '12px',
+    },
+    main: {
+        display: 'flex',
+        flex: 1,
+        overflow: 'hidden',
+    },
+    fileListContainer: {
         width: '200px',
         backgroundColor: '#ffffff',
         borderRight: '1px solid #808080',
-        overflowY: 'auto',
-        userSelect: 'none'
+        overflow: 'auto',
+    },
+    fileRow: {
+        padding: '2px 4px',
+        cursor: 'default',
+        fontSize: '12px',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        userSelect: 'none',
     },
     imageViewer: {
         flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
         backgroundColor: '#ffffff',
-        padding: '8px',
-    },
-    imageContainer: {
-        flex: 1,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        overflow: 'hidden',
-        backgroundColor: '#ffffff',
+        padding: '8px',
     },
     previewImage: {
         maxWidth: '100%',
         maxHeight: '100%',
         objectFit: 'contain',
     },
-    navigationBar: {
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '8px',
-        padding: '8px',
-        backgroundColor: '#c0c0c0',
-        marginTop: '8px',
-    },
-    navButton: {
-        backgroundColor: '#c0c0c0',
-        border: '2px outset #ffffff',
-        cursor: 'pointer',
-        padding: '4px 8px',
+    statusBar: {
+        padding: '2px 4px',
+        borderTop: '1px solid #808080',
         fontSize: '12px',
-        minWidth: '24px',
-        height: '24px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        userSelect: 'none',
-    }
+    },
 } as const;
 
 export default Photos;
