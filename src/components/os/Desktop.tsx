@@ -10,6 +10,7 @@ import Toolbar from './Toolbar';
 import DesktopShortcut, { DesktopShortcutProps } from './DesktopShortcut';
 import Scrabble from '../applications/Scrabble';
 import Photos from '../applications/Photos';
+import Music from '../applications/Music';
 import ghibliAudio from '../../assets/audio/ghibli.mp3';  // Add this line
 import { IconName } from '../../assets/icons';
 import MsPaint from '../applications/MsPaint';
@@ -77,7 +78,7 @@ const APPLICATIONS: {
     },
     music: {
         key: 'music',
-        name: 'music',
+        name: 'Music',
         shortcutIcon: 'folderIcon',
         component: Music,
     }
