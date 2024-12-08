@@ -73,6 +73,14 @@ const Photos: React.FC<PhotosAppProps> = ({ onClose, onMinimize, onInteract }) =
         }
     };
 
+    import React, { useState } from 'react';
+import Window from '../os/Window';
+
+// ... imports and PHOTOS array stay the same ...
+
+const Photos: React.FC<PhotosAppProps> = ({ onClose, onMinimize, onInteract }) => {
+    // ... state and handlers stay the same ...
+
     return (
         <Window
             top={60}
@@ -98,9 +106,7 @@ const Photos: React.FC<PhotosAppProps> = ({ onClose, onMinimize, onInteract }) =
                                 }}
                                 onClick={() => setSelectedIndex(index)}
                             >
-                                <div style={styles.fileDetails}>
-                                    {photo.name}
-                                </div>
+                                {photo.name}
                             </div>
                         ))}
                     </div>
@@ -145,26 +151,26 @@ const styles: StyleSheetCSS = {
         width: '200px',
         backgroundColor: '#ffffff',
         borderRight: '1px solid #808080',
+        overflowY: 'hidden',
         display: 'flex',
         flexDirection: 'column',
     },
     fileList: {
         flex: 1,
-        overflow: 'auto',
+        overflowY: 'auto',
+        overflowX: 'hidden', // Prevent horizontal scrolling
     },
     fileItem: {
         padding: '4px 8px',
         cursor: 'default',
         fontSize: '12px',
-        display: 'flex',
-        alignItems: 'center',
-        height: '24px',
-        lineHeight: '24px',
-    },
-    fileDetails: {
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
+        width: '100%', // Ensure items take full width
+        boxSizing: 'border-box', // Include padding in width calculation
+        minHeight: '24px',
+        display: 'block', // Change from flex to block
     },
     imageViewer: {
         flex: 1,
