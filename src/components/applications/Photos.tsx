@@ -1,32 +1,49 @@
 import React, { useState } from 'react';
 import Window from '../os/Window';
 
-// Make sure the path to the images is correct relative to where this component is located
+// Direct image imports
+import img4893 from '../../assets/pictures/IMG_4893.png';
+import img1010037 from '../../assets/pictures/P1010037.jpg';
+import img5203 from '../../assets/pictures/IMG_5203.jpg';
+import img4960 from '../../assets/pictures/IMG_4960.jpg';
+import img4792 from '../../assets/pictures/IMG_4792.jpg';
+import img2211 from '../../assets/pictures/IMG_2211.jpeg';
+import img4508 from '../../assets/pictures/IMG_4508.jpg';
+import img2757 from '../../assets/pictures/IMG_2757.jpg';
+import img3194 from '../../assets/pictures/IMG_3194.jpg';
+import img0077 from '../../assets/pictures/IMG_0077.jpg';
+import img0106 from '../../assets/pictures/IMG_0106.jpg';
+import img3348 from '../../assets/pictures/IMG_3348.jpg';
+import img0602 from '../../assets/pictures/IMG_0602.jpg';
+import img3527 from '../../assets/pictures/IMG_3527.jpg';
+import img3878 from '../../assets/pictures/IMG_3878.jpg';
+import img1477 from '../../assets/pictures/IMG_1477.jpg';
+
 interface PhotoItem {
     name: string;
-    path: string;
+    image: string;
     type: string;
     size: string;
     dateModified: string;
 }
 
 const PHOTOS: PhotoItem[] = [
-    { name: 'IMG_4893.png', path: '/photos/IMG_4893.png', type: 'PNG Image', size: '1.2 MB', dateModified: '12/06/2024' },
-    { name: 'P1010037.jpg', path: '/photos/P1010037.jpg', type: 'JPEG Image', size: '856 KB', dateModified: '12/06/2024' },
-    { name: 'IMG_5203.jpg', path: '/photos/IMG_5203.jpg', type: 'JPEG Image', size: '945 KB', dateModified: '12/06/2024' },
-    { name: 'IMG_4960.jpg', path: '/photos/IMG_4960.jpg', type: 'JPEG Image', size: '768 KB', dateModified: '12/06/2024' },
-    { name: 'IMG_4792.jpg', path: '/photos/IMG_4792.jpg', type: 'JPEG Image', size: '892 KB', dateModified: '12/06/2024' },
-    { name: 'IMG_2211.jpeg', path: '/photos/IMG_2211.jpeg', type: 'JPEG Image', size: '1.1 MB', dateModified: '12/06/2024' },
-    { name: 'IMG_4508.jpg', path: '/photos/IMG_4508.jpg', type: 'JPEG Image', size: '934 KB', dateModified: '12/06/2024' },
-    { name: 'IMG_2757.jpg', path: '/photos/IMG_2757.jpg', type: 'JPEG Image', size: '825 KB', dateModified: '12/06/2024' },
-    { name: 'IMG_3194.jpg', path: '/photos/IMG_3194.jpg', type: 'JPEG Image', size: '967 KB', dateModified: '12/06/2024' },
-    { name: 'IMG_0077.jpg', path: '/photos/IMG_0077.jpg', type: 'JPEG Image', size: '912 KB', dateModified: '12/06/2024' },
-    { name: 'IMG_0106.jpg', path: '/photos/IMG_0106.jpg', type: 'JPEG Image', size: '843 KB', dateModified: '12/06/2024' },
-    { name: 'IMG_3348.jpg', path: '/photos/IMG_3348.jpg', type: 'JPEG Image', size: '978 KB', dateModified: '12/06/2024' },
-    { name: 'IMG_0602.jpg', path: '/photos/IMG_0602.jpg', type: 'JPEG Image', size: '890 KB', dateModified: '12/06/2024' },
-    { name: 'IMG_3527.jpg', path: '/photos/IMG_3527.jpg', type: 'JPEG Image', size: '923 KB', dateModified: '12/06/2024' },
-    { name: 'IMG_3878.jpg', path: '/photos/IMG_3878.jpg', type: 'JPEG Image', size: '857 KB', dateModified: '12/06/2024' },
-    { name: 'IMG_1477.jpg', path: '/photos/IMG_1477.jpg', type: 'JPEG Image', size: '901 KB', dateModified: '12/06/2024' }
+    { name: 'IMG_4893.png', image: img4893, type: 'PNG Image', size: '1.2 MB', dateModified: '12/06/2024' },
+    { name: 'P1010037.jpg', image: img1010037, type: 'JPEG Image', size: '856 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_5203.jpg', image: img5203, type: 'JPEG Image', size: '945 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_4960.jpg', image: img4960, type: 'JPEG Image', size: '768 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_4792.jpg', image: img4792, type: 'JPEG Image', size: '892 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_2211.jpeg', image: img2211, type: 'JPEG Image', size: '1.1 MB', dateModified: '12/06/2024' },
+    { name: 'IMG_4508.jpg', image: img4508, type: 'JPEG Image', size: '934 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_2757.jpg', image: img2757, type: 'JPEG Image', size: '825 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_3194.jpg', image: img3194, type: 'JPEG Image', size: '967 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_0077.jpg', image: img0077, type: 'JPEG Image', size: '912 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_0106.jpg', image: img0106, type: 'JPEG Image', size: '843 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_3348.jpg', image: img3348, type: 'JPEG Image', size: '978 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_0602.jpg', image: img0602, type: 'JPEG Image', size: '890 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_3527.jpg', image: img3527, type: 'JPEG Image', size: '923 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_3878.jpg', image: img3878, type: 'JPEG Image', size: '857 KB', dateModified: '12/06/2024' },
+    { name: 'IMG_1477.jpg', image: img1477, type: 'JPEG Image', size: '901 KB', dateModified: '12/06/2024' }
 ];
 
 export interface WindowAppProps {
@@ -69,7 +86,6 @@ const Photos: React.FC<PhotosAppProps> = ({ onClose, onMinimize, onInteract }) =
             minimizeWindow={onMinimize}
         >
             <div style={styles.container} tabIndex={0} onKeyDown={handleKeyDown}>
-                {/* File List */}
                 <div style={styles.fileListContainer}>
                     <div style={styles.fileList}>
                         {PHOTOS.map((photo, index) => (
@@ -90,11 +106,10 @@ const Photos: React.FC<PhotosAppProps> = ({ onClose, onMinimize, onInteract }) =
                     </div>
                 </div>
 
-                {/* Photo Viewer */}
                 <div style={styles.imageViewer}>
                     <div style={styles.imageContainer}>
                         <img
-                            src={PHOTOS[selectedIndex].path}
+                            src={PHOTOS[selectedIndex].image}
                             alt={PHOTOS[selectedIndex].name}
                             style={styles.previewImage}
                         />
@@ -118,6 +133,7 @@ const Photos: React.FC<PhotosAppProps> = ({ onClose, onMinimize, onInteract }) =
         </Window>
     );
 };
+
 
 const styles: StyleSheetCSS = {
     container: {
