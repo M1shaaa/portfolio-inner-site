@@ -75,12 +75,6 @@ const APPLICATIONS: {
         name: 'photos',
         shortcutIcon: 'folderIcon',
         component: Photos,
-    },
-    music: {
-        key: 'music',
-        name: 'Music',
-        shortcutIcon: 'folderIcon',
-        component: Music,
     }
 };
 
