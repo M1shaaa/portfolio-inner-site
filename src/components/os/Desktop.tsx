@@ -10,6 +10,7 @@ import Toolbar from './Toolbar';
 import DesktopShortcut, { DesktopShortcutProps } from './DesktopShortcut';
 import Scrabble from '../applications/Scrabble';
 import Photos from '../applications/Photos';
+import ghibliAudio from '../../assets/audio/ghibli.mp3';  // Add this line
 import Music from '../applications/Music';  // Changed the path
 import { IconName } from '../../assets/icons';
 import MsPaint from '../applications/MsPaint';
