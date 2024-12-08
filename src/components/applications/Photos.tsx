@@ -86,7 +86,6 @@ const Photos: React.FC<PhotosAppProps> = ({ onClose, onMinimize, onInteract }) =
             minimizeWindow={onMinimize}
         >
             <div style={styles.container} tabIndex={0} onKeyDown={handleKeyDown}>
-                {/* Simplified file list */}
                 <div style={styles.fileList}>
                     {PHOTOS.map((photo, index) => (
                         <div
@@ -105,7 +104,6 @@ const Photos: React.FC<PhotosAppProps> = ({ onClose, onMinimize, onInteract }) =
                     ))}
                 </div>
 
-                {/* Image viewer */}
                 <div style={styles.imageViewer}>
                     <div style={styles.imageContainer}>
                         <img
@@ -124,7 +122,7 @@ const Photos: React.FC<PhotosAppProps> = ({ onClose, onMinimize, onInteract }) =
     );
 };
 
-const styles: StyleSheetCSS = {
+const styles = {
     container: {
         display: 'flex',
         height: '100%',
@@ -178,6 +176,7 @@ const styles: StyleSheetCSS = {
         alignItems: 'center',
         justifyContent: 'center',
         userSelect: 'none',
-    },
+    }
+} as const;
 
 export default Photos;
