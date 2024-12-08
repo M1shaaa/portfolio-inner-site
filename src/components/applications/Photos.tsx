@@ -86,24 +86,26 @@ const Photos: React.FC<PhotosAppProps> = ({ onClose, onMinimize, onInteract }) =
             minimizeWindow={onMinimize}
         >
             <div style={styles.container} tabIndex={0} onKeyDown={handleKeyDown}>
-                <div style={styles.fileListContainer}>
-                    <div style={styles.fileList}>
-                        {PHOTOS.map((photo, index) => (
-                            <div
-                                key={photo.name}
-                                style={{
-                                    ...styles.fileItem,
-                                    backgroundColor: index === selectedIndex ? '#000080' : 'transparent',
-                                    color: index === selectedIndex ? '#ffffff' : '#000000'
-                                }}
-                                onClick={() => setSelectedIndex(index)}
-                            >
-                                {photo.name}
-                            </div>
-                        ))}
-                    </div>
+                {/* Simplified file list */}
+                <div style={styles.fileList}>
+                    {PHOTOS.map((photo, index) => (
+                        <div
+                            key={photo.name}
+                            onClick={() => setSelectedIndex(index)}
+                            style={{
+                                padding: '2px 4px',
+                                cursor: 'default',
+                                backgroundColor: index === selectedIndex ? '#000080' : 'transparent',
+                                color: index === selectedIndex ? '#ffffff' : '#000000',
+                                fontSize: '12px'
+                            }}
+                        >
+                            {photo.name}
+                        </div>
+                    ))}
                 </div>
 
+                {/* Image viewer */}
                 <div style={styles.imageViewer}>
                     <div style={styles.imageContainer}>
                         <img
@@ -113,18 +115,8 @@ const Photos: React.FC<PhotosAppProps> = ({ onClose, onMinimize, onInteract }) =
                         />
                     </div>
                     <div style={styles.navigationBar}>
-                        <button 
-                            style={styles.navButton} 
-                            onClick={previousImage}
-                        >
-                            ◄
-                        </button>
-                        <button 
-                            style={styles.navButton} 
-                            onClick={nextImage}
-                        >
-                            ►
-                        </button>
+                        <button style={styles.navButton} onClick={previousImage}>◄</button>
+                        <button style={styles.navButton} onClick={nextImage}>►</button>
                     </div>
                 </div>
             </div>
@@ -139,30 +131,12 @@ const styles: StyleSheetCSS = {
         backgroundColor: '#c0c0c0',
         outline: 'none',
     },
-    fileListContainer: {
+    fileList: {
         width: '200px',
         backgroundColor: '#ffffff',
         borderRight: '1px solid #808080',
-        overflowY: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-    },
-    fileList: {
-        flex: 1,
         overflowY: 'auto',
-        overflowX: 'hidden',
-    },
-    fileItem: {
-        padding: '4px 8px',
-        cursor: 'default',
-        fontSize: '12px',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        width: '100%',
-        boxSizing: 'border-box',
-        minHeight: '24px',
-        display: 'block',
+        userSelect: 'none'
     },
     imageViewer: {
         flex: 1,
@@ -205,6 +179,5 @@ const styles: StyleSheetCSS = {
         justifyContent: 'center',
         userSelect: 'none',
     },
-};
 
 export default Photos;
