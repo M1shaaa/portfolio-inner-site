@@ -75,14 +75,15 @@ const APPLICATIONS: {
         name: 'photos',
         shortcutIcon: 'folderIcon',
         component: Photos,
-    },
-//     music: {
-//         key: 'music',
-//         name: 'music',
-//         shortcutIcon: 'folderIcon',
-//         component: Music,
-//     }
-// };
+    }
+    // ,
+    // music: {
+    //     key: 'music',
+    //     name: 'music',
+    //     shortcutIcon: 'folderIcon',
+    //     component: Music,
+    // }
+};
 
 const Desktop: React.FC<DesktopProps> = (props) => {
     const [windows, setWindows] = useState<DesktopWindows>({});
