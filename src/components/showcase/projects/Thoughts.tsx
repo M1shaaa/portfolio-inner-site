@@ -2,6 +2,8 @@ import React from 'react';
 
 const Thoughts: React.FC = () => {
   const thoughts = [
+    "what makes some color palettes more appealing than others",
+    "why are idioms the way they are",
     "where do we draw the line between words and non-words?",
     "how do we transmit information through light, like in fiber optic cables?",
     "what's the difference between learning and discovering something?",
