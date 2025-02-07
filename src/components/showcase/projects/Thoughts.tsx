@@ -3,7 +3,7 @@ import React from 'react';
 const Thoughts: React.FC = () => {
   const thoughts = [
     "do babies find other babies cute?",
-    "if someone took off their prothetic leg and punched me with it, is that considered hitting or kicking?",
+    "if someone attacked me with their prothetic leg, is it considered hitting or kicking?",
     "is melted ice cream a soup?",
     "why am i not as happy as my dog to go on a walk or eat the same food every day?",
     "theoretically, how much could i eat of myself before dying?",
