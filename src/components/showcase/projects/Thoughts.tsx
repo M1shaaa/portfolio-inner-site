@@ -2,8 +2,17 @@ import React from 'react';
 
 const Thoughts: React.FC = () => {
   const thoughts = [
+    "do babies find other babies cute?",
+    "if someone took off their prothetic leg and punched me with it, is that considered hitting or kicking?",
+    "is melted ice cream a soup?",
+    "why am i not as happy as my dog to go on a walk or eat the same food every day?",
+    "theoretically, how much could i eat of myself before dying?",
+    "why are some bugs cute and not others?",
+    "what makes a good question?",
+    "at what point does a plate become a bowl?",
+    "does food made with love really taste better?",
     "what makes some color palettes more appealing than others",
-    "why are idioms the way they are",
+    "how do idioms come to be?",
     "where do we draw the line between words and non-words?",
     "how do we transmit information through light, like in fiber optic cables?",
     "what's the difference between learning and discovering something?",
