@@ -1,12 +1,10 @@
 import React, { useEffect } from 'react';
 
 const GoogleAnalytics = () => {
-  // Hardcode the ID for testing (replace with your actual ID)
-  const gaId = "G-SCJDHJLBQC"; // Replace with your actual G-ID
+  // Use your specific measurement ID
+  const gaId = "G-SCJDHJLBQC";
   
   useEffect(() => {
-    console.log('GA ID:', gaId);
-    
     try {
       // Load Google Analytics
       const script1 = document.createElement('script');
