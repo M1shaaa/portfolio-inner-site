@@ -1,39 +1,21 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+import { Analytics } from "@vercel/analytics/react";
+import GoogleAnalytics from './components/GoogleAnalytics';
 
-const GoogleAnalytics = () => {
-  const gaId = process.env.REACT_APP_GA_ID;
+ReactDOM.render(
+  <React.StrictMode>
+    <GoogleAnalytics />
+    <Analytics />
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
 
-  useEffect(() => {
-    if (!gaId) return;
-    
-    // Load Google Analytics
-    const script1 = document.createElement('script');
-    script1.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
-    script1.async = true;
-    document.head.appendChild(script1);
-
-    // Initialize Google Analytics
-    window.dataLayer = window.dataLayer || [];
-    function gtag() {
-      window.dataLayer.push(arguments);
-    }
-    window.gtag = gtag;
-    gtag('js', new Date());
-    gtag('config', gaId);
-
-    // Clean up
-    return () => {
-      try {
-        if (script1.parentNode) {
-          document.head.removeChild(script1);
-        }
-      } catch (e) {
-        console.error('Error removing Google Analytics script:', e);
-      }
-    };
-  }, [gaId]);
-
-  return null;
-};
-
-export default GoogleAnalytics;
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
