@@ -2,6 +2,7 @@ import React from 'react';
 
 const Thoughts: React.FC = () => {
   const thoughts = [
+    "is it a button-up or button-down?",
     "What format are computer files stored in to be universally accessible?",
     "why is sunday laundry day?",
     "do babies find other babies cute?",
