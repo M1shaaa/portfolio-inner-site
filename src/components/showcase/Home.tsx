@@ -38,10 +38,14 @@ interface GameState {
 
 // Improved Snake Game Component
 const ImprovedSnake: React.FC = () => {
+    // Game constants
+    const CELL_SIZE = 20; // 2x larger (was 10)
+    const GROWTH_RATE = 4; // 2x faster growth (was implicitly 1-2)
+    
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [gameState, setGameState] = useState<GameState>({
-        snake: [{ x: 50, y: 50 }, { x: 40, y: 50 }, { x: 30, y: 50 }],
+        snake: [{ x: 50, y: 50 }, { x: 30, y: 50 }, { x: 10, y: 50 }], // Wider spacing for 2x size
         food: { x: 100, y: 100 },
         direction: 'right',
         score: 0
@@ -50,138 +54,16 @@ const ImprovedSnake: React.FC = () => {
     // Track if food needs to be respawned
     const foodEatenRef = useRef<boolean>(false);
     
-    // Setup canvas once on mount
+    // Track game speed
+    const speedRef = useRef<number>(120); // Starting speed (ms)
+    
     // Persistent high score
     const highScoreRef = useRef<number>(
         parseInt(localStorage.getItem('snakeHighScore') || '0')
     );
     const [sessionHighScore, setSessionHighScore] = useState<number>(0);
     const initialPositionSet = useRef<boolean>(false);
-    
-    useEffect(() => {
-        if (!containerRef.current) return;
-        
-        console.log("Creating canvas");
-        const canvas = document.createElement('canvas');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        canvas.style.position = 'absolute';
-        canvas.style.top = '0';
-        canvas.style.left = '0';
-        canvas.style.zIndex = '-1';
-        
-        containerRef.current.appendChild(canvas);
-        canvasRef.current = canvas;
-        
-        // Set initial state after container is loaded
-        setTimeout(() => {
-            // Get container bounds and set initial snake position
-            const container = document.querySelector('div[style*="position: absolute"][style*="height: 100%"]');
-            if (container) {
-                const rect = container.getBoundingClientRect();
-                // Place snake in the middle of the container
-                const centerX = rect.left + (rect.width / 2);
-                const centerY = rect.top + (rect.height / 2);
-                
-                // Round to nearest 10 for grid alignment
-                const startX = Math.floor(centerX / 10) * 10;
-                const startY = Math.floor(centerY / 10) * 10;
-                
-                console.log("Setting initial snake position at", startX, startY);
-                
-                setGameState(prev => ({
-                    ...prev,
-                    snake: [
-                        { x: startX, y: startY },
-                        { x: startX - 10, y: startY },
-                        { x: startX - 20, y: startY }
-                    ]
-                }));
-                
-                initialPositionSet.current = true;
-            }
-            
-            // Draw initial state
-            renderGame();
-            
-            // Generate initial food
-            generateNewFood();
-        }, 500); // Wait for container to be fully rendered
-        
-        // Start movement loop - SPEED ADJUSTED FROM 200 TO 120ms
-        const interval = setInterval(() => {
-            // Only start moving when initial position is set
-            if (initialPositionSet.current) {
-                moveSnake();
-                // Always check if we need to respawn food
-                if (foodEatenRef.current) {
-                    generateNewFood();
-                    foodEatenRef.current = false;
-                }
-            }
-        }, 120); // Faster movement speed (was 200ms)
-        
-        // Keyboard controls
-        const handleKeyDown = (e: KeyboardEvent) => {
-            switch(e.key) {
-                case 'ArrowUp': 
-                    setGameState((prev: GameState) => {
-                        if (prev.direction !== 'down') // Prevent 180 degree turns
-                            return { ...prev, direction: 'up' };
-                        return prev;
-                    });
-                    break;
-                case 'ArrowDown': 
-                    setGameState((prev: GameState) => {
-                        if (prev.direction !== 'up')
-                            return { ...prev, direction: 'down' };
-                        return prev;
-                    });
-                    break;
-                case 'ArrowLeft': 
-                    setGameState((prev: GameState) => {
-                        if (prev.direction !== 'right')
-                            return { ...prev, direction: 'left' };
-                        return prev;
-                    });
-                    break;
-                case 'ArrowRight': 
-                    setGameState((prev: GameState) => {
-                        if (prev.direction !== 'left')
-                            return { ...prev, direction: 'right' };
-                        return prev;
-                    });
-                    break;
-            }
-        };
-        
-        window.addEventListener('keydown', handleKeyDown);
-        
-        // Handle window resize
-        const handleResize = () => {
-            if (canvasRef.current) {
-                canvasRef.current.width = window.innerWidth;
-                canvasRef.current.height = window.innerHeight;
-                renderGame();
-            }
-        };
-        
-        window.addEventListener('resize', handleResize);
-        
-        return () => {
-            clearInterval(interval);
-            window.removeEventListener('keydown', handleKeyDown);
-            window.removeEventListener('resize', handleResize);
-            if (containerRef.current && canvasRef.current) {
-                containerRef.current.removeChild(canvasRef.current);
-            }
-        };
-    }, []);
-    
-    // Update whenever game state changes
-    useEffect(() => {
-        renderGame();
-    }, [gameState]);
+    const gameLoopRef = useRef<number | null>(null);
     
     // IMPROVED: Helper function with much more precise hit detection
     const isPositionOccupied = (x: number, y: number): boolean => {
@@ -205,6 +87,170 @@ const ImprovedSnake: React.FC = () => {
         }
         
         return false;
+    };
+    
+    // Render the game
+    const renderGame = () => {
+        if (!canvasRef.current) return;
+        
+        const ctx = canvasRef.current.getContext('2d');
+        if (!ctx) return;
+        
+        // Clear canvas
+        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        
+        // Draw snake - 2x larger size
+        gameState.snake.forEach((segment: {x: number, y: number}, index: number) => {
+            // Draw rounded rectangle for the head
+            if (index === 0) {
+                const radius = 8; // Increased for larger size
+                ctx.fillStyle = '#32CD32'; // Lime green
+                ctx.beginPath();
+                ctx.moveTo(segment.x + radius, segment.y);
+                ctx.arcTo(segment.x + CELL_SIZE, segment.y, segment.x + CELL_SIZE, segment.y + CELL_SIZE, radius);
+                ctx.arcTo(segment.x + CELL_SIZE, segment.y + CELL_SIZE, segment.x, segment.y + CELL_SIZE, radius);
+                ctx.arcTo(segment.x, segment.y + CELL_SIZE, segment.x, segment.y, radius);
+                ctx.arcTo(segment.x, segment.y, segment.x + CELL_SIZE, segment.y, radius);
+                ctx.closePath();
+                ctx.fill();
+                
+                // Draw snake eyes - larger for 2x size
+                ctx.fillStyle = 'white';
+                
+                // Position eyes based on direction
+                let leftEyeX = segment.x + 5;
+                let leftEyeY = segment.y + 5;
+                let rightEyeX = segment.x + 15;
+                let rightEyeY = segment.y + 5;
+                
+                switch (gameState.direction) {
+                    case 'up':
+                        // Eyes positioned at top
+                        break;
+                    case 'down':
+                        // Eyes positioned at bottom
+                        leftEyeY = segment.y + 15;
+                        rightEyeY = segment.y + 15;
+                        break;
+                    case 'left':
+                        // Eyes positioned at left
+                        leftEyeX = segment.x + 5;
+                        leftEyeY = segment.y + 5;
+                        rightEyeX = segment.x + 5;
+                        rightEyeY = segment.y + 15;
+                        break;
+                    case 'right':
+                        // Eyes positioned at right
+                        leftEyeX = segment.x + 15;
+                        leftEyeY = segment.y + 5;
+                        rightEyeX = segment.x + 15;
+                        rightEyeY = segment.y + 15;
+                        break;
+                }
+                
+                // Draw eyes - larger
+                const eyeSize = 3; // 2x larger
+                ctx.beginPath();
+                ctx.arc(leftEyeX, leftEyeY, eyeSize, 0, Math.PI * 2);
+                ctx.arc(rightEyeX, rightEyeY, eyeSize, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw pupils
+                ctx.fillStyle = 'black';
+                ctx.beginPath();
+                ctx.arc(leftEyeX, leftEyeY, eyeSize / 2, 0, Math.PI * 2);
+                ctx.arc(rightEyeX, rightEyeY, eyeSize / 2, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+                // Draw body segments with gap between them
+                ctx.fillStyle = index % 2 === 0 ? '#228B22' : '#32CD32'; // Alternating colors for body
+                const gap = 4; // Larger gap for larger snake
+                ctx.fillRect(
+                    segment.x + gap / 2, 
+                    segment.y + gap / 2, 
+                    CELL_SIZE - gap, 
+                    CELL_SIZE - gap
+                );
+            }
+        });
+        
+        // Draw food as apple - make it more visible - 2x larger
+        // Draw a pulsing effect to make the food more noticeable
+        const pulseSize = 10 + Math.sin(Date.now() / 200) * 3; // 2x larger
+        const glowRadius = pulseSize + 6; // 2x larger
+        
+        // Draw glow effect
+        const gradient = ctx.createRadialGradient(
+            gameState.food.x + CELL_SIZE/2, gameState.food.y + CELL_SIZE/2, 0,
+            gameState.food.x + CELL_SIZE/2, gameState.food.y + CELL_SIZE/2, glowRadius
+        );
+        gradient.addColorStop(0, 'rgba(255, 255, 0, 0.7)');
+        gradient.addColorStop(1, 'rgba(255, 255, 0, 0)');
+        
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(
+            gameState.food.x + CELL_SIZE/2,
+            gameState.food.y + CELL_SIZE/2,
+            glowRadius,
+            0,
+            Math.PI * 2
+        );
+        ctx.fill();
+        
+        // Draw apple
+        ctx.fillStyle = 'red';
+        ctx.beginPath();
+        ctx.arc(
+            gameState.food.x + CELL_SIZE/2,
+            gameState.food.y + CELL_SIZE/2,
+            pulseSize,
+            0,
+            Math.PI * 2
+        );
+        ctx.fill();
+        
+        // Draw stem
+        ctx.fillStyle = 'brown';
+        ctx.fillRect(
+            gameState.food.x + CELL_SIZE/2 - 2,
+            gameState.food.y,
+            4, // 2x width
+            6  // 2x height
+        );
+        
+        // Draw leaf
+        ctx.fillStyle = 'green';
+        ctx.beginPath();
+        ctx.ellipse(
+            gameState.food.x + CELL_SIZE/2 + 6, // 2x offset
+            gameState.food.y + 4, // 2x offset
+            6, // 2x width
+            3, // 2x height
+            Math.PI / 4,
+            0,
+            Math.PI * 2
+        );
+        ctx.fill();
+        
+        // Draw score and high scores in 80s/90s retro style
+        ctx.fillStyle = 'black';
+        ctx.font = 'bold 16px "Press Start 2P", "Courier New", monospace';
+        
+        // Add a white background with slight transparency for better readability
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.fillRect(5, 5, 250, 75);
+        
+        // Draw the text in black
+        ctx.fillStyle = 'black';
+        ctx.fillText(`SCORE: ${gameState.score}`, 10, 25);
+        ctx.fillText(`LENGTH: ${gameState.snake.length}`, 10, 50);
+        ctx.fillText(`SESSION HIGH: ${sessionHighScore}`, 10, 75);
+        
+        // Draw the all-time high score
+        if (highScoreRef.current > 0) {
+            ctx.fillText(`ALL-TIME HIGH: ${highScoreRef.current}`, 10, 100);
+        }
     };
     
     // IMPROVED: Generate new food at a valid position
@@ -253,13 +299,13 @@ const ImprovedSnake: React.FC = () => {
         );
         
         do {
-            // Generate positions that are multiples of 10 for grid alignment
+            // Generate positions that are multiples of CELL_SIZE for grid alignment
             // and constrain to the visible container area
             const availableWidth = containerRect.width - (margin * 2);
             const availableHeight = containerRect.height - (margin * 2);
             
-            newFoodX = Math.floor(Math.random() * (availableWidth / 10)) * 10 + containerRect.left + margin;
-            newFoodY = Math.floor(Math.random() * (availableHeight / 10)) * 10 + containerRect.top + margin;
+            newFoodX = Math.floor(Math.random() * (availableWidth / CELL_SIZE)) * CELL_SIZE + containerRect.left + margin;
+            newFoodY = Math.floor(Math.random() * (availableHeight / CELL_SIZE)) * CELL_SIZE + containerRect.top + margin;
             
             attempts++;
             
@@ -274,9 +320,9 @@ const ImprovedSnake: React.FC = () => {
                 console.log(`Attempt ${attempts}: Trying position (${newFoodX}, ${newFoodY})`);
             }
         } while (
-            // Check if food would spawn on snake
+            // Check if food would spawn on snake - use CELL_SIZE for hit detection
             gameState.snake.some((segment: {x: number, y: number}) => 
-                Math.abs(segment.x - newFoodX) < 10 && Math.abs(segment.y - newFoodY) < 10
+                Math.abs(segment.x - newFoodX) < CELL_SIZE && Math.abs(segment.y - newFoodY) < CELL_SIZE
             ) ||
             // Check if food would spawn on UI element with tighter tolerance
             isPositionOccupied(newFoodX, newFoodY) ||
@@ -302,12 +348,12 @@ const ImprovedSnake: React.FC = () => {
             const newSnake = [...prev.snake];
             const head = { ...newSnake[0] };
             
-            // Move head based on direction
+            // Move head based on direction and CELL_SIZE
             switch(prev.direction) {
-                case 'up': head.y -= 10; break;
-                case 'down': head.y += 10; break;
-                case 'left': head.x -= 10; break;
-                case 'right': head.x += 10; break;
+                case 'up': head.y -= CELL_SIZE; break;
+                case 'down': head.y += CELL_SIZE; break;
+                case 'left': head.x -= CELL_SIZE; break;
+                case 'right': head.x += CELL_SIZE; break;
             }
             
             // Get container bounds
@@ -333,6 +379,7 @@ const ImprovedSnake: React.FC = () => {
             if (Math.random() < 0.01) { // Only log occasionally to reduce spam
                 console.log("Snake head:", head.x, head.y);
                 console.log("Container bounds:", containerRect);
+                console.log("Current speed:", speedRef.current);
             }
             
             // Check only wall collision - use a LARGER margin to avoid false positives
@@ -350,9 +397,9 @@ const ImprovedSnake: React.FC = () => {
                 const centerX = containerRect.left + (containerRect.right - containerRect.left) / 2;
                 const centerY = containerRect.top + (containerRect.bottom - containerRect.top) / 2;
                 
-                // Round to nearest 10 for grid alignment
-                const resetX = Math.floor(centerX / 10) * 10;
-                const resetY = Math.floor(centerY / 10) * 10;
+                // Round to nearest CELL_SIZE for grid alignment
+                const resetX = Math.floor(centerX / CELL_SIZE) * CELL_SIZE;
+                const resetY = Math.floor(centerY / CELL_SIZE) * CELL_SIZE;
                 
                 console.log("Resetting snake to:", resetX, resetY);
                 
@@ -360,8 +407,8 @@ const ImprovedSnake: React.FC = () => {
                     ...prev,
                     snake: [
                         { x: resetX, y: resetY },
-                        { x: resetX - 10, y: resetY },
-                        { x: resetX - 20, y: resetY }
+                        { x: resetX - CELL_SIZE, y: resetY },
+                        { x: resetX - CELL_SIZE*2, y: resetY }
                     ],
                     direction: 'right',
                     score: 0
@@ -373,17 +420,27 @@ const ImprovedSnake: React.FC = () => {
             
             // Check self-collision (snake can't hit itself)
             const isSelfCollision = newSnake.slice(1).some((segment: {x: number, y: number}) => 
-                Math.abs(segment.x - head.x) < 5 && Math.abs(segment.y - head.y) < 5
+                Math.abs(segment.x - head.x) < CELL_SIZE/2 && Math.abs(segment.y - head.y) < CELL_SIZE/2
             );
             
             if (isSelfCollision) {
                 console.log("Self collision");
-                head.x = 50;
-                head.y = 50;
+                
+                // Reset to center of container
+                const centerX = containerRect.left + (containerRect.right - containerRect.left) / 2;
+                const centerY = containerRect.top + (containerRect.bottom - containerRect.top) / 2;
+                
+                // Round to nearest CELL_SIZE for grid alignment
+                const resetX = Math.floor(centerX / CELL_SIZE) * CELL_SIZE;
+                const resetY = Math.floor(centerY / CELL_SIZE) * CELL_SIZE;
                 
                 return {
                     ...prev,
-                    snake: [head],
+                    snake: [
+                        { x: resetX, y: resetY },
+                        { x: resetX - CELL_SIZE, y: resetY },
+                        { x: resetX - CELL_SIZE*2, y: resetY }
+                    ],
                     direction: 'right',
                     score: 0
                 };
@@ -393,7 +450,7 @@ const ImprovedSnake: React.FC = () => {
             newSnake.unshift(head);
             
             // Check if eating food
-            if (Math.abs(head.x - prev.food.x) < 10 && Math.abs(head.y - prev.food.y) < 10) {
+            if (Math.abs(head.x - prev.food.x) < CELL_SIZE && Math.abs(head.y - prev.food.y) < CELL_SIZE) {
                 foodEatenRef.current = true;
                 
                 const newScore = prev.score + 10;
@@ -408,7 +465,16 @@ const ImprovedSnake: React.FC = () => {
                     localStorage.setItem('snakeHighScore', newScore.toString());
                 }
                 
-                // IMPROVED: Don't remove tail when eating food (snake grows)
+                // IMPROVED: Add GROWTH_RATE segments when eating (2x growth rate)
+                // Instead of removing tail, add more segments by cloning the last segment
+                // This effectively makes the snake grow GROWTH_RATE segments at a time
+                const lastSegment = newSnake[newSnake.length - 1];
+                
+                // Create more segments
+                for (let i = 1; i < GROWTH_RATE; i++) {
+                    newSnake.push({ ...lastSegment });
+                }
+                
                 return {
                     ...prev,
                     snake: newSnake, 
@@ -422,169 +488,159 @@ const ImprovedSnake: React.FC = () => {
         });
     };
     
-    // Render the game
-    const renderGame = () => {
-        if (!canvasRef.current) return;
+    // Setup canvas once on mount
+    useEffect(() => {
+        if (!containerRef.current) return;
         
-        const ctx = canvasRef.current.getContext('2d');
-        if (!ctx) return;
+        console.log("Creating canvas");
+        const canvas = document.createElement('canvas');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        canvas.style.position = 'absolute';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.zIndex = '-1';
         
-        // Clear canvas
-        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        containerRef.current.appendChild(canvas);
+        canvasRef.current = canvas;
         
-        // Draw snake
-        gameState.snake.forEach((segment: {x: number, y: number}, index: number) => {
-            // Draw rounded rectangle for the head
-            if (index === 0) {
-                const radius = 5;
-                ctx.fillStyle = '#32CD32'; // Lime green
-                ctx.beginPath();
-                ctx.moveTo(segment.x + radius, segment.y);
-                ctx.arcTo(segment.x + 10, segment.y, segment.x + 10, segment.y + 10, radius);
-                ctx.arcTo(segment.x + 10, segment.y + 10, segment.x, segment.y + 10, radius);
-                ctx.arcTo(segment.x, segment.y + 10, segment.x, segment.y, radius);
-                ctx.arcTo(segment.x, segment.y, segment.x + 10, segment.y, radius);
-                ctx.closePath();
-                ctx.fill();
+        // Set initial state after container is loaded
+        setTimeout(() => {
+            // Get container bounds and set initial snake position
+            const container = document.querySelector('div[style*="position: absolute"][style*="height: 100%"]');
+            if (container) {
+                const rect = container.getBoundingClientRect();
+                // Place snake in the middle of the container
+                const centerX = rect.left + (rect.width / 2);
+                const centerY = rect.top + (rect.height / 2);
                 
-                // Draw snake eyes
-                ctx.fillStyle = 'white';
+                // Round to nearest CELL_SIZE for grid alignment
+                const startX = Math.floor(centerX / CELL_SIZE) * CELL_SIZE;
+                const startY = Math.floor(centerY / CELL_SIZE) * CELL_SIZE;
                 
-                // Position eyes based on direction
-                let leftEyeX = segment.x + 2.5;
-                let leftEyeY = segment.y + 2.5;
-                let rightEyeX = segment.x + 7.5;
-                let rightEyeY = segment.y + 2.5;
+                console.log("Setting initial snake position at", startX, startY);
                 
-                switch (gameState.direction) {
-                    case 'up':
-                        // Eyes positioned at top
-                        break;
-                    case 'down':
-                        // Eyes positioned at bottom
-                        leftEyeY = segment.y + 7.5;
-                        rightEyeY = segment.y + 7.5;
-                        break;
-                    case 'left':
-                        // Eyes positioned at left
-                        leftEyeX = segment.x + 2.5;
-                        leftEyeY = segment.y + 2.5;
-                        rightEyeX = segment.x + 2.5;
-                        rightEyeY = segment.y + 7.5;
-                        break;
-                    case 'right':
-                        // Eyes positioned at right
-                        leftEyeX = segment.x + 7.5;
-                        leftEyeY = segment.y + 2.5;
-                        rightEyeX = segment.x + 7.5;
-                        rightEyeY = segment.y + 7.5;
-                        break;
-                }
+                setGameState(prev => ({
+                    ...prev,
+                    snake: [
+                        { x: startX, y: startY },
+                        { x: startX - CELL_SIZE, y: startY },
+                        { x: startX - CELL_SIZE*2, y: startY }
+                    ]
+                }));
                 
-                // Draw eyes
-                const eyeSize = 1.5;
-                ctx.beginPath();
-                ctx.arc(leftEyeX, leftEyeY, eyeSize, 0, Math.PI * 2);
-                ctx.arc(rightEyeX, rightEyeY, eyeSize, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Draw pupils
-                ctx.fillStyle = 'black';
-                ctx.beginPath();
-                ctx.arc(leftEyeX, leftEyeY, eyeSize / 2, 0, Math.PI * 2);
-                ctx.arc(rightEyeX, rightEyeY, eyeSize / 2, 0, Math.PI * 2);
-                ctx.fill();
-            } else {
-                // Draw body segments with gap between them
-                ctx.fillStyle = index % 2 === 0 ? '#228B22' : '#32CD32'; // Alternating colors for body
-                const gap = 2;
-                ctx.fillRect(
-                    segment.x + gap / 2, 
-                    segment.y + gap / 2, 
-                    10 - gap, 
-                    10 - gap
-                );
+                initialPositionSet.current = true;
             }
-        });
+            
+            // Draw initial state
+            renderGame();
+            
+            // Generate initial food
+            generateNewFood();
+        }, 500); // Wait for container to be fully rendered
         
-        // Draw food as apple - make it more visible
-        // Draw a pulsing effect to make the food more noticeable
-        const pulseSize = 5 + Math.sin(Date.now() / 200) * 1.5;
-        const glowRadius = pulseSize + 3;
+        // Keyboard controls
+        const handleKeyDown = (e: KeyboardEvent) => {
+            switch(e.key) {
+                case 'ArrowUp': 
+                    setGameState((prev: GameState) => {
+                        if (prev.direction !== 'down') // Prevent 180 degree turns
+                            return { ...prev, direction: 'up' };
+                        return prev;
+                    });
+                    break;
+                case 'ArrowDown': 
+                    setGameState((prev: GameState) => {
+                        if (prev.direction !== 'up')
+                            return { ...prev, direction: 'down' };
+                        return prev;
+                    });
+                    break;
+                case 'ArrowLeft': 
+                    setGameState((prev: GameState) => {
+                        if (prev.direction !== 'right')
+                            return { ...prev, direction: 'left' };
+                        return prev;
+                    });
+                    break;
+                case 'ArrowRight': 
+                    setGameState((prev: GameState) => {
+                        if (prev.direction !== 'left')
+                            return { ...prev, direction: 'right' };
+                        return prev;
+                    });
+                    break;
+            }
+        };
         
-        // Draw glow effect
-        const gradient = ctx.createRadialGradient(
-            gameState.food.x + 5, gameState.food.y + 5, 0,
-            gameState.food.x + 5, gameState.food.y + 5, glowRadius
-        );
-        gradient.addColorStop(0, 'rgba(255, 255, 0, 0.7)');
-        gradient.addColorStop(1, 'rgba(255, 255, 0, 0)');
+        window.addEventListener('keydown', handleKeyDown);
         
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(
-            gameState.food.x + 5,
-            gameState.food.y + 5,
-            glowRadius,
-            0,
-            Math.PI * 2
-        );
-        ctx.fill();
+        // Handle window resize
+        const handleResize = () => {
+            if (canvasRef.current) {
+                canvasRef.current.width = window.innerWidth;
+                canvasRef.current.height = window.innerHeight;
+                renderGame();
+            }
+        };
         
-        // Draw apple
-        ctx.fillStyle = 'red';
-        ctx.beginPath();
-        ctx.arc(
-            gameState.food.x + 5,
-            gameState.food.y + 5,
-            pulseSize,
-            0,
-            Math.PI * 2
-        );
-        ctx.fill();
+        window.addEventListener('resize', handleResize);
         
-        // Draw stem
-        ctx.fillStyle = 'brown';
-        ctx.fillRect(
-            gameState.food.x + 5 - 1,
-            gameState.food.y,
-            2,
-            3
-        );
+        // Start game loop with dynamic speed
+        const updateGameLoop = () => {
+            // Clear existing interval if there is one
+            if (gameLoopRef.current !== null) {
+                window.clearInterval(gameLoopRef.current);
+            }
+            
+            // Calculate speed based on snake length
+            // Base speed 120ms, gets faster as snake grows
+            // Minimum speed (fastest) capped at 50ms
+            const snakeLength = gameState.snake.length;
+            const calculatedSpeed = Math.max(50, 120 - (snakeLength * 0.5));
+            speedRef.current = calculatedSpeed;
+            
+            console.log("Snake length:", snakeLength, "Speed:", speedRef.current);
+            
+            // Create new interval with updated speed
+            gameLoopRef.current = window.setInterval(() => {
+                // Only start moving when initial position is set
+                if (initialPositionSet.current) {
+                    moveSnake();
+                    // Always check if we need to respawn food
+                    if (foodEatenRef.current) {
+                        generateNewFood();
+                        foodEatenRef.current = false;
+                    }
+                }
+            }, speedRef.current);
+        };
         
-        // Draw leaf
-        ctx.fillStyle = 'green';
-        ctx.beginPath();
-        ctx.ellipse(
-            gameState.food.x + 5 + 3,
-            gameState.food.y + 2,
-            3,
-            1.5,
-            Math.PI / 4,
-            0,
-            Math.PI * 2
-        );
-        ctx.fill();
+        // Initialize game loop
+        updateGameLoop();
         
-        // Draw score and high scores in 80s/90s retro style
-        ctx.fillStyle = 'black';
-        ctx.font = 'bold 16px "Press Start 2P", "Courier New", monospace';
+        // Update game loop when snake length changes
+        const intervalCheck = setInterval(() => {
+            updateGameLoop();
+        }, 1000); // Check once per second if we need to update speed
         
-        // Add a white background with slight transparency for better readability
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-        ctx.fillRect(5, 5, 250, 75);
-        
-        // Draw the text in black
-        ctx.fillStyle = 'black';
-        ctx.fillText(`SCORE: ${gameState.score}`, 10, 25);
-        ctx.fillText(`LENGTH: ${gameState.snake.length}`, 10, 50);
-        ctx.fillText(`SESSION HIGH: ${sessionHighScore}`, 10, 75);
-        
-        // Draw the all-time high score
-        if (highScoreRef.current > 0) {
-            ctx.fillText(`ALL-TIME HIGH: ${highScoreRef.current}`, 10, 100);
-        }
-    };
+        return () => {
+            if (gameLoopRef.current !== null) {
+                window.clearInterval(gameLoopRef.current);
+            }
+            clearInterval(intervalCheck);
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('resize', handleResize);
+            if (containerRef.current && canvasRef.current) {
+                containerRef.current.removeChild(canvasRef.current);
+            }
+        };
+    }, []);
+    
+    // Update whenever game state changes
+    useEffect(() => {
+        renderGame();
+    }, [gameState]);
     
     return <div ref={containerRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }}></div>;
 };
@@ -764,5 +820,4 @@ const Home: React.FC<HomeProps> = (props) => {
     );
 };
 
-// Make sure to export the component correctly
 export default Home;
