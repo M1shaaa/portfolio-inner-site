@@ -383,13 +383,13 @@ const ImprovedSnake: React.FC = () => {
             }
             
             // Check only wall collision - use a LARGER margin to avoid false positives
-            const margin = 5; // Increased margin to avoid edge cases
-            
+            const margin = 0; // Increased margin to avoid edge cases
+
             if (
-                head.x < containerRect.left + margin || 
-                head.x >= containerRect.right - margin || 
-                head.y < containerRect.top + margin || 
-                head.y >= containerRect.bottom - margin
+                head.x < containerRect.left || // Exact collision with left wall
+                head.x >= containerRect.right || // Exact collision with right wall
+                head.y < containerRect.top || // Exact collision with top wall
+                head.y >= containerRect.bottom // Exact collision with bottom wall
             ) {
                 // Reset snake on wall collision
                 console.log("Wall collision at", head.x, head.y, "Container:", containerRect);
