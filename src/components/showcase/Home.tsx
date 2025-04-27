@@ -277,15 +277,34 @@ const ImprovedSnake: React.FC = () => {
                 case 'right': head.x += 10; break;
             }
             
-            // Check wall collision with a small margin
+            // Get container bounds
+            const container = document.querySelector('div[style*="position: absolute"][style*="height: 100%"]');
+            let containerRect = {
+                left: 0,
+                right: window.innerWidth,
+                top: 0,
+                bottom: window.innerHeight
+            };
+            
+            if (container) {
+                const rect = container.getBoundingClientRect();
+                containerRect = {
+                    left: rect.left,
+                    right: rect.right,
+                    top: rect.top,
+                    bottom: rect.bottom
+                };
+            }
+            
+            // Check only wall collision with a small margin
             const margin = 5;
             if (
-                head.x < margin || 
-                head.x >= window.innerWidth - margin || 
-                head.y < margin || 
-                head.y >= window.innerHeight - margin
+                head.x < containerRect.left + margin || 
+                head.x >= containerRect.right - margin || 
+                head.y < containerRect.top + margin || 
+                head.y >= containerRect.bottom - margin
             ) {
-                // Reset snake on collision
+                // Reset snake on wall collision
                 console.log("Wall collision at", head.x, head.y);
                 head.x = 50;
                 head.y = 50;
@@ -298,19 +317,8 @@ const ImprovedSnake: React.FC = () => {
                 };
             }
             
-            // Check more precisely if head hits UI element
-            if (isPositionOccupied(head.x, head.y)) {
-                console.log("UI collision at", head.x, head.y);
-                head.x = 50;
-                head.y = 50;
-                
-                return {
-                    ...prev,
-                    snake: [head],
-                    direction: 'right',
-                    score: 0
-                };
-            }
+            // REMOVED: UI element collision check (as requested)
+            // Now the snake can pass behind/through UI elements
             
             // Check self-collision (snake can't hit itself)
             const isSelfCollision = newSnake.slice(1).some((segment: {x: number, y: number}) => 
@@ -448,13 +456,37 @@ const ImprovedSnake: React.FC = () => {
             }
         });
         
-        // Draw food as apple
+        // Draw food as apple - make it more visible
+        // Draw a pulsing effect to make the food more noticeable
+        const pulseSize = 5 + Math.sin(Date.now() / 200) * 1.5;
+        const glowRadius = pulseSize + 3;
+        
+        // Draw glow effect
+        const gradient = ctx.createRadialGradient(
+            gameState.food.x + 5, gameState.food.y + 5, 0,
+            gameState.food.x + 5, gameState.food.y + 5, glowRadius
+        );
+        gradient.addColorStop(0, 'rgba(255, 255, 0, 0.7)');
+        gradient.addColorStop(1, 'rgba(255, 255, 0, 0)');
+        
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(
+            gameState.food.x + 5,
+            gameState.food.y + 5,
+            glowRadius,
+            0,
+            Math.PI * 2
+        );
+        ctx.fill();
+        
+        // Draw apple
         ctx.fillStyle = 'red';
         ctx.beginPath();
         ctx.arc(
             gameState.food.x + 5,
             gameState.food.y + 5,
-            5,
+            pulseSize,
             0,
             Math.PI * 2
         );
