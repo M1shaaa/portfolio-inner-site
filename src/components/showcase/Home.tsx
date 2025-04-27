@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from '../general';
 import { useNavigate } from 'react-router';
-import SnakeGame from './SnakeGame';
 
 // Import images
 import marioPunch from '../../assets/pictures/mario-hit.gif';
@@ -28,6 +27,230 @@ interface SocialBoxProps {
     position: number;
     onActivate: () => void;
 }
+
+// Simple Snake Game Component
+const SimpleSnake: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [gameState, setGameState] = useState({
+    snake: [{ x: 50, y: 50 }, { x: 40, y: 50 }, { x: 30, y: 50 }],
+    food: { x: 100, y: 100 },
+    direction: 'right' as 'up' | 'down' | 'left' | 'right',
+    score: 0
+  });
+  
+  // Setup canvas once on mount
+  useEffect(() => {
+    if (!containerRef.current) return;
+    
+    console.log("Creating canvas");
+    const canvas = document.createElement('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.position = 'absolute';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.zIndex = '-1';
+    
+    containerRef.current.appendChild(canvas);
+    canvasRef.current = canvas;
+    
+    // Draw initial state
+    renderGame();
+    
+    // Start simple movement loop
+    const interval = setInterval(() => {
+      moveSnake();
+    }, 200);
+    
+    // Keyboard controls
+    const handleKeyDown = (e: KeyboardEvent) => {
+      switch(e.key) {
+        case 'ArrowUp': 
+          setGameState(prev => {
+            if (prev.direction !== 'down') // Prevent 180 degree turns
+              return { ...prev, direction: 'up' };
+            return prev;
+          });
+          break;
+        case 'ArrowDown': 
+          setGameState(prev => {
+            if (prev.direction !== 'up')
+              return { ...prev, direction: 'down' };
+            return prev;
+          });
+          break;
+        case 'ArrowLeft': 
+          setGameState(prev => {
+            if (prev.direction !== 'right')
+              return { ...prev, direction: 'left' };
+            return prev;
+          });
+          break;
+        case 'ArrowRight': 
+          setGameState(prev => {
+            if (prev.direction !== 'left')
+              return { ...prev, direction: 'right' };
+            return prev;
+          });
+          break;
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    
+    // Handle window resize
+    const handleResize = () => {
+      if (canvasRef.current) {
+        canvasRef.current.width = window.innerWidth;
+        canvasRef.current.height = window.innerHeight;
+        renderGame();
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('resize', handleResize);
+      if (containerRef.current && canvasRef.current) {
+        containerRef.current.removeChild(canvasRef.current);
+      }
+    };
+  }, []);
+  
+  // Update whenever game state changes
+  useEffect(() => {
+    renderGame();
+  }, [gameState]);
+  
+  // Helper function to determine if a position is occupied by a UI element
+  const isPositionOccupied = (x: number, y: number): boolean => {
+    // Get all UI elements
+    const elements = document.querySelectorAll('h1, h2, a, div[style*="button"]');
+    
+    // Check if position is inside any of these elements
+    for (let i = 0; i < elements.length; i++) {
+      const rect = elements[i].getBoundingClientRect();
+      if (
+        x >= rect.left && 
+        x <= rect.right && 
+        y >= rect.top && 
+        y <= rect.bottom
+      ) {
+        return true;
+      }
+    }
+    
+    return false;
+  };
+  
+  // Move the snake in the current direction
+  const moveSnake = () => {
+    setGameState(prev => {
+      const newSnake = [...prev.snake];
+      const head = { ...newSnake[0] };
+      
+      // Move head based on direction
+      switch(prev.direction) {
+        case 'up': head.y -= 10; break;
+        case 'down': head.y += 10; break;
+        case 'left': head.x -= 10; break;
+        case 'right': head.x += 10; break;
+      }
+      
+      // Check wall collision
+      if (
+        head.x < 0 || 
+        head.x >= window.innerWidth || 
+        head.y < 0 || 
+        head.y >= window.innerHeight ||
+        isPositionOccupied(head.x, head.y)
+      ) {
+        // Reset snake on collision
+        head.x = 50;
+        head.y = 50;
+        
+        return {
+          ...prev,
+          snake: [head],
+          direction: 'right',
+          score: 0
+        };
+      }
+      
+      // Add new head
+      newSnake.unshift(head);
+      
+      // Check if eating food
+      if (Math.abs(head.x - prev.food.x) < 10 && Math.abs(head.y - prev.food.y) < 10) {
+        // Generate new food at random position
+        let newFoodX, newFoodY;
+        do {
+          newFoodX = Math.floor(Math.random() * (window.innerWidth / 10)) * 10;
+          newFoodY = Math.floor(Math.random() * (window.innerHeight / 10)) * 10;
+        } while (isPositionOccupied(newFoodX, newFoodY)); // Ensure food isn't inside UI elements
+        
+        return {
+          ...prev,
+          snake: newSnake,
+          food: { x: newFoodX, y: newFoodY },
+          score: prev.score + 10
+        };
+      } else {
+        // Remove tail if not eating
+        newSnake.pop();
+        return { ...prev, snake: newSnake };
+      }
+    });
+  };
+  
+  // Render the game
+  const renderGame = () => {
+    if (!canvasRef.current) return;
+    
+    const ctx = canvasRef.current.getContext('2d');
+    if (!ctx) return;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    
+    // Draw snake
+    gameState.snake.forEach((segment, index) => {
+      ctx.fillStyle = index === 0 ? '#32CD32' : '#228B22'; // Head is lighter green
+      ctx.fillRect(segment.x, segment.y, 10, 10);
+    });
+    
+    // Draw food
+    ctx.fillStyle = 'red';
+    ctx.beginPath();
+    ctx.arc(
+      gameState.food.x + 5,
+      gameState.food.y + 5,
+      5,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+    
+    // Draw stem
+    ctx.fillStyle = 'brown';
+    ctx.fillRect(
+      gameState.food.x + 5 - 1,
+      gameState.food.y,
+      2,
+      3
+    );
+    
+    // Draw score
+    ctx.fillStyle = 'white';
+    ctx.font = '16px Arial';
+    ctx.fillText(`Score: ${gameState.score}`, 10, 25);
+  };
+  
+  return <div ref={containerRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }}></div>;
+};
 
 const styles: StyleSheet = {
     page: {
@@ -100,14 +323,6 @@ const styles: StyleSheet = {
         height: 32,
         width: 32,
         marginTop: 0,
-    },
-    gameContainer: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: -1,
     }
 };
 
@@ -160,7 +375,7 @@ const Home: React.FC<HomeProps> = (props) => {
     return (
         <div style={styles.page}>
             {/* Add the Snake game in the background */}
-            <SnakeGame />
+            <SimpleSnake />
             
             <div style={styles.header}>
                 <h1 style={styles.name}>misha okeeffe</h1>
