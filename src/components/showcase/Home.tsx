@@ -56,6 +56,7 @@ const ImprovedSnake: React.FC = () => {
         parseInt(localStorage.getItem('snakeHighScore') || '0')
     );
     const [sessionHighScore, setSessionHighScore] = useState<number>(0);
+    const initialPositionSet = useRef<boolean>(false);
     
     useEffect(() => {
         if (!containerRef.current) return;
@@ -72,19 +73,51 @@ const ImprovedSnake: React.FC = () => {
         containerRef.current.appendChild(canvas);
         canvasRef.current = canvas;
         
-        // Draw initial state
-        renderGame();
-        
-        // Generate initial food
-        generateNewFood();
+        // Set initial state after container is loaded
+        setTimeout(() => {
+            // Get container bounds and set initial snake position
+            const container = document.querySelector('div[style*="position: absolute"][style*="height: 100%"]');
+            if (container) {
+                const rect = container.getBoundingClientRect();
+                // Place snake in the middle of the container
+                const centerX = rect.left + (rect.width / 2);
+                const centerY = rect.top + (rect.height / 2);
+                
+                // Round to nearest 10 for grid alignment
+                const startX = Math.floor(centerX / 10) * 10;
+                const startY = Math.floor(centerY / 10) * 10;
+                
+                console.log("Setting initial snake position at", startX, startY);
+                
+                setGameState(prev => ({
+                    ...prev,
+                    snake: [
+                        { x: startX, y: startY },
+                        { x: startX - 10, y: startY },
+                        { x: startX - 20, y: startY }
+                    ]
+                }));
+                
+                initialPositionSet.current = true;
+            }
+            
+            // Draw initial state
+            renderGame();
+            
+            // Generate initial food
+            generateNewFood();
+        }, 500); // Wait for container to be fully rendered
         
         // Start movement loop - SPEED ADJUSTED FROM 200 TO 120ms
         const interval = setInterval(() => {
-            moveSnake();
-            // Always check if we need to respawn food
-            if (foodEatenRef.current) {
-                generateNewFood();
-                foodEatenRef.current = false;
+            // Only start moving when initial position is set
+            if (initialPositionSet.current) {
+                moveSnake();
+                // Always check if we need to respawn food
+                if (foodEatenRef.current) {
+                    generateNewFood();
+                    foodEatenRef.current = false;
+                }
             }
         }, 120); // Faster movement speed (was 200ms)
         
@@ -296,8 +329,14 @@ const ImprovedSnake: React.FC = () => {
                 };
             }
             
-            // Check only wall collision with a small margin
-            const margin = 5;
+            // DEBUG output
+            if (Math.random() < 0.01) { // Only log occasionally to reduce spam
+                console.log("Snake head:", head.x, head.y);
+                console.log("Container bounds:", containerRect);
+            }
+            
+            // Check only wall collision - use a LARGER margin to avoid false positives
+            const margin = 20; // Increased margin to avoid edge cases
             if (
                 head.x < containerRect.left + margin || 
                 head.x >= containerRect.right - margin || 
@@ -305,13 +344,25 @@ const ImprovedSnake: React.FC = () => {
                 head.y >= containerRect.bottom - margin
             ) {
                 // Reset snake on wall collision
-                console.log("Wall collision at", head.x, head.y);
-                head.x = 50;
-                head.y = 50;
+                console.log("Wall collision at", head.x, head.y, "Container:", containerRect);
+                
+                // Reset to center of container
+                const centerX = containerRect.left + (containerRect.right - containerRect.left) / 2;
+                const centerY = containerRect.top + (containerRect.bottom - containerRect.top) / 2;
+                
+                // Round to nearest 10 for grid alignment
+                const resetX = Math.floor(centerX / 10) * 10;
+                const resetY = Math.floor(centerY / 10) * 10;
+                
+                console.log("Resetting snake to:", resetX, resetY);
                 
                 return {
                     ...prev,
-                    snake: [head],
+                    snake: [
+                        { x: resetX, y: resetY },
+                        { x: resetX - 10, y: resetY },
+                        { x: resetX - 20, y: resetY }
+                    ],
                     direction: 'right',
                     score: 0
                 };
