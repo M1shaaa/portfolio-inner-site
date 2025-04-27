@@ -48,6 +48,14 @@ interface PacMan extends MovingEntity {
 // Game obstacles (elements on the page we want to avoid)
 interface Obstacle extends Entity {}
 
+// Define direction opposites type
+type DirectionMap = {
+  up: 'down';
+  down: 'up';
+  left: 'right';
+  right: 'left';
+};
+
 // Create a new component for the Pac-Man game
 const PacManGame: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -231,6 +239,9 @@ const PacManGame: React.FC = () => {
         case 'right':
           newX += newPacman.speed;
           break;
+        case 'none':
+          // No movement
+          break;
       }
       
       // Check if new position is valid (within bounds and not in obstacle)
@@ -279,6 +290,9 @@ const PacManGame: React.FC = () => {
           case 'right':
             ghostNewX += newGhost.speed;
             break;
+          case 'none':
+            // No movement
+            break;
         }
         
         // Check if new position is valid
@@ -293,13 +307,17 @@ const PacManGame: React.FC = () => {
           newGhost.y = ghostNewY;
         } else {
           // If invalid position, reverse direction
-          const opposites = {
+          const opposites: DirectionMap = {
             up: 'down',
             down: 'up',
             left: 'right',
             right: 'left',
-          } as const;
-          newGhost.direction = opposites[newGhost.direction];
+          };
+          
+          // Only change direction if current direction is not 'none'
+          if (newGhost.direction !== 'none') {
+            newGhost.direction = opposites[newGhost.direction];
+          }
         }
         
         return newGhost;
@@ -497,6 +515,9 @@ const PacManGame: React.FC = () => {
         case 'right':
           pupilOffsetX = 2;
           break;
+        case 'none':
+          // No offset
+          break;
       }
       
       ctx.beginPath();
@@ -540,12 +561,10 @@ const PacManGame: React.FC = () => {
           endAngle = 1.3 * Math.PI;
           break;
         case 'right':
-          startAngle = 0.2 * Math.PI;
-          endAngle = 1.8 * Math.PI;
           startAngle = -0.3 * Math.PI;
           endAngle = 0.3 * Math.PI;
           break;
-        default:
+        case 'none':
           // Default to a full circle if no direction
           ctx.arc(
             gameEntities.pacman.x + gameEntities.pacman.width / 2,
@@ -562,8 +581,8 @@ const PacManGame: React.FC = () => {
         gameEntities.pacman.x + gameEntities.pacman.width / 2,
         gameEntities.pacman.y + gameEntities.pacman.height / 2,
         gameEntities.pacman.width / 2,
-        startAngle * Math.PI,
-        endAngle * Math.PI
+        startAngle,
+        endAngle
       );
       ctx.lineTo(
         gameEntities.pacman.x + gameEntities.pacman.width / 2,
@@ -597,31 +616,35 @@ const PacManGame: React.FC = () => {
       }
     });
     
+    let currentContainer: HTMLDivElement | null = null;
+    
     if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
+      currentContainer = containerRef.current;
+      resizeObserver.observe(currentContainer);
+      
       const canvas = document.createElement('canvas');
-      canvas.width = containerRef.current.clientWidth;
-      canvas.height = containerRef.current.clientHeight;
+      canvas.width = currentContainer.clientWidth;
+      canvas.height = currentContainer.clientHeight;
       canvas.style.position = 'absolute';
       canvas.style.top = '0';
       canvas.style.left = '0';
       canvas.style.zIndex = '-1';
-      containerRef.current.appendChild(canvas);
+      currentContainer.appendChild(canvas);
       
       contextRef.current = canvas.getContext('2d');
       
       setCanvasSize({
-        width: containerRef.current.clientWidth,
-        height: containerRef.current.clientHeight,
+        width: currentContainer.clientWidth,
+        height: currentContainer.clientHeight,
       });
     }
     
     return () => {
-      if (containerRef.current) {
-        resizeObserver.unobserve(containerRef.current);
-        const canvas = containerRef.current.querySelector('canvas');
+      if (currentContainer) {
+        resizeObserver.unobserve(currentContainer);
+        const canvas = currentContainer.querySelector('canvas');
         if (canvas) {
-          containerRef.current.removeChild(canvas);
+          currentContainer.removeChild(canvas);
         }
       }
       
@@ -636,7 +659,7 @@ const PacManGame: React.FC = () => {
     if (canvasSize.width > 0 && !gameStarted) {
       initializeGame();
     }
-  }, [canvasSize, gameStarted]);
+  }, [canvasSize, gameStarted, initializeGame]);
 
   // Start game loop when game is initialized
   useEffect(() => {
@@ -649,7 +672,7 @@ const PacManGame: React.FC = () => {
         }
       };
     }
-  }, [gameStarted]);
+  }, [gameStarted, gameLoop]);
 
   // Handle keyboard input
   useEffect(() => {
@@ -738,4 +761,5 @@ const PacManGame: React.FC = () => {
   return <div ref={containerRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }}></div>;
 };
 
-export default PacManGame;
+// Memoize the component to avoid unnecessary re-renders
+export default React.memo(PacManGame);
