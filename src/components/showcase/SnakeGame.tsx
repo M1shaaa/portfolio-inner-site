@@ -2,9 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 
 // Game constants
 const CELL_SIZE = 15;
-const GAME_SPEED = 120; // ms per update
+const GAME_SPEED = 150; // ms per update - slower for better visibility
 const INITIAL_SNAKE_LENGTH = 5;
 const FOOD_COLOR = 'red';
+const MIN_DISTANCE_FROM_OBSTACLE = 60; // Increased minimum distance from obstacles
 
 // Color palette for snake
 const SNAKE_HEAD_COLOR = '#32CD32'; // Lime green
@@ -34,6 +35,7 @@ const SnakeGame: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [gameStarted, setGameStarted] = useState(false);
+  const [gameInitialized, setGameInitialized] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
@@ -41,12 +43,15 @@ const SnakeGame: React.FC = () => {
   const animationFrameRef = useRef<number | null>(null);
   const lastUpdateRef = useRef<number>(0);
   const isUserControllingRef = useRef(false);
+  const autoMoveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Game state
   const [direction, setDirection] = useState<'up' | 'down' | 'left' | 'right'>('right');
   const [snake, setSnake] = useState<SnakeSegment[]>([]);
   const [food, setFood] = useState<Food | null>(null);
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);
+  
+  console.log("Game state:", { snake, direction, gameStarted, gameInitialized, gameOver });
   
   // Function to find UI elements that should be obstacles
   const findObstacles = () => {
@@ -56,7 +61,7 @@ const SnakeGame: React.FC = () => {
     const containerRect = containerRef.current.getBoundingClientRect();
     
     // Get all UI elements
-    const uiElements = document.querySelectorAll('div[style*="fontSize: 72"], h2, a, div[style*="button"]');
+    const uiElements = document.querySelectorAll('div[style*="fontSize: 72"], h1, h2, a, div[style*="button"], div[style*="social"]');
     
     uiElements.forEach((element) => {
       const rect = element.getBoundingClientRect();
@@ -70,6 +75,7 @@ const SnakeGame: React.FC = () => {
       });
     });
     
+    console.log("Found obstacles:", newObstacles);
     return newObstacles;
   };
   
@@ -80,13 +86,23 @@ const SnakeGame: React.FC = () => {
       return true;
     }
     
-    // Check collision with obstacles (with a small buffer)
+    // Check collision with obstacles (with a buffer)
     const buffer = 5;
     return obstacles.some(obstacle => 
       x + CELL_SIZE > obstacle.x - buffer &&
       x < obstacle.x + obstacle.width + buffer &&
       y + CELL_SIZE > obstacle.y - buffer &&
       y < obstacle.y + obstacle.height + buffer
+    );
+  };
+  
+  // Function to check if a position is too close to obstacles
+  const isTooCloseToObstacle = (x: number, y: number): boolean => {
+    return obstacles.some(obstacle => 
+      x + CELL_SIZE > obstacle.x - MIN_DISTANCE_FROM_OBSTACLE &&
+      x < obstacle.x + obstacle.width + MIN_DISTANCE_FROM_OBSTACLE &&
+      y + CELL_SIZE > obstacle.y - MIN_DISTANCE_FROM_OBSTACLE &&
+      y < obstacle.y + obstacle.height + MIN_DISTANCE_FROM_OBSTACLE
     );
   };
   
@@ -106,19 +122,35 @@ const SnakeGame: React.FC = () => {
     let x: number = 0;
     let y: number = 0;
     let validPosition = false;
+    let attempts = 0;
+    const maxAttempts = 100;
     
-    while (!validPosition) {
+    while (!validPosition && attempts < maxAttempts) {
       // Generate random position (aligned to grid)
       x = Math.floor(Math.random() * (canvasSize.width / CELL_SIZE)) * CELL_SIZE;
       y = Math.floor(Math.random() * (canvasSize.height / CELL_SIZE)) * CELL_SIZE;
       
       // Check if position is valid (not on obstacle or snake)
       const notOnObstacle = !isCollision(x, y);
+      const notTooCloseToObstacle = !isTooCloseToObstacle(x, y);
       const notOnSnake = !snakeCopy.some(segment => segment.x === x && segment.y === y);
       
-      validPosition = notOnObstacle && notOnSnake;
+      validPosition = notOnObstacle && notOnSnake && notTooCloseToObstacle;
+      attempts++;
     }
     
+    // If no valid position found after max attempts, just find a position not on an obstacle
+    if (!validPosition) {
+      attempts = 0;
+      while (!validPosition && attempts < maxAttempts) {
+        x = Math.floor(Math.random() * (canvasSize.width / CELL_SIZE)) * CELL_SIZE;
+        y = Math.floor(Math.random() * (canvasSize.height / CELL_SIZE)) * CELL_SIZE;
+        validPosition = !isCollision(x, y);
+        attempts++;
+      }
+    }
+    
+    console.log("Generated food at:", x, y);
     return {
       x: x,
       y: y,
@@ -130,17 +162,41 @@ const SnakeGame: React.FC = () => {
   const initGame = () => {
     if (!canvasRef.current || canvasSize.width === 0) return;
     
+    console.log("Initializing game with canvas size:", canvasSize);
+    
     // Find obstacles
     const newObstacles = findObstacles();
     setObstacles(newObstacles);
     
-    // Create initial snake in the center
-    const centerX = Math.floor(canvasSize.width / 2 / CELL_SIZE) * CELL_SIZE;
-    const centerY = Math.floor(canvasSize.height / 2 / CELL_SIZE) * CELL_SIZE;
+    // Create initial snake away from obstacles
+    let centerX = Math.floor(canvasSize.width / 3 / CELL_SIZE) * CELL_SIZE;
+    let centerY = Math.floor(canvasSize.height / 3 / CELL_SIZE) * CELL_SIZE;
     
+    // Make sure snake doesn't start too close to obstacles
+    let validStart = false;
+    let attempts = 0;
+    const maxAttempts = 50;
+    
+    while (!validStart && attempts < maxAttempts) {
+      centerX = Math.floor(Math.random() * (canvasSize.width / CELL_SIZE)) * CELL_SIZE;
+      centerY = Math.floor(Math.random() * (canvasSize.height / CELL_SIZE)) * CELL_SIZE;
+      
+      // Check if position and nearby positions (for snake length) are valid
+      let allPositionsValid = true;
+      for (let i = 0; i < INITIAL_SNAKE_LENGTH; i++) {
+        const posX = centerX - (i * CELL_SIZE);
+        if (posX < 0 || isCollision(posX, centerY) || isTooCloseToObstacle(posX, centerY)) {
+          allPositionsValid = false;
+          break;
+        }
+      }
+      
+      validStart = allPositionsValid;
+      attempts++;
+    }
+    
+    // Create snake segments
     const initialSnake: SnakeSegment[] = [];
-    
-    // Create snake segments going left from center
     for (let i = 0; i < INITIAL_SNAKE_LENGTH; i++) {
       initialSnake.push({
         x: centerX - (i * CELL_SIZE),
@@ -148,15 +204,44 @@ const SnakeGame: React.FC = () => {
       });
     }
     
+    console.log("Created initial snake:", initialSnake);
+    
     setSnake(initialSnake);
     setDirection('right');
     setScore(0);
     setGameOver(false);
     
     // Generate first food
-    setFood(generateFood());
+    setTimeout(() => {
+      const newFood = generateFood();
+      setFood(newFood);
+      
+      // Force an initial auto-move after a short delay
+      setTimeout(() => {
+        console.log("Starting auto movement");
+        setGameStarted(true);
+        setGameInitialized(true);
+        startAutoMovement();
+      }, 500);
+    }, 500);
+  };
+  
+  // Start automatic movement
+  const startAutoMovement = () => {
+    if (autoMoveTimeoutRef.current) {
+      clearTimeout(autoMoveTimeoutRef.current);
+    }
     
-    setGameStarted(true);
+    // Move in current direction
+    updateGame();
+    
+    // Schedule next automatic move
+    autoMoveTimeoutRef.current = setTimeout(() => {
+      // Only continue auto movement if user isn't controlling
+      if (!isUserControllingRef.current && !gameOver) {
+        startAutoMovement();
+      }
+    }, GAME_SPEED);
   };
   
   // Update game state
@@ -188,6 +273,7 @@ const SnakeGame: React.FC = () => {
       
       // Check if game over (collision with wall, obstacle, or self)
       if (isCollision(head.x, head.y) || isSelfCollision(head, newSnake)) {
+        console.log("Game over - collision detected");
         setGameOver(true);
         return prevSnake;
       }
@@ -201,7 +287,9 @@ const SnakeGame: React.FC = () => {
         setScore(prevScore => prevScore + 10);
         
         // Generate new food
-        setFood(generateFood());
+        setTimeout(() => {
+          setFood(generateFood());
+        }, 100);
       } else {
         // Remove tail if didn't eat food
         newSnake.pop();
@@ -211,7 +299,7 @@ const SnakeGame: React.FC = () => {
     });
   };
   
-  // Game loop
+  // Game loop for rendering
   const gameLoop = (timestamp: number) => {
     if (!lastUpdateRef.current) {
       lastUpdateRef.current = timestamp;
@@ -219,9 +307,8 @@ const SnakeGame: React.FC = () => {
     
     const elapsed = timestamp - lastUpdateRef.current;
     
-    if (elapsed >= GAME_SPEED) {
+    if (elapsed >= GAME_SPEED / 2) { // Render twice as often as game updates
       lastUpdateRef.current = timestamp;
-      updateGame();
       renderGame();
     }
     
@@ -371,12 +458,19 @@ const SnakeGame: React.FC = () => {
       ctx.fillText('Press Space to Play Again', canvasSize.width / 2, canvasSize.height / 2 + 60);
       ctx.textAlign = 'left';
     }
+    
+    // Debug: visualize obstacles
+    // ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
+    // obstacles.forEach(obstacle => {
+    //   ctx.strokeRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+    // });
   };
   
   // Initialize the canvas and game when component mounts
   useEffect(() => {
     // Set up canvas
     if (containerRef.current) {
+      console.log("Setting up canvas");
       const canvas = document.createElement('canvas');
       canvasRef.current = canvas;
       
@@ -426,20 +520,26 @@ const SnakeGame: React.FC = () => {
         if (animationFrameRef.current) {
           cancelAnimationFrame(animationFrameRef.current);
         }
+        
+        if (autoMoveTimeoutRef.current) {
+          clearTimeout(autoMoveTimeoutRef.current);
+        }
       };
     }
   }, []);
   
   // Initialize game when canvas size is set
   useEffect(() => {
-    if (canvasSize.width > 0 && !gameStarted) {
+    if (canvasSize.width > 0 && !gameInitialized) {
+      console.log("Canvas size set, initializing game");
       initGame();
     }
-  }, [canvasSize, gameStarted]);
+  }, [canvasSize, gameInitialized]);
   
-  // Start game loop when game is initialized
+  // Start game loop for rendering when game is initialized
   useEffect(() => {
-    if (gameStarted && !gameOver && contextRef.current) {
+    if (gameInitialized && contextRef.current) {
+      console.log("Starting game loop");
       animationFrameRef.current = requestAnimationFrame(gameLoop);
       
       return () => {
@@ -448,50 +548,83 @@ const SnakeGame: React.FC = () => {
         }
       };
     }
-  }, [gameStarted, gameOver]);
+  }, [gameInitialized]);
   
   // Handle keyboard input
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isUserControllingRef.current) {
+        console.log("User taking control");
         isUserControllingRef.current = true;
+        
+        // Clear auto-movement when user takes control
+        if (autoMoveTimeoutRef.current) {
+          clearTimeout(autoMoveTimeoutRef.current);
+        }
       }
       
       if (gameOver) {
         // Restart game on space press
         if (e.code === 'Space') {
+          console.log("Restarting game");
           initGame();
         }
         return;
       }
       
+      let newDirection = direction;
+      
       // Don't allow 180-degree turns (can't immediately go in the opposite direction)
       switch (e.key) {
         case 'ArrowUp':
           if (direction !== 'down') {
-            setDirection('up');
+            newDirection = 'up';
           }
-          e.preventDefault();
           break;
         case 'ArrowDown':
           if (direction !== 'up') {
-            setDirection('down');
+            newDirection = 'down';
           }
-          e.preventDefault();
           break;
         case 'ArrowLeft':
           if (direction !== 'right') {
-            setDirection('left');
+            newDirection = 'left';
           }
-          e.preventDefault();
           break;
         case 'ArrowRight':
           if (direction !== 'left') {
-            setDirection('right');
+            newDirection = 'right';
           }
-          e.preventDefault();
           break;
+        default:
+          return; // Don't continue for other keys
       }
+      
+      // If direction changed, update it and move immediately
+      if (newDirection !== direction) {
+        setDirection(newDirection);
+        // Move immediately
+        setTimeout(updateGame, 0);
+        // Then start a new movement timer
+        setTimeout(() => {
+          if (!gameOver) {
+            updateGame();
+            // Schedule next movement
+            const moveInterval = setInterval(() => {
+              if (gameOver) {
+                clearInterval(moveInterval);
+                return;
+              }
+              updateGame();
+            }, GAME_SPEED);
+            
+            // Cleanup on unmount
+            return () => clearInterval(moveInterval);
+          }
+        }, GAME_SPEED);
+      }
+      
+      e.preventDefault();
     };
     
     window.addEventListener('keydown', handleKeyDown);
@@ -500,47 +633,6 @@ const SnakeGame: React.FC = () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [direction, gameOver]);
-  
-  // Handle automatic movement if user is not controlling
-  useEffect(() => {
-    if (gameStarted && !gameOver && !isUserControllingRef.current) {
-      const autoMoveInterval = setInterval(() => {
-        // Make random turns occasionally, but avoid obstacles
-        if (Math.random() < 0.1) {
-          // Get current head position
-          const head = snake[0];
-          
-          // Calculate possible next positions
-          const possibleMoves = [
-            { dir: 'up', x: head.x, y: head.y - CELL_SIZE },
-            { dir: 'down', x: head.x, y: head.y + CELL_SIZE },
-            { dir: 'left', x: head.x - CELL_SIZE, y: head.y },
-            { dir: 'right', x: head.x + CELL_SIZE, y: head.y }
-          ] as const;
-          
-          // Filter out invalid moves (obstacles, walls, and 180-degree turns)
-          const validMoves = possibleMoves.filter(move => {
-            if (move.dir === 'up' && direction === 'down') return false;
-            if (move.dir === 'down' && direction === 'up') return false;
-            if (move.dir === 'left' && direction === 'right') return false;
-            if (move.dir === 'right' && direction === 'left') return false;
-            
-            return !isCollision(move.x, move.y);
-          });
-          
-          // If there are valid moves, choose one randomly
-          if (validMoves.length > 0) {
-            const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
-            setDirection(randomMove.dir);
-          }
-        }
-      }, 1000);
-      
-      return () => {
-        clearInterval(autoMoveInterval);
-      };
-    }
-  }, [gameStarted, gameOver, snake, direction]);
   
   // Return a div that will contain the canvas
   return <div ref={containerRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }}></div>;
