@@ -382,15 +382,37 @@ const ImprovedSnake: React.FC = () => {
                 console.log("Current speed:", speedRef.current);
             }
             
-            // Check only wall collision - use a LARGER margin to avoid false positives
-            const margin = 0; // Increased margin to avoid edge cases
+            // Check only wall collision with extra debug information
+            // Add a small buffer (1px) to ensure no false positives from rounding errors
+            const leftBuffer = 2; // Small buffer for left wall
+            const rightBuffer = 2; // Small buffer for right wall
+            const topBuffer = 2; // Small buffer for top wall
+            const bottomBuffer = 2; // Small buffer for bottom wall
 
-            if (
-                head.x < containerRect.left || // Exact collision with left wall
-                head.x >= containerRect.right || // Exact collision with right wall
-                head.y < containerRect.top || // Exact collision with top wall
-                head.y >= containerRect.bottom // Exact collision with bottom wall
-            ) {
+            // Check if head is outside container bounds with buffer
+            const isWallCollision = (
+                head.x < containerRect.left - leftBuffer || 
+                head.x >= containerRect.right + rightBuffer || 
+                head.y < containerRect.top - topBuffer || 
+                head.y >= containerRect.bottom + bottomBuffer
+            );
+
+            // Output detailed debug info every time to help diagnose
+            console.log("Snake position:", head.x, head.y);
+            console.log("Container bounds:", 
+                "L:" + containerRect.left, 
+                "R:" + containerRect.right, 
+                "T:" + containerRect.top, 
+                "B:" + containerRect.bottom
+            );
+            console.log("Distance from walls:", 
+                "L:" + (head.x - containerRect.left), 
+                "R:" + (containerRect.right - head.x), 
+                "T:" + (head.y - containerRect.top), 
+                "B:" + (containerRect.bottom - head.y)
+            );
+
+            if (isWallCollision) {
                 // Reset snake on wall collision
                 console.log("Wall collision at", head.x, head.y, "Container:", containerRect);
                 
