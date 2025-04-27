@@ -2,15 +2,19 @@ import React, { useEffect, useRef, useState } from 'react';
 
 // Game constants
 const DOT_SIZE = 5;
-const DOT_COUNT = 50;
-const FRUIT_COUNT = 3;
+const DOT_COUNT = 150; // Increased from 50 to 150
+const FRUIT_COUNT = 8; // Increased from 3 to 8
 const GHOST_COUNT = 4;
 const PACMAN_SIZE = 30;
 const GHOST_SIZE = 30;
 const FRUIT_SIZE = 20;
-const GAME_SPEED = 150; // ms per update
-const GHOST_SPEED = 2;
-const PACMAN_SPEED = 3;
+const GAME_SPEED = 100; // Reduced from 150ms to 100ms for faster updates
+const GHOST_SPEED = 3.5; // Increased from 2 to 3.5
+const PACMAN_SPEED = 4.5; // Increased from 3 to 4.5
+const MOUTH_ANIMATION_SPEED = 5; // Lower is faster (was effectively 10 before)
+
+// Ghost colors (defined at the module level for access in the update function)
+const GHOST_COLORS = ['red', 'pink', 'cyan', 'orange'];
 
 // Game entities
 interface Entity {
@@ -37,6 +41,9 @@ interface Fruit extends Entity {
 interface Ghost extends MovingEntity {
   color: string;
   changeDirCounter: number;
+  isEdible: boolean;
+  edibleTimer: number;
+  targetPacman: boolean;
 }
 
 interface PacMan extends MovingEntity {
@@ -122,7 +129,7 @@ const PacManGame: React.FC = () => {
   };
 
   // Initialize the game
-  const initializeGame = () => {
+  const initializeGame = React.useCallback(() => {
     if (!containerRef.current || canvasSize.width === 0) return;
     
     // Find obstacles (DOM elements that should act as walls)
@@ -156,20 +163,46 @@ const PacManGame: React.FC = () => {
     }
     
     // Generate ghosts
-    const ghostColors = ['red', 'pink', 'cyan', 'orange'];
     const ghosts: Ghost[] = [];
+    
+    // Try to place ghosts at a minimum distance from UI elements
     for (let i = 0; i < GHOST_COUNT; i++) {
-      const { x, y } = getRandomPosition(GHOST_SIZE, GHOST_SIZE);
+      let validPosition = false;
+      let attempts = 0;
+      let posX = 0;
+      let posY = 0;
+      
+      // Try up to 30 times to find a position that's not too close to obstacles
+      while (!validPosition && attempts < 30) {
+        const tempPos = getRandomPosition(GHOST_SIZE, GHOST_SIZE);
+        posX = tempPos.x;
+        posY = tempPos.y;
+        
+        // Check if position is at least 50px away from any obstacle
+        validPosition = !obstacles.some(
+          obstacle => 
+            posX + GHOST_SIZE > obstacle.x - 50 &&
+            posX < obstacle.x + obstacle.width + 50 &&
+            posY + GHOST_SIZE > obstacle.y - 50 &&
+            posY < obstacle.y + obstacle.height + 50
+        );
+        
+        attempts++;
+      }
+      
       const directions = ['up', 'down', 'left', 'right'] as const;
       ghosts.push({
-        x,
-        y,
+        x: posX,
+        y: posY,
         width: GHOST_SIZE,
         height: GHOST_SIZE,
-        color: ghostColors[i % ghostColors.length],
+        color: GHOST_COLORS[i % GHOST_COLORS.length],
         direction: directions[Math.floor(Math.random() * directions.length)],
         speed: GHOST_SPEED,
         changeDirCounter: 0,
+        isEdible: false,
+        edibleTimer: 0,
+        targetPacman: Math.random() > 0.5, // 50% chance to target Pacman initially
       });
     }
     
@@ -189,7 +222,7 @@ const PacManGame: React.FC = () => {
     
     setGameEntities({ pacman, ghosts, dots, fruits });
     setGameStarted(true);
-  };
+  }, [canvasSize, obstacles]);  // Add dependencies here
 
   // Find all DOM elements that should be obstacles
   const findObstacles = () => {
@@ -256,8 +289,8 @@ const PacManGame: React.FC = () => {
         newPacman.y = newY;
       }
       
-      // Animate Pac-Man's mouth
-      newPacman.mouthCounter = (newPacman.mouthCounter + 1) % 10;
+      // Animate Pac-Man's mouth (faster)
+      newPacman.mouthCounter = (newPacman.mouthCounter + 1) % MOUTH_ANIMATION_SPEED;
       if (newPacman.mouthCounter === 0) {
         newPacman.mouthOpen = !newPacman.mouthOpen;
       }
@@ -266,11 +299,56 @@ const PacManGame: React.FC = () => {
       const newGhosts = prev.ghosts.map(ghost => {
         const newGhost = { ...ghost };
         
-        // Occasionally change direction
-        newGhost.changeDirCounter = (newGhost.changeDirCounter + 1) % 30;
-        if (newGhost.changeDirCounter === 0 || Math.random() < 0.02) {
-          const directions = ['up', 'down', 'left', 'right'] as const;
-          newGhost.direction = directions[Math.floor(Math.random() * directions.length)];
+        // Handle edible state
+        if (newGhost.isEdible) {
+          newGhost.edibleTimer--;
+          if (newGhost.edibleTimer <= 0) {
+            newGhost.isEdible = false;
+            newGhost.color = GHOST_COLORS[newGhosts.indexOf(newGhost) % GHOST_COLORS.length];
+          }
+          
+          // Make edible ghosts move randomly and slower
+          newGhost.speed = GHOST_SPEED * 0.6;
+          
+          // Occasionally change direction when edible
+          if (Math.random() < 0.05) {
+            const directions = ['up', 'down', 'left', 'right'] as const;
+            newGhost.direction = directions[Math.floor(Math.random() * directions.length)];
+          }
+        } else {
+          // Reset normal speed
+          newGhost.speed = GHOST_SPEED;
+          
+          // If targeting Pacman, determine best direction to chase
+          if (newGhost.targetPacman) {
+            // Only change direction every so often
+            newGhost.changeDirCounter = (newGhost.changeDirCounter + 1) % 20;
+            if (newGhost.changeDirCounter === 0) {
+              // Find direction that gets closer to Pacman
+              const distX = newPacman.x - newGhost.x;
+              const distY = newPacman.y - newGhost.y;
+              
+              // Determine primary direction based on which distance is greater
+              if (Math.abs(distX) > Math.abs(distY)) {
+                newGhost.direction = distX > 0 ? 'right' : 'left';
+              } else {
+                newGhost.direction = distY > 0 ? 'down' : 'up';
+              }
+              
+              // Occasionally add randomness to make movement less predictable
+              if (Math.random() < 0.2) {
+                const directions = ['up', 'down', 'left', 'right'] as const;
+                newGhost.direction = directions[Math.floor(Math.random() * directions.length)];
+              }
+            }
+          } else {
+            // Non-chasing ghosts change direction randomly
+            newGhost.changeDirCounter = (newGhost.changeDirCounter + 1) % 30;
+            if (newGhost.changeDirCounter === 0 || Math.random() < 0.02) {
+              const directions = ['up', 'down', 'left', 'right'] as const;
+              newGhost.direction = directions[Math.floor(Math.random() * directions.length)];
+            }
+          }
         }
         
         // Move ghost
@@ -348,6 +426,14 @@ const PacManGame: React.FC = () => {
           newPacman.y + newPacman.height > fruit.y
         ) {
           newPacman.score += 100;
+          
+          // Make all ghosts edible when fruit is eaten
+          newGhosts.forEach(ghost => {
+            ghost.isEdible = true;
+            ghost.edibleTimer = 300; // Ghost will be edible for 300 frames (about 30 seconds at 100ms update)
+            ghost.color = 'blue';
+          });
+          
           return { ...fruit, eaten: true };
         }
         return fruit;
@@ -361,12 +447,26 @@ const PacManGame: React.FC = () => {
           newPacman.y < ghost.y + ghost.height &&
           newPacman.y + newPacman.height > ghost.y
         ) {
-          // Here you could implement game over logic
-          // For now, we'll just reset Pac-Man's position
-          const { x, y } = getRandomPosition(PACMAN_SIZE, PACMAN_SIZE);
-          newPacman.x = x;
-          newPacman.y = y;
-          newPacman.score = Math.max(0, newPacman.score - 50);
+          if (ghost.isEdible) {
+            // If ghost is edible, eat it
+            ghost.isEdible = false;
+            ghost.edibleTimer = 0;
+            ghost.color = GHOST_COLORS[newGhosts.indexOf(ghost) % GHOST_COLORS.length];
+            
+            // Reset ghost position
+            const { x, y } = getRandomPosition(GHOST_SIZE, GHOST_SIZE);
+            ghost.x = x;
+            ghost.y = y;
+            
+            // Increase score
+            newPacman.score += 200;
+          } else {
+            // Regular ghost collision
+            const { x, y } = getRandomPosition(PACMAN_SIZE, PACMAN_SIZE);
+            newPacman.x = x;
+            newPacman.y = y;
+            newPacman.score = Math.max(0, newPacman.score - 50);
+          }
         }
       });
       
@@ -380,7 +480,7 @@ const PacManGame: React.FC = () => {
   };
 
   // Game loop
-  const gameLoop = (timestamp: number) => {
+  const gameLoop = React.useCallback((timestamp: number) => {
     if (!lastUpdateTimeRef.current) {
       lastUpdateTimeRef.current = timestamp;
     }
@@ -394,7 +494,7 @@ const PacManGame: React.FC = () => {
     }
     
     requestRef.current = requestAnimationFrame(gameLoop);
-  };
+  }, []);  // Empty dependency array since we don't want to recreate this on every render
 
   // Render game entities
   const renderGame = () => {
@@ -476,127 +576,170 @@ const PacManGame: React.FC = () => {
       ctx.lineTo(ghost.x, ghost.y + ghost.height / 2);
       ctx.fill();
       
-      // Eyes
-      ctx.fillStyle = 'white';
-      ctx.beginPath();
-      ctx.arc(
-        ghost.x + ghost.width / 3,
-        ghost.y + ghost.height / 3,
-        ghost.width / 6,
-        0,
-        2 * Math.PI
-      );
-      ctx.arc(
-        ghost.x + (ghost.width / 3) * 2,
-        ghost.y + ghost.height / 3,
-        ghost.width / 6,
-        0,
-        2 * Math.PI
-      );
-      ctx.fill();
-      
-      // Pupils
-      ctx.fillStyle = 'black';
-      
-      // Adjust pupil position based on direction
-      let pupilOffsetX = 0;
-      let pupilOffsetY = 0;
-      
-      switch (ghost.direction) {
-        case 'up':
-          pupilOffsetY = -2;
-          break;
-        case 'down':
-          pupilOffsetY = 2;
-          break;
-        case 'left':
-          pupilOffsetX = -2;
-          break;
-        case 'right':
-          pupilOffsetX = 2;
-          break;
-        case 'none':
-          // No offset
-          break;
+      // For edible ghosts, draw blinking effect when almost done
+      if (ghost.isEdible && ghost.edibleTimer < 100 && Math.floor(ghost.edibleTimer / 10) % 2 === 0) {
+        // Draw white eyes and mouth for flashing effect
+        ctx.fillStyle = 'white';
+        // Eyes
+        ctx.beginPath();
+        ctx.arc(
+          ghost.x + ghost.width / 3,
+          ghost.y + ghost.height / 3,
+          ghost.width / 5,
+          0,
+          2 * Math.PI
+        );
+        ctx.arc(
+          ghost.x + (ghost.width / 3) * 2,
+          ghost.y + ghost.height / 3,
+          ghost.width / 5,
+          0,
+          2 * Math.PI
+        );
+        ctx.fill();
+      } else if (ghost.isEdible) {
+        // Draw edible ghost eyes (scared eyes)
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        
+        // Left eye - simple curve
+        ctx.moveTo(ghost.x + ghost.width / 4, ghost.y + ghost.height / 3);
+        ctx.lineTo(ghost.x + ghost.width / 4 + ghost.width / 10, ghost.y + ghost.height / 3 - ghost.height / 10);
+        ctx.lineTo(ghost.x + ghost.width / 4 + ghost.width / 5, ghost.y + ghost.height / 3);
+        ctx.fill();
+        
+        // Right eye - simple curve
+        ctx.moveTo(ghost.x + (ghost.width / 4) * 3, ghost.y + ghost.height / 3);
+        ctx.lineTo(ghost.x + (ghost.width / 4) * 3 - ghost.width / 10, ghost.y + ghost.height / 3 - ghost.height / 10);
+        ctx.lineTo(ghost.x + (ghost.width / 4) * 3 - ghost.width / 5, ghost.y + ghost.height / 3);
+        ctx.fill();
+        
+        // Draw scared mouth
+        ctx.beginPath();
+        ctx.moveTo(ghost.x + ghost.width / 4, ghost.y + ghost.height / 2);
+        
+        // Zigzag mouth
+        const mouthWidth = ghost.width / 2;
+        const zigzagCount = 5;
+        const segmentWidth = mouthWidth / zigzagCount;
+        
+        for (let i = 0; i <= zigzagCount; i++) {
+          const y = ghost.y + ghost.height / 2 + (i % 2 === 0 ? ghost.height / 15 : -ghost.height / 15);
+          ctx.lineTo(ghost.x + ghost.width / 4 + i * segmentWidth, y);
+        }
+        
+        ctx.stroke();
+      } else {
+        // Regular ghost eyes
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.arc(
+          ghost.x + ghost.width / 3,
+          ghost.y + ghost.height / 3,
+          ghost.width / 6,
+          0,
+          2 * Math.PI
+        );
+        ctx.arc(
+          ghost.x + (ghost.width / 3) * 2,
+          ghost.y + ghost.height / 3,
+          ghost.width / 6,
+          0,
+          2 * Math.PI
+        );
+        ctx.fill();
+        
+        // Pupils
+        ctx.fillStyle = 'black';
+        
+        // Adjust pupil position based on direction
+        let pupilOffsetX = 0;
+        let pupilOffsetY = 0;
+        
+        switch (ghost.direction) {
+          case 'up':
+            pupilOffsetY = -2;
+            break;
+          case 'down':
+            pupilOffsetY = 2;
+            break;
+          case 'left':
+            pupilOffsetX = -2;
+            break;
+          case 'right':
+            pupilOffsetX = 2;
+            break;
+          case 'none':
+            // No offset
+            break;
+        }
+        
+        ctx.beginPath();
+        ctx.arc(
+          ghost.x + ghost.width / 3 + pupilOffsetX,
+          ghost.y + ghost.height / 3 + pupilOffsetY,
+          ghost.width / 10,
+          0,
+          2 * Math.PI
+        );
+        ctx.arc(
+          ghost.x + (ghost.width / 3) * 2 + pupilOffsetX,
+          ghost.y + ghost.height / 3 + pupilOffsetY,
+          ghost.width / 10,
+          0,
+          2 * Math.PI
+        );
+        ctx.fill();
       }
-      
-      ctx.beginPath();
-      ctx.arc(
-        ghost.x + ghost.width / 3 + pupilOffsetX,
-        ghost.y + ghost.height / 3 + pupilOffsetY,
-        ghost.width / 10,
-        0,
-        2 * Math.PI
-      );
-      ctx.arc(
-        ghost.x + (ghost.width / 3) * 2 + pupilOffsetX,
-        ghost.y + ghost.height / 3 + pupilOffsetY,
-        ghost.width / 10,
-        0,
-        2 * Math.PI
-      );
-      ctx.fill();
     });
     
     // Draw Pac-Man
     ctx.fillStyle = 'yellow';
     ctx.beginPath();
     
+    // Center coordinates for easier reference
+    const centerX = gameEntities.pacman.x + gameEntities.pacman.width / 2;
+    const centerY = gameEntities.pacman.y + gameEntities.pacman.height / 2;
+    const radius = gameEntities.pacman.width / 2;
+    
     if (gameEntities.pacman.mouthOpen) {
       // Calculate mouth angle based on direction
-      let startAngle = 0.2;
-      let endAngle = 1.8;
+      let startAngle = 0;
+      let endAngle = 0;
       
       switch (gameEntities.pacman.direction) {
         case 'up':
-          startAngle = -0.8 * Math.PI;
-          endAngle = 0.8 * Math.PI;
+          startAngle = 1.75 * Math.PI; // 315 degrees
+          endAngle = 1.25 * Math.PI; // 225 degrees
           break;
         case 'down':
-          startAngle = 0.2 * Math.PI;
-          endAngle = 1.8 * Math.PI;
+          startAngle = 0.75 * Math.PI; // 135 degrees
+          endAngle = 0.25 * Math.PI; // 45 degrees
           break;
         case 'left':
-          startAngle = 0.7 * Math.PI;
-          endAngle = 1.3 * Math.PI;
+          startAngle = 1.25 * Math.PI; // 225 degrees
+          endAngle = 0.75 * Math.PI; // 135 degrees
           break;
         case 'right':
-          startAngle = -0.3 * Math.PI;
-          endAngle = 0.3 * Math.PI;
+          startAngle = 0.25 * Math.PI; // 45 degrees
+          endAngle = 1.75 * Math.PI; // 315 degrees
           break;
         case 'none':
-          // Default to a full circle if no direction
-          ctx.arc(
-            gameEntities.pacman.x + gameEntities.pacman.width / 2,
-            gameEntities.pacman.y + gameEntities.pacman.height / 2,
-            gameEntities.pacman.width / 2,
-            0,
-            2 * Math.PI
-          );
-          ctx.fill();
-          return;
+          // Default to right-facing if no direction
+          startAngle = 0.25 * Math.PI; // 45 degrees
+          endAngle = 1.75 * Math.PI; // 315 degrees
+          break;
       }
       
-      ctx.arc(
-        gameEntities.pacman.x + gameEntities.pacman.width / 2,
-        gameEntities.pacman.y + gameEntities.pacman.height / 2,
-        gameEntities.pacman.width / 2,
-        startAngle,
-        endAngle
-      );
-      ctx.lineTo(
-        gameEntities.pacman.x + gameEntities.pacman.width / 2,
-        gameEntities.pacman.y + gameEntities.pacman.height / 2
-      );
+      // Draw the pacman arc
+      ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+      
+      // Connect to center
+      ctx.lineTo(centerX, centerY);
+      ctx.closePath();
     } else {
       // Full circle when mouth is closed
-      ctx.arc(
-        gameEntities.pacman.x + gameEntities.pacman.width / 2,
-        gameEntities.pacman.y + gameEntities.pacman.height / 2,
-        gameEntities.pacman.width / 2,
-        0,
-        2 * Math.PI
-      );
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
     }
     
     ctx.fill();
