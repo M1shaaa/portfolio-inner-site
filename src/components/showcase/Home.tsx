@@ -51,6 +51,12 @@ const ImprovedSnake: React.FC = () => {
     const foodEatenRef = useRef<boolean>(false);
     
     // Setup canvas once on mount
+    // Persistent high score
+    const highScoreRef = useRef<number>(
+        parseInt(localStorage.getItem('snakeHighScore') || '0')
+    );
+    const [sessionHighScore, setSessionHighScore] = useState<number>(0);
+    
     useEffect(() => {
         if (!containerRef.current) return;
         
@@ -75,7 +81,7 @@ const ImprovedSnake: React.FC = () => {
         // Start movement loop - SPEED ADJUSTED FROM 200 TO 120ms
         const interval = setInterval(() => {
             moveSnake();
-            // Check if we need to respawn food
+            // Always check if we need to respawn food
             if (foodEatenRef.current) {
                 generateNewFood();
                 foodEatenRef.current = false;
@@ -144,13 +150,13 @@ const ImprovedSnake: React.FC = () => {
         renderGame();
     }, [gameState]);
     
-    // IMPROVED: Helper function with more precise hit detection
+    // IMPROVED: Helper function with much more precise hit detection
     const isPositionOccupied = (x: number, y: number): boolean => {
         // Get all UI elements
         const elements = document.querySelectorAll('h1, h2, a, div[style*="button"]');
         
-        // Add a small buffer for hit testing (smaller than before)
-        const buffer = 2; // Was implicitly larger before
+        // Add a very tiny buffer for hit testing
+        const buffer = 0.5; // Extremely small buffer for precise collision
         
         // Check if position is inside any of these elements
         for (let i = 0; i < elements.length; i++) {
