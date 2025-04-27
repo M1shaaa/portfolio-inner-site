@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from '../general';
 import { useNavigate } from 'react-router';
+import PacManGame from './PacManGame';
 
 // Import images
 import marioPunch from '../../assets/pictures/mario-hit.gif';
@@ -99,6 +100,14 @@ const styles: StyleSheet = {
         height: 32,
         width: 32,
         marginTop: 0,
+    },
+    gameContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: -1,
     }
 };
 
@@ -144,60 +153,4 @@ const Home: React.FC<HomeProps> = (props) => {
     const socialLinks = [
         { icon: ghIcon, link: 'https://github.com/M1shaaa' },
         { icon: inIcon, link: 'https://www.linkedin.com/in/misha-o-keeffe-099348262/' },
-        { icon: twitterIcon, link: 'https://x.com/mish_uhhh' },
-        { icon: gsIcon, link: 'https://scholar.google.com/citations?user=j41CbesAAAAJ&hl=en' },
-    ];
-
-    return (
-        <div style={styles.page}>
-            <div style={styles.header}>
-                <h1 style={styles.name}>misha okeeffe</h1>
-                <h2>personal website</h2>
-            </div>
-            <div style={styles.buttons}>
-                <Link containerStyle={styles.link} to="about" text="about me" />
-                <Link
-                    containerStyle={styles.link}
-                    to="experience"
-                    text="research"
-                />
-                <Link
-                    containerStyle={styles.link}
-                    to="projects"
-                    text="everything else"
-                />
-                <Link
-                    containerStyle={styles.link}
-                    to="contact"
-                    text="contact"
-                />
-            </div>
-            <div style={styles.forHireContainer} onMouseDown={goToContact}>
-                {/* <img src={forhire} alt="" /> */}
-            </div>
-            <div style={styles.socialsContainer}>
-                <div style={styles.socials}>
-                    {socialLinks.map((social, index) => (
-                        <div key={index} style={styles.socialWrapper}>
-                            <SocialBox
-                                icon={social.icon}
-                                link={social.link}
-                                position={index}
-                                onActivate={() => {
-                                    setActiveMario(index);
-                                    setTimeout(() => setActiveMario(null), 500);
-                                }}
-                            />
-                            <MarioAnimation
-                                isAnimating={activeMario === index}
-                                index={index}
-                            />
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-    );
-};
-
-export default Home;
+        { icon: twitterIcon, link: 'https://x.com/mish_uhh
