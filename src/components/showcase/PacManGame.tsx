@@ -745,7 +745,7 @@ const PacManGame: React.FC = () => {
     ctx.fill();
     
     // Draw score
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = 'black';
     ctx.font = '14px Arial';
     ctx.fillText(`Score: ${gameEntities.pacman.score}`, 10, 20);
   };
