@@ -383,7 +383,8 @@ const ImprovedSnake: React.FC = () => {
             }
             
             // Check only wall collision - use a LARGER margin to avoid false positives
-            const margin = 20; // Increased margin to avoid edge cases
+            const margin = 5; // Increased margin to avoid edge cases
+            
             if (
                 head.x < containerRect.left + margin || 
                 head.x >= containerRect.right - margin || 
