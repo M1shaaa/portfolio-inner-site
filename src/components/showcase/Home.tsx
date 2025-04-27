@@ -182,19 +182,63 @@ const ImprovedSnake: React.FC = () => {
         let attempts = 0;
         const maxAttempts = 200; // Increased from 100
         
+        // Get the main container dimensions for better placement
+        const homeContainer = document.querySelector('div[style*="position: absolute"][style*="height: 100%"]');
+        let containerRect = {
+            left: 0,
+            right: window.innerWidth,
+            top: 0,
+            bottom: window.innerHeight,
+            width: window.innerWidth,
+            height: window.innerHeight
+        };
+        
+        if (homeContainer) {
+            const rect = homeContainer.getBoundingClientRect();
+            containerRect = {
+                left: rect.left,
+                right: rect.right,
+                top: rect.top,
+                bottom: rect.bottom,
+                width: rect.width,
+                height: rect.height
+            };
+            console.log("Found home container:", containerRect);
+        } else {
+            console.log("Using window dimensions for food placement");
+        }
+        
         // Make sure food is within sensible bounds
         const margin = 40; // Keep food away from edges
         
+        // Debug information
+        console.log("Generating food within:", 
+            containerRect.left + margin, 
+            containerRect.right - margin,
+            containerRect.top + margin,
+            containerRect.bottom - margin
+        );
+        
         do {
             // Generate positions that are multiples of 10 for grid alignment
-            newFoodX = Math.floor(Math.random() * ((window.innerWidth - margin*2) / 10)) * 10 + margin;
-            newFoodY = Math.floor(Math.random() * ((window.innerHeight - margin*2) / 10)) * 10 + margin;
+            // and constrain to the visible container area
+            const availableWidth = containerRect.width - (margin * 2);
+            const availableHeight = containerRect.height - (margin * 2);
+            
+            newFoodX = Math.floor(Math.random() * (availableWidth / 10)) * 10 + containerRect.left + margin;
+            newFoodY = Math.floor(Math.random() * (availableHeight / 10)) * 10 + containerRect.top + margin;
+            
             attempts++;
             
-            // Prevent infinite loops
+            // Force exit after too many attempts
             if (attempts >= maxAttempts) {
-                console.log("Max attempts reached, using last position");
+                console.log("Max attempts reached, using last position:", newFoodX, newFoodY);
                 break;
+            }
+            
+            // Debug every 10 attempts
+            if (attempts % 10 === 0) {
+                console.log(`Attempt ${attempts}: Trying position (${newFoodX}, ${newFoodY})`);
             }
         } while (
             // Check if food would spawn on snake
@@ -202,11 +246,17 @@ const ImprovedSnake: React.FC = () => {
                 Math.abs(segment.x - newFoodX) < 10 && Math.abs(segment.y - newFoodY) < 10
             ) ||
             // Check if food would spawn on UI element with tighter tolerance
-            isPositionOccupied(newFoodX, newFoodY)
+            isPositionOccupied(newFoodX, newFoodY) ||
+            // Extra check: Make sure it's not too close to the edge
+            newFoodX < containerRect.left + margin || 
+            newFoodX > containerRect.right - margin || 
+            newFoodY < containerRect.top + margin || 
+            newFoodY > containerRect.bottom - margin
         );
         
         console.log("Generated new food at:", newFoodX, newFoodY);
         
+        // Make the food visually distinct
         setGameState((prev: GameState) => ({
             ...prev,
             food: { x: newFoodX, y: newFoodY }
@@ -287,11 +337,23 @@ const ImprovedSnake: React.FC = () => {
             if (Math.abs(head.x - prev.food.x) < 10 && Math.abs(head.y - prev.food.y) < 10) {
                 foodEatenRef.current = true;
                 
+                const newScore = prev.score + 10;
+                
+                // Update high scores
+                if (newScore > sessionHighScore) {
+                    setSessionHighScore(newScore);
+                }
+                
+                if (newScore > highScoreRef.current) {
+                    highScoreRef.current = newScore;
+                    localStorage.setItem('snakeHighScore', newScore.toString());
+                }
+                
                 // IMPROVED: Don't remove tail when eating food (snake grows)
                 return {
                     ...prev,
                     snake: newSnake, 
-                    score: prev.score + 10
+                    score: newScore
                 };
             } else {
                 // Remove tail if not eating
@@ -421,13 +483,24 @@ const ImprovedSnake: React.FC = () => {
         );
         ctx.fill();
         
-        // Draw score
-        ctx.fillStyle = 'white';
-        ctx.font = '16px Arial';
-        ctx.fillText(`Score: ${gameState.score}`, 10, 25);
+        // Draw score and high scores in 80s/90s retro style
+        ctx.fillStyle = 'black';
+        ctx.font = 'bold 16px "Press Start 2P", "Courier New", monospace';
         
-        // Draw snake length
-        ctx.fillText(`Length: ${gameState.snake.length}`, 10, 50);
+        // Add a white background with slight transparency for better readability
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.fillRect(5, 5, 250, 75);
+        
+        // Draw the text in black
+        ctx.fillStyle = 'black';
+        ctx.fillText(`SCORE: ${gameState.score}`, 10, 25);
+        ctx.fillText(`LENGTH: ${gameState.snake.length}`, 10, 50);
+        ctx.fillText(`SESSION HIGH: ${sessionHighScore}`, 10, 75);
+        
+        // Draw the all-time high score
+        if (highScoreRef.current > 0) {
+            ctx.fillText(`ALL-TIME HIGH: ${highScoreRef.current}`, 10, 100);
+        }
     };
     
     return <div ref={containerRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }}></div>;
