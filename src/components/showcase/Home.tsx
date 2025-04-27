@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from '../general';
 import { useNavigate } from 'react-router';
-import PacManGame from './PacManGame';
+import SnakeGame from './SnakeGame';
 
 // Import images
 import marioPunch from '../../assets/pictures/mario-hit.gif';
@@ -159,8 +159,8 @@ const Home: React.FC<HomeProps> = (props) => {
 
     return (
         <div style={styles.page}>
-            {/* Add the PacMan game in the background */}
-            <PacManGame />
+            {/* Add the Snake game in the background */}
+            <SnakeGame />
             
             <div style={styles.header}>
                 <h1 style={styles.name}>misha okeeffe</h1>
