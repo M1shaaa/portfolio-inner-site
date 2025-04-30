@@ -2,6 +2,7 @@ import React from 'react';
 
 const Thoughts: React.FC = () => {
   const thoughts = [
+    "why is it okay to say 'morning' or 'afternoon' to people but not 'fall' or 'winter'?",
     "is it a button-up or button-down?",
     "What format are computer files stored in to be universally accessible?",
     "why is sunday laundry day?",
