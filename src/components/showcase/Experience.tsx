@@ -1,7 +1,7 @@
 import React from 'react';
 import ResumeDownload from './ResumeDownload';
 // Import the construction GIF
-import constructionGif from '/Users/mokeeffe/Documents/GitHub/portfolio-inner-site/src/assets/pictures/construction.gif';
+import constructionGif from '../../assets/pictures/construction.gif';
 
 export interface ExperienceProps {}
 
