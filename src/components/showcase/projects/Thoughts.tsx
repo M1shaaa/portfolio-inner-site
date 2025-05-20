@@ -2,7 +2,8 @@ import React from 'react';
 
 const Thoughts: React.FC = () => {
   const thoughts = [
-    "does a double yoke mean twins'?",
+    "Was a sip really good if you didn't make that noise after it?",
+    "does a double yoke mean twins?",
     "why is it okay to say 'morning' or 'afternoon' to people but not 'fall' or 'winter'?",
     "is it a button-up or button-down?",
     "What format are computer files stored in to be universally accessible?",
