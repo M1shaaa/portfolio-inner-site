@@ -785,7 +785,7 @@ const Home: React.FC<HomeProps> = (props) => {
         { icon: ghIcon, link: 'https://github.com/M1shaaa' },
         { icon: inIcon, link: 'https://www.linkedin.com/in/misha-o-keeffe-099348262' },
         { icon: twitterIcon, link: 'https://x.com/mish_uhhh' },
-        { icon: gsIcon, link: 'https://scholar.google.com/citations?user=j41CbesAAAAJ&hl=en' },
+        { icon: gsIcon, link: 'https://scholar.google.com/citations?user=Q5ygtrwAAAAJ&hl=en' },
     ];
 
     return (
