@@ -9,7 +9,7 @@ const Thoughts: React.FC = () => {
     "What format are computer files stored in to be universally accessible?",
     "why is sunday laundry day?",
     "do babies find other babies cute?",
-    "if someone attacked me with their prothetic leg, is it considered hitting or kicking?",
+    "if someone attacked me with their prosthetic leg, is it considered hitting or kicking?",
     "is melted ice cream a soup?",
     "why am i not as happy as my dog to go on a walk or eat the same food every day?",
     "theoretically, how much could i eat of myself before dying?",
