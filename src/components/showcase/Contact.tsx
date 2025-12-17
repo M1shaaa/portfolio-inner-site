@@ -132,7 +132,7 @@ const Contact: React.FC<ContactProps> = (props) => {
                     />
                     <SocialBox
                         icon={gsIcon}
-                        link={'https://scholar.google.com/citations?user=Q5ygtrwAAAAJ&hl=en'}
+                        link={'https://scholar.google.com/citations?user=Q5ygtrwAAAAJ&hl=en&oi=ao'}
                 </div>
             </div>
             <div className="text-block">
