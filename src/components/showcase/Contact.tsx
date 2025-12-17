@@ -207,7 +207,7 @@ const Contact: React.FC<ContactProps> = (props) => {
                         <div style={styles.socialWrapper}>
                             <SocialBox
                                 icon={gsIcon}
-                                link={'https://scholar.google.com/citations?user=Q5ygtrwAAAAJ&hl=en&oi=ao'}
+                                link={'https://scholar.google.com/citations?hl=en&user=Q5ygtrwAAAAJ&view_op=list_works&sortby=pubdate'}
                                 onActivate={() => {
                                     setActiveMario(3);
                                     setTimeout(() => setActiveMario(null), 500);
