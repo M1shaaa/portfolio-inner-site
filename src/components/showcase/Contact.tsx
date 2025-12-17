@@ -1,9 +1,11 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import colors from '../../constants/colors';
 import twitterIcon from '../../assets/pictures/contact-twitter.png';
 import gsIcon from '../../assets/pictures/contact-gs.png';
 import ghIcon from '../../assets/pictures/contact-gh.png';
 import inIcon from '../../assets/pictures/contact-in.png';
+import marioPunch from '../../assets/pictures/mario-hit.gif';
+import marioStill from '../../assets/pictures/mario-still.png';
 import ResumeDownload from './ResumeDownload';
 
 export interface ContactProps {}
@@ -19,15 +21,55 @@ const validateEmail = (email: string) => {
 interface SocialBoxProps {
     icon: string;
     link: string;
+    onActivate?: () => void;
 }
 
-const SocialBox: React.FC<SocialBoxProps> = ({ link, icon }) => {
+interface MarioAnimationProps {
+    isAnimating: boolean;
+    index: number;
+}
+
+const SocialBox: React.FC<SocialBoxProps> = ({ link, icon, onActivate }) => {
+    const handleClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (onActivate) {
+            onActivate();
+        }
+        
+        setTimeout(() => {
+            window.open(link, '_blank');
+        }, 1000);
+    };
+
     return (
-        <a rel="noreferrer" target="_blank" href={link}>
+        <a rel="noreferrer" target="_blank" href={link} onClick={handleClick}>
             <div className="big-button-container" style={styles.social}>
                 <img src={icon} alt="" style={styles.socialImage} />
             </div>
         </a>
+    );
+};
+
+const MarioAnimation: React.FC<MarioAnimationProps> = ({ isAnimating, index }) => {
+    const animationKeyRef = useRef<number>(0);
+    
+    useEffect(() => {
+        if (isAnimating) {
+            // Increment key to force React to remount the image element
+            // This ensures the GIF animation restarts every time
+            animationKeyRef.current += 1;
+        }
+    }, [isAnimating]);
+    
+    // Use a key that changes when animation starts to force remount
+    // This is the most reliable way to restart a GIF animation
+    return (
+        <img 
+            key={`mario-${index}-${isAnimating ? animationKeyRef.current : 'still'}`}
+            src={isAnimating ? marioPunch : marioStill}
+            alt=""
+            style={styles.marioImage}
+        />
     );
 };
 
@@ -40,6 +82,7 @@ const Contact: React.FC<ContactProps> = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [formMessage, setFormMessage] = useState('');
     const [formMessageColor, setFormMessageColor] = useState('');
+    const [activeMario, setActiveMario] = useState<number | null>(null);
 
     useEffect(() => {
         if (validateEmail(email) && name.length > 0 && message.length > 0) {
@@ -117,22 +160,65 @@ const Contact: React.FC<ContactProps> = (props) => {
         <div className="site-page-content">
             <div style={styles.header}>
                 <h1>Contact</h1>
-                <div style={styles.socials}>
-                    <SocialBox
-                        icon={ghIcon}
-                        link={'https://github.com/M1shaaa'}
-                    />
-                    <SocialBox
-                        icon={inIcon}
-                        link={'https://www.linkedin.com/in/misha-o-keeffe-099348262/'}
-                    />
-                    <SocialBox
-                        icon={twitterIcon}
-                        link={'https://x.com/mish_uhhh'}
-                    />
-                    <SocialBox
-                        icon={gsIcon}
-                        link={'https://scholar.google.com/citations?user=Q5ygtrwAAAAJ&hl=en&oi=ao'}
+                <div style={styles.socialsContainer}>
+                    <div style={styles.socials}>
+                        <div style={styles.socialWrapper}>
+                            <SocialBox
+                                icon={ghIcon}
+                                link={'https://github.com/M1shaaa'}
+                                onActivate={() => {
+                                    setActiveMario(0);
+                                    setTimeout(() => setActiveMario(null), 500);
+                                }}
+                            />
+                            <MarioAnimation
+                                isAnimating={activeMario === 0}
+                                index={0}
+                            />
+                        </div>
+                        <div style={styles.socialWrapper}>
+                            <SocialBox
+                                icon={inIcon}
+                                link={'https://www.linkedin.com/in/misha-o-keeffe-099348262/'}
+                                onActivate={() => {
+                                    setActiveMario(1);
+                                    setTimeout(() => setActiveMario(null), 500);
+                                }}
+                            />
+                            <MarioAnimation
+                                isAnimating={activeMario === 1}
+                                index={1}
+                            />
+                        </div>
+                        <div style={styles.socialWrapper}>
+                            <SocialBox
+                                icon={twitterIcon}
+                                link={'https://x.com/mish_uhhh'}
+                                onActivate={() => {
+                                    setActiveMario(2);
+                                    setTimeout(() => setActiveMario(null), 500);
+                                }}
+                            />
+                            <MarioAnimation
+                                isAnimating={activeMario === 2}
+                                index={2}
+                            />
+                        </div>
+                        <div style={styles.socialWrapper}>
+                            <SocialBox
+                                icon={gsIcon}
+                                link={'https://scholar.google.com/citations?user=Q5ygtrwAAAAJ&hl=en&oi=ao'}
+                                onActivate={() => {
+                                    setActiveMario(3);
+                                    setTimeout(() => setActiveMario(null), 500);
+                                }}
+                            />
+                            <MarioAnimation
+                                isAnimating={activeMario === 3}
+                                index={3}
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
             <div className="text-block">
@@ -290,18 +376,33 @@ const styles: StyleSheetCSS = {
         alignItems: 'flex-end',
         justifyContent: 'space-between',
     },
+    socialsContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-end',
+    },
     socials: {
         marginBottom: 16,
         justifyContent: 'flex-end',
+        display: 'flex',
+        flexDirection: 'row',
+        gap: '16px',
+    },
+    socialWrapper: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
     },
     social: {
-        width: 4,
-        height: 4,
-        // borderRadius: 1000,
-
+        width: 36,
+        height: 36,
         justifyContent: 'center',
         alignItems: 'center',
-        marginLeft: 8,
+    },
+    marioImage: {
+        height: 32,
+        width: 32,
+        marginTop: 4,
     },
 };
 

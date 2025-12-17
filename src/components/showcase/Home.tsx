@@ -742,13 +742,28 @@ const styles: StyleSheet = {
     }
 };
 
-const MarioAnimation: React.FC<MarioAnimationProps> = ({ isAnimating, index }) => (
-    <img 
-        src={isAnimating ? marioPunch : marioStill}
-        alt=""
-        style={styles.marioImage}
-    />
-);
+const MarioAnimation: React.FC<MarioAnimationProps> = ({ isAnimating, index }) => {
+    const animationKeyRef = useRef<number>(0);
+    
+    useEffect(() => {
+        if (isAnimating) {
+            // Increment key to force React to remount the image element
+            // This ensures the GIF animation restarts every time
+            animationKeyRef.current += 1;
+        }
+    }, [isAnimating]);
+    
+    // Use a key that changes when animation starts to force remount
+    // This is the most reliable way to restart a GIF animation
+    return (
+        <img 
+            key={`mario-${index}-${isAnimating ? animationKeyRef.current : 'still'}`}
+            src={isAnimating ? marioPunch : marioStill}
+            alt=""
+            style={styles.marioImage}
+        />
+    );
+};
 
 const SocialBox: React.FC<SocialBoxProps> = ({ link, icon, onActivate }) => {
     const handleClick = (e: React.MouseEvent) => {
