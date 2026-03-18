@@ -2,6 +2,7 @@ import React from 'react';
 
 const Thoughts: React.FC = () => {
   const thoughts = [
+    "What makes a name cute?",
     "What is taste? What does it mean to have good taste in something?",
     "What does it mean to understand something? Like, really",
     "Was a sip really good if you didn't make that noise after it?",
