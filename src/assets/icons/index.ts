@@ -20,6 +20,7 @@ import scrabbleIcon from './scrabbleIcon.png';
 import folderIcon from './folderIcon.png';
 import close from './close.png';
 import mspaintIcon from './mspaintIcon.png';
+import camera from './camera.png';
 
 const icons = {
     windowResize: windowResize,
@@ -37,6 +38,7 @@ const icons = {
     scrabbleIcon: scrabbleIcon,
     mspaintIcon: mspaintIcon,
     henordleIcon: henordleIcon,
+    camera: camera,
     close: close,
     windowGameIcon: windowGameIcon,
     windowExplorerIcon: windowExplorerIcon,

@@ -10,6 +10,7 @@ import Toolbar from './Toolbar';
 import DesktopShortcut, { DesktopShortcutProps } from './DesktopShortcut';
 import Scrabble from '../applications/Scrabble';
 import Photos from '../applications/Photos';
+import Camera from '../applications/Camera';
 import ghibliAudio from '../../assets/audio/ghibli.mp3';  // Add this line
 // import Music from '../applications/Music';  // Changed the path
 import { IconName } from '../../assets/icons';
@@ -75,6 +76,12 @@ const APPLICATIONS: {
         name: 'photos',
         shortcutIcon: 'folderIcon',
         component: Photos,
+    },
+    camera: {
+        key: 'camera',
+        name: 'Photobooth',
+        shortcutIcon: 'camera',
+        component: Camera,
     }
     // ,
     // music: {

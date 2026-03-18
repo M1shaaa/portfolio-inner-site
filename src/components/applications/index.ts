@@ -6,3 +6,4 @@ export { default as Photos } from './Photos';
 export { default as Scrabble } from './Scrabble';
 export { default as ShowcaseExplorer } from './ShowcaseExplorer';
 export { default as MsPaint } from './MsPaint';
+export { default as Camera } from './Camera';
